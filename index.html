@@ -317,6 +317,14 @@ tfoot tr.ppl td{color:var(--red)}
     </div>
     <div class="answer" id="answer" hidden style="margin-top:12px"></div>
   </div>
+  <form id="ask-pw" hidden>
+    <label for="pw" class="muted" style="display:block;margin-bottom:6px"><span lang="es">Contraseña del grupo</span><span lang="pt">Senha do grupo</span></label>
+    <div class="row">
+      <input id="pw" type="password" autocomplete="current-password" style="font:400 16px var(--body);padding:10px 12px;border-radius:10px;border:0;background:var(--paper);color:var(--ink)">
+      <button type="submit" class="go"><span lang="es">Entrar</span><span lang="pt">Entrar</span></button>
+      <span class="muted" id="pw-status"></span>
+    </div>
+  </form>
   <div id="ask-off">
     <p class="muted" lang="es">El asistente funciona dentro de Claude. <a href="https://claude.ai/artifact/1LaVToVU29Hnv5wPr8sEPK" target="_blank" rel="noopener">Abrir el sitio en Claude</a> para preguntar.</p>
     <p class="muted" lang="pt">O assistente funciona dentro do Claude. <a href="https://claude.ai/artifact/1LaVToVU29Hnv5wPr8sEPK" target="_blank" rel="noopener">Abrir o site no Claude</a> para perguntar.</p>
@@ -486,8 +494,52 @@ tfoot tr.ppl td{color:var(--red)}
   }
   function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
 
+  // Servidor propio (Cloudflare Worker con Gemini) para el sitio público. Vacío = todavía no configurado.
+  const ASK_API="";
+  const show=(id,on)=>{document.getElementById(id).hidden=!on};
+  function renderSaved(items){
+    const box=document.getElementById("saved");
+    show("saved-wrap",items.length>0);
+    box.innerHTML=items.map(v=>`<div class="qa"><b>${esc(String(v.q||""))}</b><p>${esc(String(v.a||"").slice(0,1200))}</p></div>`).join("");
+  }
+  async function api(path,data){
+    const r=await fetch(ASK_API.replace(/\/$/,"")+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    let j={};try{j=await r.json()}catch(e){}
+    if(!r.ok)throw Object.assign(new Error(j.error||"error"),{code:j.error||"error"});
+    return j;
+  }
+  function startPublic(){
+    if(!ASK_API)return;
+    show("ask-off",false);
+    let pw=""; try{pw=sessionStorage.getItem("pw")||""}catch(e){}
+    const enter=async(p)=>{
+      try{const h=await api("/history",{password:p});pw=p;try{sessionStorage.setItem("pw",p)}catch(e){}
+        show("ask-pw",false);show("ask-on",true);renderSaved(h.items||[]);return true}
+      catch(e){return false}
+    };
+    document.getElementById("ask-pw").onsubmit=async ev=>{ev.preventDefault();
+      const st=document.getElementById("pw-status");st.textContent="…";
+      const ok=await enter(document.getElementById("pw").value);
+      st.textContent=ok?"":(LANG==="es"?"Contraseña incorrecta.":"Senha incorreta.")};
+    (async()=>{if(!(pw&&await enter(pw)))show("ask-pw",true)})();
+    stopEl.hidden=true;
+    goEl.onclick=async()=>{
+      const q=qEl.value.trim(); if(!q){stEl.textContent=T("empty");return}
+      goEl.disabled=true; ansEl.hidden=false; ansEl.textContent=T("think"); stEl.textContent="";
+      try{
+        const {answer}=await api("/ask",{password:pw,question:q,lang:LANG,context:context()});
+        ansEl.textContent=answer; stEl.textContent=T("saved");
+        try{const h=await api("/history",{password:pw});renderSaved(h.items||[])}catch(e){}
+      }catch(e){
+        ansEl.hidden=true;
+        if(e.code==="wrong_password"){show("ask-on",false);show("ask-pw",true)}
+        else stEl.textContent=e.code==="rate_limited"?T("rate"):T("err");
+      }finally{goEl.disabled=false}
+    };
+  }
+
   (async()=>{
-    if(!window.claude||!claude.use)return;
+    if(!window.claude||!claude.use){startPublic();return}
     const sample=await claude.use("sample").catch(()=>null);
     if(!sample)return;
     document.getElementById("ask-on").hidden=false;

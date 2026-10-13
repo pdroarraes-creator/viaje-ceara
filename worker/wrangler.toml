@@ -1,0 +1,18 @@
+name = "viaje-ceara-ask"
+main = "index.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+GEMINI_MODEL = "gemini-3.1-flash-lite"
+ALLOWED_ORIGIN = "https://pdroarraes-creator.github.io"
+
+# Crear el KV con: npx wrangler kv namespace create QA
+# y pegar acá el id que devuelve.
+[[kv_namespaces]]
+binding = "QA"
+id = "PEGAR_AQUI_EL_ID_DEL_KV"
+
+# Secretos (nunca en este archivo):
+#   npx wrangler secret put GEMINI_API_KEY
+#   npx wrangler secret put SITE_PASSWORD
+#   npx wrangler secret put ADMIN_KEY
