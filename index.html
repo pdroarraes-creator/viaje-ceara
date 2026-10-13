@@ -156,6 +156,11 @@ tfoot tr.ppl td{color:var(--red)}
 .install{margin-top:16px;background:var(--card);border:1.5px dashed var(--sea);border-radius:14px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start}
 .install img{width:52px;height:52px;border-radius:12px;flex-shrink:0}
 .install p{font-size:15px}
+.pwbox{position:relative;display:inline-flex}
+.eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:0;padding:8px;cursor:pointer;color:var(--soft);display:flex}
+.eye svg{width:22px;height:22px;fill:currentColor}
+.eye[aria-pressed="true"] .s{display:none}
+.robo.away{opacity:0;transform:scale(.6);pointer-events:none;transition:opacity .25s,transform .25s}
 .robo{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:40;width:64px;height:64px;border-radius:50%;box-shadow:0 6px 18px rgba(14,18,48,.35);display:block;text-decoration:none;animation:robo-in .6s ease-out .4s both}
 .robo svg{width:64px;height:64px;display:block;border-radius:50%}
 .robo:hover svg,.robo:focus-visible svg{transform:rotate(-6deg) scale(1.05);transition:transform .2s}
@@ -452,7 +457,7 @@ body{padding-bottom:88px}
   <form id="ask-pw" hidden>
     <label for="pw" class="muted" style="display:block;margin-bottom:6px"><span lang="es">Contraseña del grupo</span><span lang="pt">Senha do grupo</span></label>
     <div class="row">
-      <input id="pw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" style="font:400 16px var(--body);padding:10px 12px;border-radius:10px;border:0;background:var(--paper);color:var(--ink)">
+      <span class="pwbox"><input id="pw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" style="padding-right:44px !important;font:400 16px var(--body);padding:10px 12px;border-radius:10px;border:0;background:var(--paper);color:var(--ink)"><button type="button" class="eye" id="pw-eye" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="o" d="M12 5C6.5 5 2.7 9.4 1.5 12c1.2 2.6 5 7 10.5 7s9.3-4.4 10.5-7C21.3 9.4 17.5 5 12 5zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/><path class="s" d="M3 3l18 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></span>
       <button type="submit" class="go"><span lang="es">Entrar</span><span lang="pt">Entrar</span></button>
       <span class="muted" id="pw-status"></span>
     </div>
@@ -535,6 +540,8 @@ body{padding-bottom:88px}
   newsEl.addEventListener("click",e=>{if(e.target===newsEl)closeNews()});
   if(seen!==SITE_VERSION){dot.hidden=false;try{navigator.setAppBadge&&navigator.setAppBadge(1)}catch(e){};if(seen)openNews();else{try{localStorage.setItem("seen-version",SITE_VERSION)}catch(e){};dot.hidden=true}}
 
+  try{const robo=document.getElementById("robo"),sec=document.getElementById("preguntar");
+    new IntersectionObserver(es=>es.forEach(e=>robo.classList.toggle("away",e.isIntersecting)),{rootMargin:"0px 0px -30% 0px"}).observe(sec)}catch(e){}
   const ib=document.getElementById("insp-btn"),ip=document.getElementById("insp");
   ib.addEventListener("click",()=>{const open=ib.getAttribute("aria-expanded")!=="true";ib.setAttribute("aria-expanded",String(open));ip.hidden=!open});
 
@@ -763,6 +770,8 @@ body{padding-bottom:88px}
       const r=await enter(document.getElementById("pw").value);
       st.textContent=r==="ok"?"":r==="wrong_password"?(LANG==="es"?"Contraseña incorrecta.":"Senha incorreta."):
         (LANG==="es"?"No se pudo conectar con el asistente ("+r+"). Probá en un rato.":"Não deu para conectar com o assistente ("+r+"). Tente daqui a pouco.")};
+    document.getElementById("pw-eye").onclick=function(){const i=document.getElementById("pw"),on=i.type==="password";
+      i.type=on?"text":"password";this.setAttribute("aria-pressed",String(on));this.setAttribute("aria-label",on?"Ocultar contraseña":"Mostrar contraseña");i.focus()};
     (async()=>{if(!(pw&&await enter(pw)==="ok"))show("ask-pw",true)})();
     stopEl.hidden=true;
     goEl.onclick=async()=>{
