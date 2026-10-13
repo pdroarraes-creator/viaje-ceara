@@ -21,16 +21,41 @@ const PERSONAS = {
 
 // Permisos por número: quién puede ver finanzas y dar órdenes. Los números van en la variable BOT_ROLES (JSON) de Cloudflare:
 // {"5491100000000":"pedro","5491100000001":"raquel","5491100000002":"hijo"}
-function roleOf(env, from) {
+async function roleOf(env, from) {
   let roles = {};
   try { roles = JSON.parse(env.BOT_ROLES || "{}"); } catch {}
+  let allow = {};
+  try { allow = JSON.parse((await env.QA.get("bot:allow")) || "{}"); } catch {}
   const d = String(from).replace(/\D/g, "");
   // WhatsApp guarda algunos números de Brasil sin el 9 (55 81 9284-9887) y otros con él (55 81 99284-9887): probamos las dos formas
   const alt = [d];
   if (/^55\d{2}9\d{8}$/.test(d)) alt.push(d.slice(0, 4) + d.slice(5));
   if (/^55\d{2}[6-9]\d{7}$/.test(d)) alt.push(d.slice(0, 4) + "9" + d.slice(4));
-  for (const k of alt) if (roles[k]) return roles[k];
+  for (const k of alt) { if (allow[k]) return allow[k].role || "viajante"; if (roles[k]) return roles[k]; }
   return "externo";
+}
+
+// Panel /admin: lista de números autorizados, quem tentou falar e o texto extra que o bot conhece.
+export async function botAdmin(body, env, json) {
+  const norm = x => String(x || "").replace(/\D/g, "");
+  let allow = {};
+  try { allow = JSON.parse((await env.QA.get("bot:allow")) || "{}"); } catch {}
+  const a = body.action;
+  if (a === "allow") {
+    const id = norm(body.id); if (!id) return json({ error: "bad_id" }, 400);
+    allow[id] = { name: String(body.name || "").slice(0, 40), role: ["pedro", "raquel", "hijo", "viajante"].includes(body.role) ? body.role : "viajante" };
+    await env.QA.put("bot:allow", JSON.stringify(allow)); await env.QA.delete("botunk:" + id);
+  } else if (a === "remove") {
+    delete allow[norm(body.id)]; await env.QA.put("bot:allow", JSON.stringify(allow));
+  } else if (a === "ignore") {
+    await env.QA.delete("botunk:" + norm(body.id));
+  } else if (a === "setextra") {
+    await env.QA.put("bot:extra", String(body.text || "").slice(0, 8000));
+  }
+  const l = await env.QA.list({ prefix: "botunk:", limit: 100 });
+  const unknown = [];
+  for (const k of l.keys) { try { unknown.push(JSON.parse(await env.QA.get(k.name))); } catch {} }
+  return json({ allow, unknown, extra: (await env.QA.get("bot:extra")) || "" });
 }
 
 // Datos reales del viaje: texto plano que se genera del sitio (knowledge.py) y se publica junto a él. Cache 1 hora en KV.
@@ -54,10 +79,14 @@ export async function handleBot(body, env, json, safeEqual) {
   const bot = body.bot === "caju" ? "caju" : "castanha";
   const text = String(body.text || "").trim().slice(0, 1000);
   if (!text) return json({ reply: "" });
-  const role = roleOf(env, body.from);
+  const role = await roleOf(env, body.from);
 
-  // Caju es solo para la familia: a los de afuera no les responde
-  if (bot === "caju" && role === "externo") return json({ reply: "", denied: true });
+  // Solo responde a números autorizados (panel /admin). Los demás quedan en la lista "quién intentó hablar" para autorizar con un toque.
+  if (role === "externo" || (bot === "caju" && role === "viajante")) {
+    const id = String(body.from).replace(/\D/g, "");
+    if (id) await env.QA.put("botunk:" + id, JSON.stringify({ id, name: String(body.name || "").slice(0, 40), text: text.slice(0, 60), t: Date.now(), bot }), { expirationTtl: 14 * 86400 });
+    return json({ reply: "", denied: true });
+  }
 
   // límite por persona y hora (evita gastos y spam)
   const hour = Math.floor(Date.now() / 3600000), rl = `botrl:${bot}:${String(body.from).replace(/\D/g, "")}:${hour}`;
@@ -71,7 +100,7 @@ export async function handleBot(body, env, json, safeEqual) {
   const who = String(body.name || role).slice(0, 30);
   const contents = [...hist, { role: "user", parts: [{ text: `[${who}, ${role}] ${text}` }] }];
 
-  const datos = await trip(env);
+  const datos = (await trip(env)) + ((await env.QA.get("bot:extra")) ? "\n\nINFORMACIÓN EXTRA (cargada por Pedro):\n" + (await env.QA.get("bot:extra")) : "");
   const system = PERSONAS[bot] +
     (datos ? ` DATOS REALES DEL VIAJE A CEARÁ (usalos como única fuente para fechas, lugares, horarios y precios; si algo no está acá, decí que no lo sabés y no inventes; no digas que "todavía no está definido" si está en los datos):\n${datos}\n---\n` : "") +
     ` Quien te escribe ahora tiene el rol "${role}". ` +

@@ -1,5 +1,5 @@
 import { ADMIN_PAGE } from "./admin.js";
-import { handleBot } from "./bot.js";
+import { handleBot, botAdmin } from "./bot.js";
 // Asistente del viaje a Ceará — Cloudflare Worker
 // Guarda la clave de Gemini y la contraseña del grupo como secretos (nunca en el código)
 // y guarda cada pregunta y respuesta en Workers KV para mejorar el sitio.
@@ -139,6 +139,11 @@ export default {
       const key = "visit:" + String(9999999999999 - t).padStart(13, "0") + ":" + Math.random().toString(36).slice(2, 6);
       await env.QA.put(key, "1", { metadata: meta, expirationTtl: 60 * 86400 });
       return json({ ok: true });
+    }
+
+    if (url.pathname === "/bot-admin") {
+      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
+      return botAdmin(body, env, json);
     }
 
     if (url.pathname === "/visits") {

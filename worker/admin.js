@@ -20,6 +20,15 @@ table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px
 <div class="row"><button id="ver" type="button">Ver perguntas</button></div>
 <textarea id="o" readonly rows="8"></textarea>
 
+<h2>WhatsApp: quem a Castanha atende</h2>
+<p class="muted">Só os números autorizados recebem resposta. Quem tentar falar e não estiver na lista aparece aqui para você autorizar com um toque.</p>
+<div class="row"><button id="bl" type="button">Atualizar lista</button> <span id="bs" class="muted"></span></div>
+<div id="bt"></div>
+<h3>Informação extra para o bot</h3>
+<p class="muted">Tudo que você escrever aqui a Castanha passa a saber (além do roteiro do site). Ex.: reservas, telefones, combinados.</p>
+<textarea id="bx" rows="8" placeholder="Ex.: Hotel em Fortaleza: ... Check-in 14h. Telefone do motorista: ..."></textarea>
+<div class="row"><button id="bxs" type="button">Salvar informação extra</button></div>
+
 <h2>Avisos no celular</h2>
 <h2>Acessos ao site (anônimo, últimos 60 dias)</h2>
 <div class="row"><button id="vv" type="button">Ver acessos</button> <span id="vs" class="muted"></span></div>
@@ -52,6 +61,18 @@ vv.onclick=function(){vs.textContent="Carregando…";post("/visits",{}).then(fun
  var tp={open_ok:"entrou",open_nopw:"abriu, sem senha",wrong_pw:"senha errada"};
  it.slice(0,40).forEach(function(v){h+="<tr><td>"+fm.format(v.t)+" "+hm.format(v.t)+"</td><td>"+v.dev+" · "+v.br+(v.app?" (app)":"")+" · "+(v.vid||"").slice(0,4)+"</td><td>"+(v.place||"?")+"</td><td>"+v.lang+"</td><td>"+(v.bot?"provável robô":(tp[v.kind]||v.kind))+(v.org?"<br><small class=muted>"+v.org+"</small>":"")+"</td></tr>"});vt.innerHTML=h+"</table>"}).catch(function(e){vs.textContent=e.message})};
 pt.onclick=function(){ps.textContent="Enviando…";post("/push-now",{}).then(function(d){ps.textContent=d.subscribers+" celulares, "+d.sent+" enviados, "+d.removed+" removidos, "+d.failed+" com erro."}).catch(function(e){ps.textContent=e.message})};
+
+function esc2(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function drawBot(d){var h="<table><tr><th>Número</th><th>Nome</th><th>Papel</th><th></th></tr>";
+ Object.keys(d.allow).forEach(function(id){h+="<tr><td>"+esc2(id)+"</td><td>"+esc2(d.allow[id].name)+"</td><td>"+esc2(d.allow[id].role)+"</td><td><button data-a='remove' data-id='"+esc2(id)+"'>Remover</button></td></tr>"});
+ h+="</table>";
+ if(d.unknown.length){h+="<p><b>Tentaram falar e estão bloqueados:</b></p><table><tr><th>Número</th><th>Nome no WhatsApp</th><th>Disse</th><th></th></tr>";
+  d.unknown.forEach(function(u){h+="<tr><td>"+esc2(u.id)+"</td><td>"+esc2(u.name)+"</td><td>"+esc2(u.text)+"</td><td><input size='10' placeholder='nome' class='nm'> <select class='rl'><option value='viajante'>viajante</option><option value='pedro'>pedro</option><option value='raquel'>raquel</option><option value='hijo'>filho</option></select> <button data-a='allow' data-id='"+esc2(u.id)+"'>Autorizar</button> <button data-a='ignore' data-id='"+esc2(u.id)+"'>Ignorar</button></td></tr>"});h+="</table>"}
+ bt.innerHTML=h;bx.value=d.extra;bs.textContent=Object.keys(d.allow).length+" autorizados, "+d.unknown.length+" aguardando"}
+function botCall(data){bs.textContent="Carregando…";return post("/bot-admin",data).then(drawBot).catch(function(e){bs.textContent="Erro: "+e.message})}
+bl.onclick=function(){botCall({action:"list"})};
+bxs.onclick=function(){botCall({action:"setextra",text:bx.value})};
+bt.onclick=function(e){var b=e.target;if(!b.dataset||!b.dataset.a)return;var row=b.closest("tr"),nm=row.querySelector(".nm"),rl=row.querySelector(".rl");botCall({action:b.dataset.a,id:b.dataset.id,name:nm?nm.value:"",role:rl?rl.value:""})};
 
 var SITE="https://pdroarraes-creator.github.io/viaje-ceara/videos/";
 function loadScript(){fetch(SITE+ep.value+".json?t="+Date.now()).then(function(r){return r.text()}).then(function(t){sc.value=t}).catch(function(){sc.value=""})}
