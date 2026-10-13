@@ -23,6 +23,7 @@ textarea{width:100%;font:13px ui-monospace,monospace;border-radius:10px;border:1
 .row input{flex:1;min-width:120px}
 table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:middle}
 .muted{color:var(--mut);font-size:12.5px;margin:2px 0 6px}audio{width:100%;margin-top:8px}
+select{max-width:100%;width:100%}input[type=checkbox]{width:18px;height:18px;min-height:0;padding:0;accent-color:var(--ink)}label.muted{display:flex;gap:8px;align-items:center}
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;background:#fff;border-top:1.5px solid var(--ink);padding-bottom:env(safe-area-inset-bottom)}
 .tabs button{flex:1;border:0;border-radius:0;background:#fff;min-height:48px;font-size:11px;font-weight:600;color:var(--mut);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .tabs button span{font-size:17px;line-height:1}.tabs button.on{color:var(--ink);background:var(--gold)}
