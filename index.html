@@ -678,7 +678,7 @@ body{padding-bottom:88px}
   const qEl=document.getElementById("q"),goEl=document.getElementById("go"),stopEl=document.getElementById("stop"),stEl=document.getElementById("status"),ansEl=document.getElementById("answer");
   function renderSugs(){const box=document.getElementById("sugs");if(!box)return;box.innerHTML="";(SUGS[LANG]||SUGS.es).forEach(s=>{const b=document.createElement("button");b.type="button";b.textContent=s;b.onclick=()=>{qEl.value=s;qEl.focus()};box.append(b)})}
   let saved=null; try{saved=localStorage.getItem("lang")}catch(e){}
-  setLang(saved||"es");
+  setLang(saved||(/^pt/i.test(navigator.language||(navigator.languages||[])[0]||"")?"pt":"es")); // primera vez: idioma del celular
 
   const copy={
     think:{es:"Pensando…",pt:"Pensando…"},
