@@ -2,7 +2,7 @@
 import json, glob, wave, subprocess, numpy as np, sherpa_onnx, os
 S=json.load(open("/home/claude/viaje-ceara/videos/ep01.json"))
 VOICE={"Castanha":("es_AR-daniela-high",1.0),"Caju":("es_MX-ald-medium",1.05)}
-FIX=[("Schoonenborch","Schónenborj"),("1649","mil seiscientos cuarenta y nueve"),("1654","mil seiscientos cincuenta y cuatro"),("1726","mil setecientos veintiséis"),("2026","dos mil veintiséis"),("Pajeú","Pallejú")]
+FIX=[("Schoonenborch","Schónenborj"),("1649","mil seiscientos cuarenta y nueve"),("1654","mil seiscientos cincuenta y cuatro"),("1726","mil setecientos veintiséis"),("2026","dos mil veintiséis"),("Pajeú","Pallejú"),("visse","vise"),("Oi,","Oi,")]
 E={}
 def eng(v):
     if v not in E:

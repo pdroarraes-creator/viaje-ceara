@@ -144,7 +144,7 @@ function scene(t,f){
     stamp('FUERTE','Schoonenborch · 1649',t,B.fuerte+1.4,2.6,200);
     trans(t,B.guerra,0.35);fadeIn(t,B.fuerte,0.45);return;
   }
-  const L5=TL.lines.find(l=>l.i===5);
+  const L5=TL.lines.find(l=>l.i===TL.ev.surrLine);
   if(t<L5.start-0.25){ // GUERRA no mapa (Pernambuco)
     const a=t-B.guerra,k=ease(prog(a,0,2.2)),shake=shk(t,E.cannons);
     const v=cam(IMG.c6,lerp(0.62,0.57,k)+shake[0],lerp(0.42,0.6,k)+shake[1],lerp(1.4,2.5,k));
