@@ -1,3 +1,4 @@
+import { ADMIN_PAGE } from "./admin.js";
 // Asistente del viaje a Ceará — Cloudflare Worker
 // Guarda la clave de Gemini y la contraseña del grupo como secretos (nunca en el código)
 // y guarda cada pregunta y respuesta en Workers KV para mejorar el sitio.
@@ -74,6 +75,41 @@ export default {
       const id = await sha(sub.endpoint);
       await env.QA.put(`sub:${id}`, JSON.stringify({ endpoint: sub.endpoint, at: Date.now() }));
       return json({ ok: true });
+    }
+
+    // Estudio de voz (solo admin): listar voces y sintetizar un trecho
+    if (url.pathname === "/voices" || url.pathname === "/tts") {
+      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
+      if (!env.GEMINI_API_KEY) return json({ error: "no_gemini_key" }, 503);
+      const G = "https://generativelanguage.googleapis.com/v1beta";
+      const hdr = { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY };
+      if (url.pathname === "/voices") {
+        const q = new URLSearchParams({ page_size: "300" });
+        for (const l of [].concat(body.lang || ["pt-BR"])) q.append("language_code", String(l));
+        if (body.gender) q.append("gender", String(body.gender));
+        const r = await fetch(`${G}/voices?${q}`, { headers: hdr });
+        const t = await r.text();
+        if (!r.ok) return json({ error: "upstream", status: r.status, detail: t.slice(0, 600) }, 502);
+        let d; try { d = JSON.parse(t); } catch { return json({ error: "bad_upstream" }, 502); }
+        return json({ voices: (d.voices || []).map(v => ({ id: v.id, name: v.display_name, lang: v.language_code, accent: v.accent, gender: v.gender, pitch: v.pitch, desc: v.description })) });
+      }
+      const text = String(body.text || "").slice(0, 1200);
+      if (!text || !body.voice) return json({ error: "empty" }, 400);
+      const ann = body.style ? [{ type: "speech_metadata", style: String(body.style).slice(0, 200) }] : undefined;
+      const req = {
+        model: String(body.model || env.TTS_MODEL || "gemini-3.8-flash-tts"),
+        input: [{ type: "user_input", content: [{ type: "text", text, ...(ann ? { annotations: ann } : {}) }] }],
+        response_format: { type: "audio" },
+        generation_config: { speech_config: [{ voice: String(body.voice) }] },
+      };
+      const r = await fetch(`${G}/interactions`, { method: "POST", headers: hdr, body: JSON.stringify(req) });
+      const t = await r.text();
+      if (!r.ok) return json({ error: "upstream", status: r.status, detail: t.slice(0, 600) }, 502);
+      let d; try { d = JSON.parse(t); } catch { return json({ error: "bad_upstream" }, 502); }
+      let audio = null;
+      for (const st of d.steps || []) if (st.type === "model_output") for (const c of st.content || []) if (c.type === "audio" && c.data) audio = c.data;
+      if (!audio) return json({ error: "no_audio", detail: t.slice(0, 400) }, 502);
+      return json({ audio });
     }
 
     // Mandar un aviso ya a todos (página /admin, para probar)
@@ -266,19 +302,4 @@ function safeEqual(a, b) {
   return diff === 0;
 }
 
-const ADMIN_PAGE = `<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Perguntas do viaje-ceara</title>
-<style>body{font:16px system-ui,sans-serif;max-width:760px;margin:0 auto;padding:16px}input,button{font:inherit;padding:8px 12px}textarea{width:100%;height:60vh;font:13px ui-monospace,monospace}</style></head>
-<body><h1>Perguntas e respostas salvas</h1>
-<form id="f"><input id="k" type="password" placeholder="ADMIN_KEY" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"> <button>Ver</button></form>
-<p><button id="pt" type="button">Enviar aviso de teste agora</button> <span id="ps"></span></p>
-<p id="s"></p><textarea id="o" readonly></textarea>
-<script>
-f.onsubmit=async e=>{e.preventDefault();s.textContent="Carregando…";
-const r=await fetch("/export",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({key:k.value})});
-if(!r.ok){s.textContent="Chave errada.";return}const d=await r.json();
-s.textContent=d.items.length+" perguntas. Copie o texto abaixo e cole no Claude para melhorar o site.";
-o.value=JSON.stringify(d.items,null,2)};
-pt.onclick=async()=>{ps.textContent="Enviando…";const r=await fetch("/push-now",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({key:k.value})});
-if(!r.ok){ps.textContent="Chave errada.";return}const d=await r.json();ps.textContent=d.subscribers+" celulares, "+d.sent+" enviados, "+d.removed+" removidos, "+d.failed+" com erro."};
-</script></body></html>`;
+
