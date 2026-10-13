@@ -495,7 +495,7 @@ tfoot tr.ppl td{color:var(--red)}
   function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
 
   // Servidor propio (Cloudflare Worker con Gemini) para el sitio público. Vacío = todavía no configurado.
-  const ASK_API="";
+  const ASK_API="https://viaje-ceara-ask.pdroarraes.workers.dev";
   const show=(id,on)=>{document.getElementById(id).hidden=!on};
   function renderSaved(items){
     const box=document.getElementById("saved");
