@@ -8,10 +8,10 @@ preview_urls = false
 GEMINI_MODEL = "gemini-3.1-flash-lite"
 ALLOWED_ORIGIN = "https://pdroarraes-creator.github.io"
 
-# Memória das perguntas (Workers KV). Descomentar quando tiver o ID do namespace:
-# [[kv_namespaces]]
-# binding = "QA"
-# id = "ID_DO_KV"
+# Memória das perguntas (Workers KV, namespace viaje-ceara-qa)
+[[kv_namespaces]]
+binding = "QA"
+id = "d89cf90a5bf0437c83a3ba2a2a3acaff"
 
 # Segredos ficam só no painel do Cloudflare (Settings → Variables and Secrets):
 #   GEMINI_API_KEY, SITE_PASSWORD, ADMIN_KEY
