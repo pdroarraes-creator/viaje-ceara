@@ -1,4 +1,5 @@
 import { ADMIN_PAGE } from "./admin.js";
+import { ICON192, ICON512 } from "./icons.js";
 import { handleBot, botAdmin } from "./bot.js";
 // Asistente del viaje a Ceará — Cloudflare Worker
 // Guarda la clave de Gemini y la contraseña del grupo como secretos (nunca en el código)
@@ -39,6 +40,20 @@ export default {
 
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
 
+    // App /admin instalável (manifest, ícones e service worker mínimo)
+    if (request.method === "GET" && url.pathname === "/admin.webmanifest") {
+      return new Response(JSON.stringify({ name: "Admin Rumo ao Ceará", short_name: "Admin Ceará", start_url: "/admin", scope: "/", display: "standalone", background_color: "#F4ECDD", theme_color: "#1E2350", icons: [
+        { src: "/admin-icon-192.png", sizes: "192x192", type: "image/png" },
+        { src: "/admin-icon-512.png", sizes: "512x512", type: "image/png" },
+        { src: "/admin-icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" }] }), { headers: { "Content-Type": "application/manifest+json" } });
+    }
+    if (request.method === "GET" && (url.pathname === "/admin-icon-192.png" || url.pathname === "/admin-icon-512.png")) {
+      const b = Uint8Array.from(atob(url.pathname.includes("192") ? ICON192 : ICON512), c => c.charCodeAt(0));
+      return new Response(b, { headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=86400" } });
+    }
+    if (request.method === "GET" && url.pathname === "/admin-sw.js") {
+      return new Response("self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch',()=>{});", { headers: { "Content-Type": "text/javascript", "Service-Worker-Allowed": "/" } });
+    }
     if (url.pathname === "/admin" && request.method === "GET") {
       return new Response(ADMIN_PAGE, { headers: { "Content-Type": "text/html; charset=utf-8" } });
     }

@@ -1,41 +1,80 @@
-// Página /admin: perguntas salvas, aviso de teste e estúdio de voz dos episódios.
+// Página /admin (app instalável): WhatsApp, acessos, perguntas, avisos e estúdio de voz.
 // Atenção: não usar crase nem cifrão-chave dentro do HTML (está num template literal).
-export const ADMIN_PAGE = String.raw`<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin do viaje-ceara</title>
+export const ADMIN_PAGE = String.raw`<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Admin Rumo ao Ceará</title>
+<meta name="theme-color" content="#1E2350"><meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="/admin.webmanifest"><link rel="icon" href="/admin-icon-192.png"><link rel="apple-touch-icon" href="/admin-icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Admin Ceará">
 <style>
-body{font:16px system-ui,sans-serif;max-width:820px;margin:0 auto;padding:16px;color:#1E2350;background:#F4ECDD}
-h1{font-size:22px}h2{font-size:18px;margin-top:28px;border-top:2px solid #1E2350;padding-top:14px}
-input,button,select{font:inherit;padding:8px 12px;border-radius:8px;border:1.5px solid #1E2350;background:#fff;color:#1E2350}
-button{background:#F4B33D;font-weight:700;cursor:pointer}button:disabled{opacity:.5}
-textarea{width:100%;box-sizing:border-box;font:13px ui-monospace,monospace;border-radius:8px;border:1.5px solid #1E2350;padding:8px}
+:root{--ink:#1E2350;--cream:#F4ECDD;--gold:#F4B33D;--card:#fff;--line:#d9cfba;--mut:#5b5f7a;--ok:#2e7d4f;--bad:#b3261e}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.45 system-ui,sans-serif;color:var(--ink);background:var(--cream);padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:var(--ink);color:#fff}
+.top b{font-size:18px;flex:1}.top small{opacity:.7}
+.top button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);padding:6px 10px;font-weight:500}
+main,#login{max-width:760px;margin:0 auto;padding:16px}
+h2{font-size:20px;margin:4px 0 6px}h3{font-size:16px;margin:20px 0 4px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+input,button,select{font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);min-height:44px}
+button{background:var(--gold);font-weight:700;cursor:pointer}button:disabled{opacity:.5}
+button.ghost{background:#fff}button.danger{background:#fff;color:var(--bad);border-color:var(--bad)}
+textarea{width:100%;font:14px ui-monospace,monospace;border-radius:10px;border:1.5px solid var(--ink);padding:10px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
-table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid #c9bfa8;padding:5px 6px;text-align:left}
-.muted{color:#555;font-size:14px}audio{width:100%;margin-top:8px}
+.row input{flex:1;min-width:120px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:middle}
+.muted{color:var(--mut);font-size:14px}audio{width:100%;margin-top:8px}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;background:#fff;border-top:1.5px solid var(--ink);padding-bottom:env(safe-area-inset-bottom)}
+.tabs button{flex:1;border:0;border-radius:0;background:#fff;min-height:58px;font-size:12px;font-weight:600;color:var(--mut);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.tabs button span{font-size:22px;line-height:1}.tabs button.on{color:var(--ink);background:var(--gold)}
+section[data-tab]{display:none}section[data-tab].on{display:block}
+#bt .person{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 14px}
+#bt .person div{min-width:0}#bt .person small{display:block;color:var(--mut)}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--cream);border:1px solid var(--line);font-size:13px}
+.warn{background:#fff6dd;border-color:var(--gold)}
 </style></head>
-<body><h1>Admin do Rumo ao Ceará</h1>
+<body>
+<div class="top"><b>Rumo ao Ceará <small>admin</small></b><button id="lo" type="button" hidden>Sair</button></div>
+
+<div id="login"><div class="card"><h2>Entrar</h2><p class="muted">Digite a ADMIN_KEY uma vez. Este aparelho vai lembrar.</p>
 <form id="f" class="row"><input id="k" type="password" placeholder="ADMIN_KEY" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"> <button>Entrar</button></form>
-<p id="s" class="muted"></p>
+<p id="s" class="muted"></p></div></div>
 
-<h2>Perguntas salvas</h2>
-<div class="row"><button id="ver" type="button">Ver perguntas</button></div>
-<textarea id="o" readonly rows="8"></textarea>
-
-<h2>WhatsApp: quem a Castanha atende</h2>
-<p class="muted">Só os números autorizados recebem resposta. Quem tentar falar e não estiver na lista aparece aqui para você autorizar com um toque.</p>
-<div class="row"><button id="bl" type="button">Atualizar lista</button> <span id="bs" class="muted"></span></div>
+<main id="app" hidden>
+<section data-tab="wa">
+<h2>WhatsApp</h2>
+<p class="muted">A Castanha só responde a quem está na lista.</p>
+<div class="card"><h3 style="margin-top:0">Adicionar um telefone</h3>
+<p class="muted">Com código do país e DDD, só números. Ex.: 5491128706685 (Argentina) ou 5581999999999 (Brasil).</p>
+<div class="row"><input id="mp" type="tel" inputmode="numeric" placeholder="Telefone" autocomplete="off"><input id="mn" placeholder="Nome"></div>
+<div class="row"><select id="mr"><option value="viajante">Viajante (família vizinha)</option><option value="pedro">Pedro</option><option value="raquel">Raquel</option><option value="hijo">Filho</option></select><button id="madd" type="button">Autorizar</button></div></div>
+<div class="row"><button id="bl" type="button" class="ghost">Atualizar lista</button> <span id="bs" class="muted"></span></div>
 <div id="bt"></div>
-<h3>Informação extra para o bot</h3>
-<p class="muted">Tudo que você escrever aqui a Castanha passa a saber (além do roteiro do site). Ex.: reservas, telefones, combinados.</p>
-<textarea id="bx" rows="8" placeholder="Ex.: Hotel em Fortaleza: ... Check-in 14h. Telefone do motorista: ..."></textarea>
-<div class="row"><button id="bxs" type="button">Salvar informação extra</button></div>
+<div class="card"><h3 style="margin-top:0">Informação extra para a Castanha</h3>
+<p class="muted">Tudo que escrever aqui ela passa a saber, além do roteiro do site. Ex.: reservas, telefones, combinados.</p>
+<textarea id="bx" rows="8" placeholder="Ex.: Hotel em Fortaleza: ... Check-in 14h."></textarea>
+<div class="row"><button id="bxs" type="button">Salvar</button></div></div>
+</section>
 
-<h2>Avisos no celular</h2>
-<h2>Acessos ao site (anônimo, últimos 60 dias)</h2>
+<section data-tab="ac">
+<h2>Acessos ao site</h2><p class="muted">Anônimo, últimos 60 dias.</p>
 <div class="row"><button id="vv" type="button">Ver acessos</button> <span id="vs" class="muted"></span></div>
 <div id="vt"></div>
-<div class="row"><button id="pt" type="button">Enviar aviso de teste agora</button> <span id="ps" class="muted"></span></div>
+</section>
 
-<h2>Estúdio de voz (episódios)</h2>
+<section data-tab="pg">
+<h2>Perguntas salvas</h2>
+<div class="row"><button id="ver" type="button">Ver perguntas</button></div>
+<textarea id="o" readonly rows="14"></textarea>
+</section>
+
+<section data-tab="av">
+<h2>Avisos no celular</h2>
+<p class="muted">Manda uma notificação de teste para quem ativou os avisos do site.</p>
+<div class="row"><button id="pt" type="button">Enviar aviso de teste agora</button> <span id="ps" class="muted"></span></div>
+</section>
+
+<section data-tab="vz">
+<h2>Estúdio de voz</h2>
 <p class="muted">1) Carregue as vozes. 2) Escolha uma voz para cada robô e teste. 3) Gere o episódio e baixe o .wav. Depois mande o arquivo no chat do Claude.</p>
 <div class="row">
  <select id="ep"><option value="ep01">ep01 · Por que Fortaleza</option></select>
@@ -48,11 +87,28 @@ table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px
 <audio id="au" controls hidden></audio>
 <div class="row"><a id="dl" hidden>Baixar .wav</a></div>
 <details><summary class="muted">Roteiro (JSON)</summary><textarea id="sc" rows="14"></textarea></details>
+</section>
+</main>
+
+<nav class="tabs" id="tabs" hidden>
+<button data-go="wa" class="on"><span>💬</span>WhatsApp</button>
+<button data-go="ac"><span>👀</span>Acessos</button>
+<button data-go="pg"><span>❓</span>Perguntas</button>
+<button data-go="av"><span>🔔</span>Avisos</button>
+<button data-go="vz"><span>🎙️</span>Vozes</button>
+</nav>
 
 <script>
 var KEY="";
 function post(path,data){data.key=KEY;return fetch(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error((j.error||"erro")+(j.status?" "+j.status:"")+(j.detail?" · "+j.detail:""));return j})})}
-f.onsubmit=function(e){e.preventDefault();KEY=k.value;s.textContent="Conferindo…";post("/export",{}).then(function(d){s.textContent="Ok. "+d.items.length+" perguntas salvas.";o.value=JSON.stringify(d.items,null,2)}).catch(function(){s.textContent="Chave errada."})};
+var STORE="adm-key";
+function enter(key,remember){KEY=key;s.textContent="Conferindo…";return post("/export",{}).then(function(d){if(remember){try{localStorage.setItem(STORE,key)}catch(e){}}login.hidden=true;app.hidden=false;tabs.hidden=false;lo.hidden=false;o.value=JSON.stringify(d.items,null,2);botCall({action:"list"});return true}).catch(function(){KEY="";s.textContent="Chave errada.";return false})}
+f.onsubmit=function(e){e.preventDefault();enter(k.value,true)};
+lo.onclick=function(){try{localStorage.removeItem(STORE)}catch(e){}location.reload()};
+tabs.onclick=function(e){var b=e.target.closest("button");if(!b||!b.dataset.go)return;document.querySelectorAll("#tabs button").forEach(function(x){x.classList.toggle("on",x===b)});document.querySelectorAll("section[data-tab]").forEach(function(x){x.classList.toggle("on",x.dataset.tab===b.dataset.go)});window.scrollTo(0,0)};
+document.querySelector("section[data-tab=wa]").classList.add("on");
+try{var saved=localStorage.getItem(STORE);if(saved){s.textContent="Entrando…";enter(saved,false)}}catch(e){}
+if("serviceWorker" in navigator)navigator.serviceWorker.register("/admin-sw.js").catch(function(){});
 ver.onclick=function(){post("/export",{}).then(function(d){o.value=JSON.stringify(d.items,null,2)}).catch(function(e){o.value=e.message})};
 vv.onclick=function(){vs.textContent="Carregando…";post("/visits",{}).then(function(d){var it=d.items,day={},tz="America/Argentina/Buenos_Aires",fm=new Intl.DateTimeFormat("pt-BR",{timeZone:tz,day:"2-digit",month:"2-digit"}),hm=new Intl.DateTimeFormat("pt-BR",{timeZone:tz,hour:"2-digit",minute:"2-digit"});
  var devs={};it.forEach(function(v){var k=fm.format(v.t);(day[k]=day[k]||{n:0,s:{}}).n++;day[k].s[v.vid||"?"]=1;devs[v.vid||"?"]=1});
@@ -63,16 +119,19 @@ vv.onclick=function(){vs.textContent="Carregando…";post("/visits",{}).then(fun
 pt.onclick=function(){ps.textContent="Enviando…";post("/push-now",{}).then(function(d){ps.textContent=d.subscribers+" celulares, "+d.sent+" enviados, "+d.removed+" removidos, "+d.failed+" com erro."}).catch(function(e){ps.textContent=e.message})};
 
 function esc2(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-function drawBot(d){var h="<table><tr><th>Número</th><th>Nome</th><th>Papel</th><th></th></tr>";
- Object.keys(d.allow).forEach(function(id){h+="<tr><td>"+esc2(id)+"</td><td>"+esc2(d.allow[id].name)+"</td><td>"+esc2(d.allow[id].role)+"</td><td><button data-a='remove' data-id='"+esc2(id)+"'>Remover</button></td></tr>"});
- h+="</table>";
- if(d.unknown.length){h+="<p><b>Tentaram falar e estão bloqueados:</b></p><table><tr><th>Número</th><th>Nome no WhatsApp</th><th>Disse</th><th></th></tr>";
-  d.unknown.forEach(function(u){h+="<tr><td>"+esc2(u.id)+"</td><td>"+esc2(u.name)+"</td><td>"+esc2(u.text)+"</td><td><input size='10' placeholder='nome' class='nm'> <select class='rl'><option value='viajante'>viajante</option><option value='pedro'>pedro</option><option value='raquel'>raquel</option><option value='hijo'>filho</option></select> <button data-a='allow' data-id='"+esc2(u.id)+"'>Autorizar</button> <button data-a='ignore' data-id='"+esc2(u.id)+"'>Ignorar</button></td></tr>"});h+="</table>"}
- bt.innerHTML=h;bx.value=d.extra;bs.textContent=Object.keys(d.allow).length+" autorizados, "+d.unknown.length+" aguardando"}
+var ROLE={viajante:"viajante",pedro:"Pedro",raquel:"Raquel",hijo:"filho"};
+function drawBot(d){var h="",ids=Object.keys(d.allow);
+ h+="<h3>Autorizados ("+ids.length+")</h3>";
+ if(!ids.length)h+="<p class='muted'>Ninguém ainda. Adicione um telefone acima.</p>";
+ ids.forEach(function(id){var p=d.allow[id];h+="<div class='person card'><div><b>"+esc2(p.name||"(sem nome)")+"</b> <span class='pill'>"+esc2(ROLE[p.role]||p.role)+"</span><small>"+esc2(id)+"</small></div><button class='danger' data-a='remove' data-id='"+esc2(id)+"'>Remover</button></div>"});
+ if(d.unknown.length){h+="<h3>Tentaram falar e estão bloqueados ("+d.unknown.length+")</h3>";
+  d.unknown.forEach(function(u){h+="<div class='card warn'><b>"+esc2(u.name||"(sem nome)")+"</b> <small class='muted'>"+esc2(u.id)+"</small><div class='muted'>Disse: "+esc2(u.text||"(áudio ou mídia)")+"</div><div class='row'><input class='nm' placeholder='nome' value='"+esc2(u.name)+"'><select class='rl'><option value='viajante'>viajante</option><option value='pedro'>Pedro</option><option value='raquel'>Raquel</option><option value='hijo'>filho</option></select></div><div class='row'><button data-a='allow' data-id='"+esc2(u.id)+"'>Autorizar</button><button class='ghost' data-a='ignore' data-id='"+esc2(u.id)+"'>Ignorar</button></div></div>"})}
+ bt.innerHTML=h;bx.value=d.extra;bs.textContent=ids.length+" autorizados, "+d.unknown.length+" aguardando"}
 function botCall(data){bs.textContent="Carregando…";return post("/bot-admin",data).then(drawBot).catch(function(e){bs.textContent="Erro: "+e.message})}
 bl.onclick=function(){botCall({action:"list"})};
 bxs.onclick=function(){botCall({action:"setextra",text:bx.value})};
-bt.onclick=function(e){var b=e.target;if(!b.dataset||!b.dataset.a)return;var row=b.closest("tr"),nm=row.querySelector(".nm"),rl=row.querySelector(".rl");botCall({action:b.dataset.a,id:b.dataset.id,name:nm?nm.value:"",role:rl?rl.value:""})};
+madd.onclick=function(){var n=mp.value.replace(/\D/g,"");if(n.length<8){bs.textContent="Telefone curto demais. Use código do país + DDD + número.";return}botCall({action:"allow",id:n,name:mn.value,role:mr.value}).then(function(){mp.value="";mn.value=""})};
+bt.onclick=function(e){var b=e.target.closest("button");if(!b||!b.dataset||!b.dataset.a)return;var row=b.closest(".card"),nm=row.querySelector(".nm"),rl=row.querySelector(".rl");botCall({action:b.dataset.a,id:b.dataset.id,name:nm?nm.value:"",role:rl?rl.value:""})};
 
 var SITE="https://pdroarraes-creator.github.io/viaje-ceara/videos/";
 function loadScript(){fetch(SITE+ep.value+".json?t="+Date.now()).then(function(r){return r.text()}).then(function(t){sc.value=t}).catch(function(){sc.value=""})}

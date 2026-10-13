@@ -50,7 +50,7 @@ async function start() {
           mentionedMe: !!ctx?.mentionedJid?.some(j => j.split("@")[0] === me),
           repliedToMe: !!ctx?.participant && ctx.participant.split("@")[0] === me,
         };
-        console.log("msg", isGroup ? "grupo" : "privado", jid.split("@")[0], JSON.stringify(aud ? "[áudio " + (aud.seconds || "?") + "s]" : (text || "").slice(0, 40)), m.fromMe ? "(minha)" : "");
+        console.log("msg", isGroup ? "grupo" : "privado", [msg.key.senderPn, msg.key.remoteJidAlt, jid].filter(Boolean).map(x => x.split("@")[0]).join("|"), JSON.stringify(aud ? "[áudio " + (aud.seconds || "?") + "s]" : (text || "").slice(0, 40)), m.fromMe ? "(minha)" : "");
         if (!shouldReply(bot, m)) { console.log("  -> ignorada"); continue; }
         // en grupos WhatsApp a veces usa un identificador interno (@lid): preferimos el número real si viene
         const sender = (isGroup ? (msg.key.participantPn || msg.key.participantAlt || msg.key.participant) : (msg.key.senderPn || msg.key.remoteJidAlt || jid)) || "";
@@ -59,9 +59,11 @@ async function start() {
           const buf = await downloadMediaMessage(msg, "buffer", {}, { logger: pino({ level: "silent" }), reuploadRequest: sock.updateMediaMessage });
           audio = { mime: (aud.mimetype || "audio/ogg").split(";")[0], data: buf.toString("base64") };
         }
+        const cand = isGroup ? [msg.key.participantPn, msg.key.participantAlt, msg.key.participant] : [msg.key.senderPn, msg.key.remoteJidAlt, jid];
+        const ids = [...new Set(cand.filter(Boolean))];
         const r = await fetch(WORKER_URL.replace(/\/$/, "") + "/bot", {
           method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ botKey: BOT_KEY, bot, from: sender.split("@")[0], name: msg.pushName || "", chat: jid, text: cleanText(text, bot), audio }),
+          body: JSON.stringify({ botKey: BOT_KEY, bot, from: sender.split("@")[0], name: msg.pushName || "", chat: jid, text: cleanText(text, bot), audio, ids }),
         });
         const d = await r.json().catch(() => ({}));
         console.log("  worker:", r.status, JSON.stringify(d).slice(0, 160));

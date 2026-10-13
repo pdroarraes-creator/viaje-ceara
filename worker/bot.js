@@ -21,18 +21,24 @@ const PERSONAS = {
 
 // Permisos por número: quién puede ver finanzas y dar órdenes. Los números van en la variable BOT_ROLES (JSON) de Cloudflare:
 // {"5491100000000":"pedro","5491100000001":"raquel","5491100000002":"hijo"}
-async function roleOf(env, from) {
+async function roleOf(env, from, ids = []) {
   let roles = {};
   try { roles = JSON.parse(env.BOT_ROLES || "{}"); } catch {}
   let allow = {};
   try { allow = JSON.parse((await env.QA.get("bot:allow")) || "{}"); } catch {}
-  const d = String(from).replace(/\D/g, "");
+  const all = [from, ...ids].map(x => String(x || "").split("@")[0].replace(/\D/g, "")).filter(Boolean);
+  for (const d of new Set(all)) { const r = roleOne(d, roles, allow); if (r) return r; }
+  return "externo";
+}
+function roleOne(d, roles, allow) {
   // WhatsApp guarda algunos números de Brasil sin el 9 (55 81 9284-9887) y otros con él (55 81 99284-9887): probamos las dos formas
   const alt = [d];
   if (/^55\d{2}9\d{8}$/.test(d)) alt.push(d.slice(0, 4) + d.slice(5));
   if (/^55\d{2}[6-9]\d{7}$/.test(d)) alt.push(d.slice(0, 4) + "9" + d.slice(4));
+  if (/^54(?!9)\d{10}$/.test(d)) alt.push("549" + d.slice(2)); // Argentina: móvil con o sin el 9
+  if (/^549\d{10}$/.test(d)) alt.push("54" + d.slice(3));
   for (const k of alt) { if (allow[k]) return allow[k].role || "viajante"; if (roles[k]) return roles[k]; }
-  return "externo";
+  return "";
 }
 
 // Panel /admin: lista de números autorizados, quem tentou falar e o texto extra que o bot conhece.
@@ -80,11 +86,13 @@ export async function handleBot(body, env, json, safeEqual) {
   let text = String(body.text || "").trim().slice(0, 1000);
   const au = body.audio && typeof body.audio.data === "string" && body.audio.data.length < 4_000_000 && /^audio\//.test(String(body.audio.mime)) ? body.audio : null;
   if (!text && !au) return json({ reply: "" });
-  const role = await roleOf(env, body.from);
+  const ids = Array.isArray(body.ids) ? body.ids.slice(0, 6) : [];
+  const role = await roleOf(env, body.from, ids);
 
   // Solo responde a números autorizados (panel /admin). Los demás quedan en la lista "quién intentó hablar" para autorizar con un toque.
   if (role === "externo" || (bot === "caju" && role === "viajante")) {
-    const id = String(body.from).replace(/\D/g, "");
+    const pn = ids.find(x => String(x).endsWith("@s.whatsapp.net"));
+    const id = String(pn || body.from).split("@")[0].replace(/\D/g, "");
     if (id) await env.QA.put("botunk:" + id, JSON.stringify({ id, name: String(body.name || "").slice(0, 40), text: text.slice(0, 60), t: Date.now(), bot }), { expirationTtl: 14 * 86400 });
     return json({ reply: "", denied: true });
   }
