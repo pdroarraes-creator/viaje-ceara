@@ -156,6 +156,14 @@ tfoot tr.ppl td{color:var(--red)}
 .install{margin-top:16px;background:var(--card);border:1.5px dashed var(--sea);border-radius:14px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start}
 .install img{width:52px;height:52px;border-radius:12px;flex-shrink:0}
 .install p{font-size:15px}
+.robo{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:40;width:64px;height:64px;border-radius:50%;box-shadow:0 6px 18px rgba(14,18,48,.35);display:block;text-decoration:none;animation:robo-in .6s ease-out .4s both}
+.robo svg{width:64px;height:64px;display:block;border-radius:50%}
+.robo:hover svg,.robo:focus-visible svg{transform:rotate(-6deg) scale(1.05);transition:transform .2s}
+.robo-tip{position:absolute;right:72px;top:50%;transform:translateY(-50%);background:var(--card);color:var(--ink);border:1.5px solid var(--ink);border-radius:999px;padding:4px 12px;font:700 14px var(--body);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+.robo:hover .robo-tip,.robo:focus-visible .robo-tip{opacity:1}
+@keyframes robo-in{from{transform:translateY(90px) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.robo{animation:none}}
+body{padding-bottom:88px}
 .push-ic{width:44px;height:44px;flex-shrink:0;fill:var(--caju);background:#1E2350;border-radius:12px;padding:9px}
 .install .x{margin-left:auto;background:none;border:0;color:var(--soft);font-size:22px;line-height:1;cursor:pointer;padding:0 4px}
 .scen{justify-self:start}
@@ -198,6 +206,23 @@ tfoot tr.ppl td{color:var(--red)}
   </div></div>
 </header>
 
+<a class="robo" id="robo" href="#preguntar" aria-label="Preguntar al asistente" title="Preguntar">
+  <svg viewBox="0 0 64 64" aria-hidden="true">
+    <circle cx="32" cy="32" r="32" fill="#1E2350"/>
+    <path d="M20 50h24l-12 11z" fill="#D7322B"/><path d="M27 50l5 5 5-5" fill="none" stroke="#F4B33D" stroke-width="1.5"/>
+    <rect x="17" y="27" width="30" height="23" rx="7" fill="#DCE5EE" stroke="#0E1230" stroke-width="2"/>
+    <rect x="13" y="34" width="4" height="9" rx="2" fill="#9FB2C4"/><rect x="47" y="34" width="4" height="9" rx="2" fill="#9FB2C4"/>
+    <circle cx="26" cy="38" r="4" fill="#0E1230"/><circle cx="38" cy="38" r="4" fill="#0E1230"/>
+    <circle cx="27.3" cy="36.7" r="1.3" fill="#F4B33D"/><circle cx="39.3" cy="36.7" r="1.3" fill="#F4B33D"/>
+    <path d="M27 45q5 3 10 0" fill="none" stroke="#0E1230" stroke-width="2" stroke-linecap="round"/>
+    <path d="M21 29q11-17 22 0z" fill="#7A4521" stroke="#0E1230" stroke-width="1.6"/>
+    <path d="M7 30Q32 2 57 30Q32 20 7 30z" fill="#9A5B2E" stroke="#0E1230" stroke-width="1.8"/>
+    <path d="M32 12.5l1.3 2.7 3 .4-2.2 2.1.5 3-2.6-1.4-2.6 1.4.5-3-2.2-2.1 3-.4z" fill="#F4B33D"/>
+    <circle cx="20" cy="22" r="1.4" fill="#F4B33D"/><circle cx="44" cy="22" r="1.4" fill="#F4B33D"/>
+    <path d="M15 28q17-9 34 0" fill="none" stroke="#F4B33D" stroke-width="1" stroke-dasharray="2 2"/>
+  </svg>
+  <span class="robo-tip"><span lang="es">Preguntar</span><span lang="pt">Perguntar</span></span>
+</a>
 <div class="news" id="news" hidden role="dialog" aria-modal="true" aria-labelledby="news-t">
   <div class="news-card">
     <h3 id="news-t"><span lang="es">Novedades del viaje</span><span lang="pt">Novidades da viagem</span></h3>
@@ -427,7 +452,7 @@ tfoot tr.ppl td{color:var(--red)}
   <form id="ask-pw" hidden>
     <label for="pw" class="muted" style="display:block;margin-bottom:6px"><span lang="es">Contraseña del grupo</span><span lang="pt">Senha do grupo</span></label>
     <div class="row">
-      <input id="pw" type="password" autocomplete="current-password" style="font:400 16px var(--body);padding:10px 12px;border-radius:10px;border:0;background:var(--paper);color:var(--ink)">
+      <input id="pw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" style="font:400 16px var(--body);padding:10px 12px;border-radius:10px;border:0;background:var(--paper);color:var(--ink)">
       <button type="submit" class="go"><span lang="es">Entrar</span><span lang="pt">Entrar</span></button>
       <span class="muted" id="pw-status"></span>
     </div>
@@ -490,8 +515,9 @@ tfoot tr.ppl td{color:var(--red)}
   applyShort();
 
   // novedades: punto rojo + aviso cuando el sitio cambia
-  const SITE_VERSION="2026-10-12.6";
+  const SITE_VERSION="2026-10-12.7";
   const CHANGES=[
+    ["Nuevo: el robot nordestino abajo a la derecha te lleva directo a preguntar","Novo: o robô nordestino no canto de baixo leva direto para perguntar"],
     ["Ahora podés activar avisos en el celular cuando el sitio se actualiza","Agora dá para ativar avisos no celular quando o site é atualizado"],
     ["La historia ahora empieza resumida; tocá «Ver toda» para leer más","A história agora começa resumida; toque em «Ver toda» para ler mais"],
     ["Día 28: tarde de compras, con dónde ir, precios y horarios","Dia 28: tarde de compras, com onde ir, preços e horários"],
@@ -675,9 +701,10 @@ tfoot tr.ppl td{color:var(--red)}
     box.innerHTML=items.map(v=>`<div class="qa"><b>${esc(String(v.q||""))}</b><p>${esc(String(v.a||"").slice(0,1200))}</p></div>`).join("");
   }
   async function api(path,data){
-    const r=await fetch(ASK_API.replace(/\/$/,"")+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    let r;try{r=await fetch(ASK_API.replace(/\/$/,"")+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)})}
+    catch(e){throw Object.assign(new Error("net"),{code:"sin conexión"})}
     let j={};try{j=await r.json()}catch(e){}
-    if(!r.ok)throw Object.assign(new Error(j.error||"error"),{code:j.error||"error"});
+    if(!r.ok)throw Object.assign(new Error(j.error||"error"),{code:j.error||("http "+r.status)});
     return j;
   }
   // avisos push (solo en el sitio público, con service worker)
@@ -726,15 +753,17 @@ tfoot tr.ppl td{color:var(--red)}
     show("ask-off",false);
     let pw=""; try{pw=localStorage.getItem("pw")||""}catch(e){}
     const enter=async(p)=>{
+      p=String(p||"").trim();
       try{const h=await api("/history",{password:p});pw=p;try{localStorage.setItem("pw",p)}catch(e){}
-        show("ask-pw",false);show("ask-on",true);renderSaved(h.items||[]);return true}
-      catch(e){return false}
+        show("ask-pw",false);show("ask-on",true);renderSaved(h.items||[]);return "ok"}
+      catch(e){return e.code||"net"}
     };
     document.getElementById("ask-pw").onsubmit=async ev=>{ev.preventDefault();
       const st=document.getElementById("pw-status");st.textContent="…";
-      const ok=await enter(document.getElementById("pw").value);
-      st.textContent=ok?"":(LANG==="es"?"Contraseña incorrecta.":"Senha incorreta.")};
-    (async()=>{if(!(pw&&await enter(pw)))show("ask-pw",true)})();
+      const r=await enter(document.getElementById("pw").value);
+      st.textContent=r==="ok"?"":r==="wrong_password"?(LANG==="es"?"Contraseña incorrecta.":"Senha incorreta."):
+        (LANG==="es"?"No se pudo conectar con el asistente ("+r+"). Probá en un rato.":"Não deu para conectar com o assistente ("+r+"). Tente daqui a pouco.")};
+    (async()=>{if(!(pw&&await enter(pw)==="ok"))show("ask-pw",true)})();
     stopEl.hidden=true;
     goEl.onclick=async()=>{
       const q=qEl.value.trim(); if(!q){stEl.textContent=T("empty");return}

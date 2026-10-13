@@ -41,6 +41,19 @@ export default {
       return new Response(ADMIN_PAGE, { headers: { "Content-Type": "text/html; charset=utf-8" } });
     }
 
+    // Diagnóstico: solo dice qué está configurado, nunca los valores
+    if (url.pathname === "/health" && request.method === "GET") {
+      return json({
+        ok: true,
+        password_set: !!env.SITE_PASSWORD,
+        gemini_key_set: !!env.GEMINI_API_KEY,
+        admin_key_set: !!env.ADMIN_KEY,
+        memory_kv: !!env.QA,
+        model: env.GEMINI_MODEL || "gemini-3.1-flash-lite",
+        allowed_origin: origin,
+      });
+    }
+
     if (url.pathname === "/vapid" && request.method === "GET") {
       if (!env.QA) return json({ error: "no_kv" }, 503);
       return json({ key: (await vapidKeys(env)).pub });
@@ -75,7 +88,8 @@ export default {
       return json({ items: await listQA(env, 1000) });
     }
 
-    if (!env.SITE_PASSWORD || !safeEqual(String(body.password || ""), env.SITE_PASSWORD)) {
+    // La contraseña del grupo no distingue mayúsculas, espacios al costado ni acentos (el iPhone pone la primera en mayúscula)
+    if (!env.SITE_PASSWORD || !safeEqual(normPw(body.password), normPw(env.SITE_PASSWORD))) {
       return json({ error: "wrong_password" }, 401);
     }
 
@@ -239,6 +253,10 @@ async function overLimit(env, request) {
   if (n >= PER_HOUR) return true;
   await env.QA.put(k, String(n + 1), { expirationTtl: 3700 });
   return false;
+}
+
+function normPw(p) {
+  return String(p || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
 }
 
 function safeEqual(a, b) {
