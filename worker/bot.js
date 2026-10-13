@@ -22,7 +22,15 @@ const PERSONAS = {
 // Permisos por número: quién puede ver finanzas y dar órdenes. Los números van en la variable BOT_ROLES (JSON) de Cloudflare:
 // {"5491100000000":"pedro","5491100000001":"raquel","5491100000002":"hijo"}
 function roleOf(env, from) {
-  try { return JSON.parse(env.BOT_ROLES || "{}")[String(from).replace(/\D/g, "")] || "externo"; } catch { return "externo"; }
+  let roles = {};
+  try { roles = JSON.parse(env.BOT_ROLES || "{}"); } catch {}
+  const d = String(from).replace(/\D/g, "");
+  // WhatsApp guarda algunos números de Brasil sin el 9 (55 81 9284-9887) y otros con él (55 81 99284-9887): probamos las dos formas
+  const alt = [d];
+  if (/^55\d{2}9\d{8}$/.test(d)) alt.push(d.slice(0, 4) + d.slice(5));
+  if (/^55\d{2}[6-9]\d{7}$/.test(d)) alt.push(d.slice(0, 4) + "9" + d.slice(4));
+  for (const k of alt) if (roles[k]) return roles[k];
+  return "externo";
 }
 
 export async function handleBot(body, env, json, safeEqual) {

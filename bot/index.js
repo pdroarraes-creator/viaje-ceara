@@ -50,7 +50,8 @@ async function start() {
           repliedToMe: !!ctx?.participant && ctx.participant.split("@")[0] === me,
         };
         if (!shouldReply(bot, m)) continue;
-        const sender = (isGroup ? msg.key.participant : jid) || "";
+        // en grupos WhatsApp a veces usa un identificador interno (@lid): preferimos el número real si viene
+        const sender = (isGroup ? (msg.key.participantPn || msg.key.participantAlt || msg.key.participant) : (msg.key.senderPn || msg.key.remoteJidAlt || jid)) || "";
         const r = await fetch(WORKER_URL.replace(/\/$/, "") + "/bot", {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ botKey: BOT_KEY, bot, from: sender.split("@")[0], name: msg.pushName || "", chat: jid, text: cleanText(text, bot) }),
