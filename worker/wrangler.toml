@@ -15,3 +15,7 @@ id = "d89cf90a5bf0437c83a3ba2a2a3acaff"
 
 # Segredos ficam só no painel do Cloudflare (Settings → Variables and Secrets):
 #   GEMINI_API_KEY, SITE_PASSWORD, ADMIN_KEY
+
+# Cada 15 minutos mira si el sitio cambió de versión y manda el aviso push
+[triggers]
+crons = ["*/15 * * * *"]

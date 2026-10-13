@@ -156,6 +156,7 @@ tfoot tr.ppl td{color:var(--red)}
 .install{margin-top:16px;background:var(--card);border:1.5px dashed var(--sea);border-radius:14px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start}
 .install img{width:52px;height:52px;border-radius:12px;flex-shrink:0}
 .install p{font-size:15px}
+.push-ic{width:44px;height:44px;flex-shrink:0;fill:var(--caju);background:#1E2350;border-radius:12px;padding:9px}
 .install .x{margin-left:auto;background:none;border:0;color:var(--soft);font-size:22px;line-height:1;cursor:pointer;padding:0 4px}
 .scen{justify-self:start}
 
@@ -226,6 +227,17 @@ tfoot tr.ppl td{color:var(--red)}
   </div>
   <button type="button" class="x" id="inst-x" aria-label="Cerrar">×</button>
 </div>
+<div class="install" id="push" hidden>
+  <svg class="push-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 0 0-5.5-6.84V3a1.5 1.5 0 0 0-3 0v1.16A7 7 0 0 0 5 11v5l-2 2v1h18v-1z"/></svg>
+  <div style="display:grid;gap:6px;min-width:0">
+    <b><span lang="es">Avisos en el celular</span><span lang="pt">Avisos no celular</span></b>
+    <p id="push-txt"><span lang="es">Recibí una notificación cada vez que actualicemos el viaje.</span><span lang="pt">Receba uma notificação sempre que atualizarmos a viagem.</span></p>
+    <p id="push-ios" hidden><span lang="es">En el iPhone los avisos funcionan solo desde el ícono instalado: primero agregalo a inicio y abrí el sitio desde ahí.</span><span lang="pt">No iPhone os avisos só funcionam pelo ícone instalado: primeiro adicione à tela de início e abra o site por ali.</span></p>
+    <button type="button" class="btn" id="push-go" hidden style="justify-self:start"><span lang="es">Activar avisos</span><span lang="pt">Ativar avisos</span></button>
+    <p id="push-msg" hidden></p>
+  </div>
+  <button type="button" class="x" id="push-x" aria-label="Cerrar">×</button>
+</div>
 <button type="button" class="btn insp-btn" id="insp-btn" aria-expanded="false" aria-controls="insp"><span lang="es">Inspiración del sitio</span><span lang="pt">Inspiração do site</span></button>
 <div class="insp" id="insp" hidden>
   <h3><span lang="es">Inspirado en la xilografía de cordel</span><span lang="pt">Inspirado na xilogravura de cordel</span></h3>
@@ -258,9 +270,9 @@ tfoot tr.ppl td{color:var(--red)}
       <h3><span lang="es">Descanso, compras y Beira-Mar</span><span lang="pt">Descanso, compras e Beira-Mar</span></h3>
       <ul lang="es"><li>Mañana para dormir</li><li>Tarde de compras para ellas (opciones abajo)</li><li>Atardecer en el Mercado dos Peixes do Mucuripe: elegís el pescado y te lo cocinan ahí</li><li>Feria de artesanías de noche en la Beira-Mar</li></ul>
       <ul lang="pt"><li>Manhã para dormir</li><li>Tarde de compras para elas (opções abaixo)</li><li>Fim de tarde no Mercado dos Peixes do Mucuripe: você escolhe o peixe e eles preparam na hora</li><li>Feirinha de artesanato à noite na Beira-Mar</li></ul>
-      <details class="alt shop"><summary><span lang="es">Compras: dónde ir</span><span lang="pt">Compras: onde ir</span></summary><div class="shopwrap"><h4><span lang="es">Recuerdos y artesanías</span><span lang="pt">Lembranças e artesanato</span></h4><ul><li><b>Mercado Central</b> · <span lang="es">encajes, hamacas, castañas, dulces y cachaças, cerca de la Catedral</span><span lang="pt">rendas, redes, castanhas, doces e cachaças, perto da Catedral</span><br><span class="shopmeta">R$ 5–20 recuerdos · <span lang="es">lun. a sáb., ~8 a 17 h</span><span lang="pt">seg. a sáb., ~8h às 17h</span></span> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Mercado+Central+Fortaleza"><span lang="es">Mapa</span><span lang="pt">Mapa</span></a> · <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Mercado+Central+Fortaleza">Fotos</a></li><li><b>Feirinha da Beira-Mar</b> · <span lang="es">artesanías, bikinis, pareos y licores frente al mar</span><span lang="pt">artesanato, biquínis, cangas e licores na beira-mar</span><br><span class="shopmeta">un poco más cara que el Mercado · <span lang="es">todos los días, ~16 a 21 h</span><span lang="pt">todos os dias, ~16h às 21h</span></span> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Feirinha+da+Beira+Mar+Fortaleza"><span lang="es">Mapa</span><span lang="pt">Mapa</span></a> · <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Feirinha+da+Beira+Mar+Fortaleza">Fotos</a></li></ul><h4><span lang="es">Moda y ropa de playa</span><span lang="pt">Moda e moda praia</span></h4><ul><li><b>Avenida Monsenhor Tabosa</b> · <span lang="es">calle de tiendas de ropa, calzado, carteras y moda playa en Praia de Iracema</span><span lang="pt">rua de lojas de roupa, calçado, bolsas e moda praia na Praia de Iracema</span><br><span class="shopmeta">precio intermedio · <span lang="es">horario comercial</span><span lang="pt">horário comercial</span></span> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Avenida+Monsenhor+Tabosa+Fortaleza"><span lang="es">Mapa</span><span lang="pt">Mapa</span></a> · <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Avenida+Monsenhor+Tabosa+Fortaleza">Fotos</a></li><li><b>Centro Fashion</b> · <span lang="es">shopping popular gigante de ropa y accesorios</span><span lang="pt">shopping popular gigante de roupas e acessórios</span><br><span class="shopmeta">precios bajos, algunos por mayor · <span lang="es">conviene ir temprano</span><span lang="pt">vale ir cedo</span></span> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Centro+Fashion+Fortaleza"><span lang="es">Mapa</span><span lang="pt">Mapa</span></a> · <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Centro+Fashion+Fortaleza">Fotos</a></li><li><b>Buraco da Gia y Rua José Avelino</b> · <span lang="es">mayoristas de moda en el Centro; remeras R$ 20–40, bikinis R$ 40–80</span><span lang="pt">atacado de moda no Centro; camisetas R$ 20–40, biquínis R$ 40–80</span><br><span class="shopmeta">muy barato · <span lang="es">mié. a sáb., ~4 a 14 h</span><span lang="pt">qua. a sáb., ~4h às 14h</span></span> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Rua+Jos%C3%A9+Avelino+Fortaleza"><span lang="es">Mapa</span><span lang="pt">Mapa</span></a> · <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Rua+Jos%C3%A9+Avelino+Fortaleza">Fotos</a></li></ul><h4><span lang="es">Shoppings</span><span lang="pt">Shoppings</span></h4><ul><li><b>Shopping Iguatemi</b> · <span lang="es">más de 450 tiendas, grandes marcas y patio de comidas</span><span lang="pt">mais de 450 lojas, grandes marcas e praça de alimentação</span><br><span class="shopmeta">precio de shopping · <span lang="es">lun. a sáb., ~10 a 22 h</span><span lang="pt">seg. a sáb., ~10h às 22h</span></span> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Shopping+Iguatemi+Fortaleza"><span lang="es">Mapa</span><span lang="pt">Mapa</span></a> · <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Shopping+Iguatemi+Fortaleza">Fotos</a></li><li><b>Shopping RioMar</b> · <span lang="es">unas 400 tiendas, cine y teatro</span><span lang="pt">cerca de 400 lojas, cinema e teatro</span><br><span class="shopmeta">precio de shopping · <span lang="es">~10 a 22 h</span><span lang="pt">~10h às 22h</span></span> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Shopping+RioMar+Fortaleza"><span lang="es">Mapa</span><span lang="pt">Mapa</span></a> · <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Shopping+RioMar+Fortaleza">Fotos</a></li></ul><p class="src"><span lang="es">En ferias y mayoristas se regatea. Algunos precios de mayorista valen solo comprando varias piezas. Fuente:</span><span lang="pt">Em feiras e atacado se negocia. Alguns preços de atacado valem só comprando várias peças. Fonte:</span> <a target="_blank" rel="noopener" href="https://www.grupodicas.com/onde-fazer-compras-em-fortaleza/">Grupo Dicas</a>.</p></div></details></li>
+      <details class="alt shop"><summary><span lang="es">Compras: dónde ir</span><span lang="pt">Compras: onde ir</span></summary><div class="shopwrap"><h4><span lang="es">Recuerdos, artesanías y ropa de playa</span><span lang="pt">Lembranças, artesanato e moda praia</span></h4><ul><li><b>Feirinha da Beira-Mar</b> · <span lang="es">encajes, hamacas, castañas, dulces, cachaças, bikinis y pareos frente al mar: está todo y al mismo precio que en el Mercado Central</span><span lang="pt">rendas, redes, castanhas, doces, cachaças, biquínis e cangas na beira-mar: tem de tudo e pelo mesmo preço do Mercado Central</span><br><span class="shopmeta"><span lang="es">recuerdos R$ 5–20 · todos los días, ~16 a 21 h</span><span lang="pt">lembranças R$ 5–20 · todos os dias, ~16h às 21h</span></span> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Feirinha+da+Beira+Mar+Fortaleza">Mapa</a> · <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Feirinha+da+Beira+Mar+Fortaleza">Fotos</a></li></ul><h4><span lang="es">Shoppings</span><span lang="pt">Shoppings</span></h4><ul><li><b>Shopping Iguatemi</b> · <span lang="es">más de 450 tiendas, grandes marcas y patio de comidas</span><span lang="pt">mais de 450 lojas, grandes marcas e praça de alimentação</span><br><span class="shopmeta"><span lang="es">precio de shopping · lun. a sáb., ~10 a 22 h</span><span lang="pt">preço de shopping · seg. a sáb., ~10h às 22h</span></span> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Shopping+Iguatemi+Fortaleza">Mapa</a> · <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Shopping+Iguatemi+Fortaleza">Fotos</a></li><li><b>Shopping RioMar</b> · <span lang="es">unas 400 tiendas, cine y teatro</span><span lang="pt">cerca de 400 lojas, cinema e teatro</span><br><span class="shopmeta"><span lang="es">precio de shopping · ~10 a 22 h</span><span lang="pt">preço de shopping · ~10h às 22h</span></span> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Shopping+RioMar+Fortaleza">Mapa</a> · <a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Shopping+RioMar+Fortaleza">Fotos</a></li></ul><p class="src"><span lang="es">En la feria se regatea. Fuente:</span><span lang="pt">Na feira se negocia. Fonte:</span> <a target="_blank" rel="noopener" href="https://www.grupodicas.com/onde-fazer-compras-em-fortaleza/">Grupo Dicas</a>.</p></div></details></li>
   </ol>
-<div class="tips"><h3><span lang="es">Para tener en cuenta</span><span lang="pt">Bom saber</span></h3><ul lang="es"><li>Usar apps de transporte, no caminar de noche por playas vacías y no mostrar objetos de valor.</li><li>Los mejores barrios para dormir y salir: Meireles, Mucuripe e Iracema.</li></ul><ul lang="pt"><li>Usar apps de transporte, não caminhar à noite em praias vazias e não exibir objetos de valor.</li><li>Os melhores bairros para ficar e sair: Meireles, Mucuripe e Iracema.</li></ul></div>
+<div class="tips"><h3><span lang="es">Para tener en cuenta</span><span lang="pt">Bom saber</span></h3><ul lang="es"><li>Para moverse, apps de transporte.</li><li>Los mejores barrios para dormir y salir: Meireles, Mucuripe e Iracema.</li></ul><ul lang="pt"><li>Para se locomover, apps de transporte.</li><li>Os melhores bairros para ficar e sair: Meireles, Mucuripe e Iracema.</li></ul></div>
 <details class="alt"><summary><span lang="es">Ver alternativas</span><span lang="pt">Ver alternativas</span></summary><ul><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/beira-mar.html?checkin=2027-01-27&checkout=2027-01-29&group_adults=3&group_children=1&age=9&no_rooms=1">Hotel Beira Mar</a> · <span lang="es">4★ frente al mar, Meireles</span><span lang="pt">4★ na beira-mar, Meireles</span></li><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/holiday-inn-fortaleza.html?checkin=2027-01-27&checkout=2027-01-29&group_adults=3&group_children=1&age=9&no_rooms=1">Holiday Inn Fortaleza</a> · <span lang="es">4★, pileta y estacionamiento gratis</span><span lang="pt">4★, piscina e estacionamento grátis</span></li><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/gran-mareiro.html?checkin=2027-01-27&checkout=2027-01-29&group_adults=3&group_children=1&age=9&no_rooms=1">Gran Mareiro</a> · <span lang="es">5★ en Praia do Futuro</span><span lang="pt">5★ na Praia do Futuro</span></li><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/praia-mar.html?checkin=2027-01-27&checkout=2027-01-29&group_adults=3&group_children=1&age=9&no_rooms=1">Hotel Praia Mar</a> · <span lang="es">3★, la opción más barata frente al mar</span><span lang="pt">3★, a opção mais barata na beira-mar</span></li><li><a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Cumbuco+dunas+buggy">Cumbuco</a> · <span lang="es">paseo de un día con médanos y buggy, ~35 km</span><span lang="pt">passeio de um dia com dunas e buggy, ~35 km</span></li></ul></details>
 </section>
 
@@ -440,6 +452,7 @@ tfoot tr.ppl td{color:var(--red)}
     LANG=l; body.dataset.lang=l; document.documentElement.lang=l==="es"?"es":"pt-BR";
     document.querySelectorAll("[data-set]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.set===l)));
     try{localStorage.setItem("lang",l)}catch(e){}
+    try{window.caches&&caches.open("prefs").then(c=>c.put("lang",new Response(l))).catch(()=>{})}catch(e){}
     renderSugs();
   }
   document.querySelectorAll("[data-set]").forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.set)));
@@ -477,8 +490,9 @@ tfoot tr.ppl td{color:var(--red)}
   applyShort();
 
   // novedades: punto rojo + aviso cuando el sitio cambia
-  const SITE_VERSION="2026-10-12.5";
+  const SITE_VERSION="2026-10-12.6";
   const CHANGES=[
+    ["Ahora podés activar avisos en el celular cuando el sitio se actualiza","Agora dá para ativar avisos no celular quando o site é atualizado"],
     ["La historia ahora empieza resumida; tocá «Ver toda» para leer más","A história agora começa resumida; toque em «Ver toda» para ler mais"],
     ["Día 28: tarde de compras, con dónde ir, precios y horarios","Dia 28: tarde de compras, com onde ir, preços e horários"],
     ["Historia, cultura y curiosidades de cada lugar, con botón para resumir","História, cultura e curiosidades de cada lugar, com botão para resumir"],
@@ -666,6 +680,47 @@ tfoot tr.ppl td{color:var(--red)}
     if(!r.ok)throw Object.assign(new Error(j.error||"error"),{code:j.error||"error"});
     return j;
   }
+  // avisos push (solo en el sitio público, con service worker)
+  (function(){
+    if(window.claude||!("serviceWorker" in navigator)||!ASK_API)return;
+    const API=ASK_API.replace(/\/$/,"");
+    const card=document.getElementById("push"),go=document.getElementById("push-go"),msg=document.getElementById("push-msg");
+    const ios=/iPhone|iPad|iPod/.test(navigator.userAgent);
+    const standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
+    const b64u=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+    const fromB64u=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
+    const say=(es,pt)=>{msg.innerHTML=`<span lang="es">${es}</span><span lang="pt">${pt}</span>`;msg.hidden=false};
+    let gone=false;try{gone=localStorage.getItem("push-x")==="1"}catch(e){}
+    document.getElementById("push-x").onclick=()=>{card.hidden=true;try{localStorage.setItem("push-x","1")}catch(e){}};
+    navigator.serviceWorker.register("sw.js").then(async reg=>{
+      const can="PushManager" in window&&"Notification" in window;
+      let sub=null;try{sub=can?await reg.pushManager.getSubscription():null}catch(e){}
+      const getKey=async()=>{const r=await fetch(API+"/vapid");if(!r.ok)throw new Error("vapid");return (await r.json()).key};
+      const subscribe=async()=>{
+        const key=await getKey();
+        const s=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:fromB64u(key)});
+        const r=await fetch(API+"/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({subscription:s.toJSON(),lang:LANG})});
+        if(!r.ok)throw new Error("subscribe");return s};
+      if(sub){ // ya suscripto: si el servidor cambió de clave, renovamos en silencio
+        try{const key=await getKey();const used=sub.options&&sub.options.applicationServerKey?b64u(sub.options.applicationServerKey):key;
+          if(used!==key){await sub.unsubscribe();await subscribe()}}catch(e){}
+        return}
+      if(gone)return;
+      if(!can){if(ios&&!standalone){document.getElementById("push-ios").hidden=false;document.getElementById("push-txt").hidden=true;card.hidden=false}return}
+      if(Notification.permission==="denied")return;
+      go.hidden=false;card.hidden=false;
+      go.onclick=async()=>{
+        go.disabled=true;
+        try{
+          const p=await Notification.requestPermission();
+          if(p!=="granted"){say("Sin permiso no podemos avisarte. Se puede cambiar en la configuración del celular.","Sem permissão não dá para avisar. Dá para mudar nas configurações do celular.");go.disabled=false;return}
+          await subscribe();
+          go.hidden=true;say("Listo: te vamos a avisar cuando haya novedades.","Pronto: vamos avisar quando houver novidades.");
+          setTimeout(()=>{card.hidden=true},4000);
+        }catch(e){go.disabled=false;say("No se pudo activar. Probá de nuevo en un rato.","Não deu para ativar. Tente de novo daqui a pouco.")}
+      };
+    }).catch(()=>{});
+  })();
   function startPublic(){
     if(!ASK_API)return;
     show("ask-off",false);

@@ -9,18 +9,26 @@
 //   GEMINI_MODEL    texto    opcional, por defecto gemini-3.1-flash-lite
 //   ALLOWED_ORIGIN  texto    opcional, por defecto https://pdroarraes-creator.github.io
 // Binding de KV (Settings → Bindings): nombre QA
+//
+// Avisos push: el propio worker crea sus claves VAPID (quedan en KV), guarda las suscripciones
+// y cada 15 minutos (cron) mira news.json del sitio; si la versión cambió, avisa a todos.
 
 const MAX_Q = 600;
 const MAX_CONTEXT = 16000;
 const PER_HOUR = 30;
+const PUSH_HOSTS = [/(^|\.)fcm\.googleapis\.com$/, /(^|\.)push\.apple\.com$/, /(^|\.)push\.services\.mozilla\.com$/, /(^|\.)notify\.windows\.com$/];
 
 export default {
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(checkAndNotify(env));
+  },
+
   async fetch(request, env) {
     const url = new URL(request.url);
     const origin = env.ALLOWED_ORIGIN || "https://pdroarraes-creator.github.io";
     const cors = {
       "Access-Control-Allow-Origin": origin,
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Vary": "Origin",
     };
@@ -33,10 +41,33 @@ export default {
       return new Response(ADMIN_PAGE, { headers: { "Content-Type": "text/html; charset=utf-8" } });
     }
 
+    if (url.pathname === "/vapid" && request.method === "GET") {
+      if (!env.QA) return json({ error: "no_kv" }, 503);
+      return json({ key: (await vapidKeys(env)).pub });
+    }
+
     if (request.method !== "POST") return json({ error: "not_found" }, 404);
 
     let body;
     try { body = await request.json(); } catch { return json({ error: "bad_request" }, 400); }
+
+    // Suscribir un celular a los avisos (no pide contraseña: solo guarda la dirección de push)
+    if (url.pathname === "/subscribe") {
+      const sub = body.subscription || {};
+      let host = "";
+      try { const u = new URL(String(sub.endpoint || "")); if (u.protocol === "https:") host = u.hostname; } catch {}
+      if (!host || !PUSH_HOSTS.some(r => r.test(host))) return json({ error: "bad_endpoint" }, 400);
+      if (!env.QA) return json({ error: "no_kv" }, 503);
+      const id = await sha(sub.endpoint);
+      await env.QA.put(`sub:${id}`, JSON.stringify({ endpoint: sub.endpoint, at: Date.now() }));
+      return json({ ok: true });
+    }
+
+    // Mandar un aviso ya a todos (página /admin, para probar)
+    if (url.pathname === "/push-now") {
+      if (!env.ADMIN_KEY || !safeEqual(String(body.key || ""), env.ADMIN_KEY)) return json({ error: "wrong_key" }, 401);
+      return json(await notifyAll(env));
+    }
 
     // Exportar todo (página /admin)
     if (url.pathname === "/export") {
@@ -106,6 +137,75 @@ export default {
   },
 };
 
+// ---------- avisos push ----------
+async function checkAndNotify(env) {
+  if (!env.QA) return;
+  const site = (env.ALLOWED_ORIGIN || "https://pdroarraes-creator.github.io") + "/viaje-ceara/news.json";
+  let version;
+  try {
+    const r = await fetch(site + "?t=" + Date.now(), { cf: { cacheTtl: 0 } });
+    if (!r.ok) return;
+    version = String((await r.json()).version || "");
+  } catch { return; }
+  if (!version) return;
+  const last = await env.QA.get("push:last-version");
+  if (last === version) return;
+  await env.QA.put("push:last-version", version);
+  if (last) await notifyAll(env); // la primera vez solo anota la versión
+}
+
+async function notifyAll(env) {
+  const v = await vapidKeys(env);
+  const list = await env.QA.list({ prefix: "sub:", limit: 1000 });
+  let sent = 0, removed = 0, failed = 0;
+  for (const k of list.keys) {
+    let sub; try { sub = JSON.parse(await env.QA.get(k.name)); } catch { continue; }
+    if (!sub || !sub.endpoint) continue;
+    try {
+      const r = await sendPush(v, sub.endpoint);
+      if (r.status === 404 || r.status === 410) { await env.QA.delete(k.name); removed++; }
+      else if (r.ok) sent++;
+      else failed++;
+    } catch { failed++; }
+  }
+  return { subscribers: list.keys.length, sent, removed, failed };
+}
+
+let vapidCache = null;
+async function vapidKeys(env) {
+  if (vapidCache) return vapidCache;
+  let v = await env.QA.get("push:vapid", { type: "json" });
+  if (!v) {
+    const kp = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+    v = { jwk: await crypto.subtle.exportKey("jwk", kp.privateKey), pub: b64u(await crypto.subtle.exportKey("raw", kp.publicKey)) };
+    await env.QA.put("push:vapid", JSON.stringify(v));
+  }
+  return (vapidCache = v);
+}
+
+// Push sin contenido: solo firma VAPID (ES256). El service worker busca el texto en news.json.
+async function sendPush(v, endpoint) {
+  const aud = new URL(endpoint).origin;
+  const enc = s => b64u(new TextEncoder().encode(JSON.stringify(s)));
+  const unsigned = enc({ typ: "JWT", alg: "ES256" }) + "." +
+    enc({ aud, exp: Math.floor(Date.now() / 1000) + 12 * 3600, sub: "https://pdroarraes-creator.github.io/viaje-ceara/" });
+  const { d, x, y } = v.jwk;
+  const key = await crypto.subtle.importKey("jwk", { kty: "EC", crv: "P-256", d, x, y }, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, key, new TextEncoder().encode(unsigned));
+  return fetch(endpoint, {
+    method: "POST",
+    headers: { Authorization: `vapid t=${unsigned}.${b64u(sig)}, k=${v.pub}`, TTL: "86400", Urgency: "normal", "Content-Length": "0" },
+  });
+}
+
+function b64u(buf) {
+  let s = ""; for (const c of new Uint8Array(buf)) s += String.fromCharCode(c);
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+async function sha(t) {
+  return b64u(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t))).slice(0, 22);
+}
+
 function norm(t) {
   return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(w => w.length > 2);
 }
@@ -153,6 +253,7 @@ const ADMIN_PAGE = `<!doctype html><html lang="pt"><head><meta charset="utf-8"><
 <style>body{font:16px system-ui,sans-serif;max-width:760px;margin:0 auto;padding:16px}input,button{font:inherit;padding:8px 12px}textarea{width:100%;height:60vh;font:13px ui-monospace,monospace}</style></head>
 <body><h1>Perguntas e respostas salvas</h1>
 <form id="f"><input id="k" type="password" placeholder="ADMIN_KEY" autocomplete="off"> <button>Ver</button></form>
+<p><button id="pt" type="button">Enviar aviso de teste agora</button> <span id="ps"></span></p>
 <p id="s"></p><textarea id="o" readonly></textarea>
 <script>
 f.onsubmit=async e=>{e.preventDefault();s.textContent="Carregando…";
@@ -160,4 +261,6 @@ const r=await fetch("/export",{method:"POST",headers:{"Content-Type":"applicatio
 if(!r.ok){s.textContent="Chave errada.";return}const d=await r.json();
 s.textContent=d.items.length+" perguntas. Copie o texto abaixo e cole no Claude para melhorar o site.";
 o.value=JSON.stringify(d.items,null,2)};
+pt.onclick=async()=>{ps.textContent="Enviando…";const r=await fetch("/push-now",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({key:k.value})});
+if(!r.ok){ps.textContent="Chave errada.";return}const d=await r.json();ps.textContent=d.subscribers+" celulares, "+d.sent+" enviados, "+d.removed+" removidos, "+d.failed+" com erro."};
 </script></body></html>`;
