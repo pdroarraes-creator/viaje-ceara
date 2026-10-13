@@ -58,7 +58,15 @@ export default {
       const lang = body.lang === "pt" ? "pt" : "es";
       const context = String(body.context || "").slice(0, MAX_CONTEXT);
 
+      // 1) Primero buscamos en las preguntas ya respondidas (gratis y rápido)
+      const past = await listQA(env, 200);
+      const hit = bestMatch(question, past.filter(x => x.lang === lang));
+      if (hit) return json({ answer: hit.a, cached: true });
+
       if (await overLimit(env, request)) return json({ error: "rate_limited" }, 429);
+
+      // 2) Si no hay, Gemini responde partiendo de lo que ya sabemos
+      const memory = past.slice(0, 15).map(x => `P: ${x.q}\nR: ${x.a}`).join("\n\n").slice(0, 6000);
 
       const langName = lang === "pt" ? "português do Brasil" : "español rioplatense";
       const system =
@@ -76,7 +84,7 @@ export default {
           headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: system }] },
-            contents: [{ role: "user", parts: [{ text: `DATOS DEL SITIO:\n${context}\n\nPREGUNTA:\n${question}` }] }],
+            contents: [{ role: "user", parts: [{ text: `DATOS DEL SITIO:\n${context}\n\nPREGUNTAS YA RESPONDIDAS AL GRUPO (usalas como base y mantené coherencia):\n${memory || "(ninguna todavía)"}\n\nPREGUNTA:\n${question}` }] }],
             generationConfig: { maxOutputTokens: 800, temperature: 0.4 },
           }),
         });
@@ -97,6 +105,21 @@ export default {
     return json({ error: "not_found" }, 404);
   },
 };
+
+function norm(t) {
+  return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(w => w.length > 2);
+}
+function bestMatch(q, items) {
+  const a = new Set(norm(q)); if (a.size < 2) return null;
+  let best = null, score = 0;
+  for (const it of items) {
+    const b = new Set(norm(String(it.q || ""))); if (!b.size) continue;
+    let inter = 0; a.forEach(w => { if (b.has(w)) inter++; });
+    const j = inter / (a.size + b.size - inter);
+    if (j > score) { score = j; best = it; }
+  }
+  return score >= 0.75 ? best : null;
+}
 
 async function listQA(env, limit) {
   if (!env.QA) return [];

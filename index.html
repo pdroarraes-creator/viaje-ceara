@@ -111,6 +111,15 @@ tfoot td{font-weight:700;border-bottom:0;font-size:16px}
 tfoot tr.ppl td{color:var(--red)}
 .note{font-size:14px;color:var(--soft)}
 .ctrls{display:flex;flex-wrap:wrap;gap:10px}
+.bell{position:relative;background:none;border:0;color:var(--ink);cursor:pointer;padding:4px;display:inline-flex}
+.bell svg{width:22px;height:22px;fill:currentColor}
+.bell .dot{position:absolute;top:2px;right:2px;width:10px;height:10px;border-radius:50%;background:#E0322B;border:2px solid var(--paper)}
+.news{position:fixed;inset:0;z-index:50;background:rgba(15,20,48,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.news-card{background:var(--card);color:var(--ink);border-radius:18px;border:1.5px solid var(--ink);padding:20px;max-width:440px;width:100%;display:grid;gap:12px;animation:unfold .3s ease-out}
+.news-card ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.news-card .go{font:700 16px var(--body);background:var(--caju);color:#1E2350;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;justify-self:start}
+.story .more[hidden]{display:none}
+.story .tgl{justify-self:start;font:700 14px var(--body);background:none;border:0;color:var(--sea);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
 .story{display:grid;gap:10px;padding:16px 18px;border-radius:14px;background:var(--card);border-left:5px solid var(--sea)}
 .story p{max-width:64ch}
 .facts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:4px 0 0}
@@ -173,12 +182,21 @@ tfoot tr.ppl td{color:var(--red)}
     <a href="#costos"><span lang="es">Costos</span><span lang="pt">Custos</span></a>
     <a href="#preguntar"><span lang="es">Preguntar</span><span lang="pt">Perguntar</span></a>
   </nav>
+  <div style="display:flex;gap:10px;align-items:center">
+  <button type="button" class="bell" id="bell" aria-label="Novedades"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.4-2h-4.8A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 0 0-5-6.7V3a2 2 0 1 0-4 0v1.3A7 7 0 0 0 5 11v5l-2 2v1h18v-1z"/></svg><span class="dot" id="bell-dot" hidden></span></button>
   <div class="seg" role="group" aria-label="Idioma">
     <button type="button" id="b-es" data-set="es" aria-pressed="true">ES</button>
     <button type="button" id="b-pt" data-set="pt" aria-pressed="false">PT</button>
-  </div>
+  </div></div>
 </header>
 
+<div class="news" id="news" hidden role="dialog" aria-modal="true" aria-labelledby="news-t">
+  <div class="news-card">
+    <h3 id="news-t"><span lang="es">Novedades del viaje</span><span lang="pt">Novidades da viagem</span></h3>
+    <ul id="news-list"></ul>
+    <button type="button" class="go" id="news-ok"><span lang="es">Entendido</span><span lang="pt">Entendi</span></button>
+  </div>
+</div>
 <div class="hero">
   <canvas id="hero" aria-hidden="true"></canvas>
   <h1><span lang="es">Rumbo a Ceará</span><span lang="pt">Rumo ao Ceará</span></h1>
@@ -231,9 +249,10 @@ tfoot tr.ppl td{color:var(--red)}
       <p lang="pt">Saída 22:00, chegada 03:10. Hotel reservado desde esta noite.</p></li>
     <li class="day"><div class="when"><span lang="es">Jueves 28/01</span><span lang="pt">Quinta 28/01</span></div>
       <h3><span lang="es">Descanso y Beira-Mar</span><span lang="pt">Descanso e Beira-Mar</span></h3>
-      <ul lang="es"><li>Mañana para dormir</li><li>Atardecer en la Avenida Beira-Mar</li><li>Feria de artesanías de noche</li></ul>
-      <ul lang="pt"><li>Manhã para dormir</li><li>Fim de tarde na Avenida Beira-Mar</li><li>Feirinha de artesanato à noite</li></ul></li>
+      <ul lang="es"><li>Mañana para dormir</li><li>Atardecer en el Mercado dos Peixes do Mucuripe: elegís el pescado y te lo cocinan ahí</li><li>Feria de artesanías de noche en la Beira-Mar</li></ul>
+      <ul lang="pt"><li>Manhã para dormir</li><li>Fim de tarde no Mercado dos Peixes do Mucuripe: você escolhe o peixe e eles preparam na hora</li><li>Feirinha de artesanato à noite na Beira-Mar</li></ul></li>
   </ol>
+<div class="tips"><h3><span lang="es">Para tener en cuenta</span><span lang="pt">Bom saber</span></h3><ul lang="es"><li>Usar apps de transporte, no caminar de noche por playas vacías y no mostrar objetos de valor.</li><li>Los mejores barrios para dormir y salir: Meireles, Mucuripe e Iracema.</li></ul><ul lang="pt"><li>Usar apps de transporte, não caminhar à noite em praias vazias e não exibir objetos de valor.</li><li>Os melhores bairros para ficar e sair: Meireles, Mucuripe e Iracema.</li></ul></div>
 <details class="alt"><summary><span lang="es">Ver alternativas</span><span lang="pt">Ver alternativas</span></summary><ul><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/beira-mar.html?checkin=2027-01-27&checkout=2027-01-29&group_adults=3&group_children=1&age=9&no_rooms=1">Hotel Beira Mar</a> · <span lang="es">4★ frente al mar, Meireles</span><span lang="pt">4★ na beira-mar, Meireles</span></li><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/holiday-inn-fortaleza.html?checkin=2027-01-27&checkout=2027-01-29&group_adults=3&group_children=1&age=9&no_rooms=1">Holiday Inn Fortaleza</a> · <span lang="es">4★, pileta y estacionamiento gratis</span><span lang="pt">4★, piscina e estacionamento grátis</span></li><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/gran-mareiro.html?checkin=2027-01-27&checkout=2027-01-29&group_adults=3&group_children=1&age=9&no_rooms=1">Gran Mareiro</a> · <span lang="es">5★ en Praia do Futuro</span><span lang="pt">5★ na Praia do Futuro</span></li><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/praia-mar.html?checkin=2027-01-27&checkout=2027-01-29&group_adults=3&group_children=1&age=9&no_rooms=1">Hotel Praia Mar</a> · <span lang="es">3★, la opción más barata frente al mar</span><span lang="pt">3★, a opção mais barata na beira-mar</span></li><li><a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Cumbuco+dunas+buggy">Cumbuco</a> · <span lang="es">paseo de un día con médanos y buggy, ~35 km</span><span lang="pt">passeio de um dia com dunas e buggy, ~35 km</span></li></ul></details>
 </section>
 
@@ -261,8 +280,8 @@ tfoot tr.ppl td{color:var(--red)}
   </ol>
   <div class="tips">
     <h3><span lang="es">Para tener en cuenta</span><span lang="pt">Bom saber</span></h3>
-    <ul lang="es"><li>Alojarse en el resort no da acceso automático al parque. Solo lo incluyen los paquetes con parques. Confirmar por WhatsApp de Beach Park: +55 85 8171-7021.</li><li>Los huéspedes entran 1 hora antes en dos atracciones del Aqua Park.</li><li>Adentro se paga solo con la tarjeta de consumo. Si se recarga con débito o efectivo, devuelven lo que sobra.</li></ul>
-    <ul lang="pt"><li>Ficar no resort não dá direito automático ao parque. Só os pacotes com parques incluem. Confirmar pelo WhatsApp do Beach Park: +55 85 8171-7021.</li><li>Hóspedes entram 1 hora antes em duas atrações do Aqua Park.</li><li>Lá dentro se paga só com o cartão de consumo. Recarregando no débito ou em dinheiro, devolvem o que sobrar.</li></ul>
+    <ul lang="es"><li>Alojarse en el resort no da acceso automático al parque. Solo lo incluyen los paquetes con parques. Confirmar por WhatsApp de Beach Park: +55 85 8171-7021.</li><li>Los huéspedes entran 1 hora antes en dos atracciones del Aqua Park. Conviene llegar temprano y, si se puede, ir en días de semana.</li><li>Adentro se paga solo con la tarjeta de consumo. Si se recarga con débito o efectivo, devuelven lo que sobra.</li></ul>
+    <ul lang="pt"><li>Ficar no resort não dá direito automático ao parque. Só os pacotes com parques incluem. Confirmar pelo WhatsApp do Beach Park: +55 85 8171-7021.</li><li>Hóspedes entram 1 hora antes em duas atrações do Aqua Park. Vale chegar cedo e, se der, ir em dia de semana.</li><li>Lá dentro se paga só com o cartão de consumo. Recarregando no débito ou em dinheiro, devolvem o que sobrar.</li></ul>
   </div>
 <details class="alt"><summary><span lang="es">Ver alternativas</span><span lang="pt">Ver alternativas</span></summary><ul><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/oceani-resort-porto-das-dunas.html?checkin=2027-01-29&checkout=2027-02-02&group_adults=3&group_children=1&age=9&no_rooms=1">Oceani Beach Park</a> · <span lang="es">4★ frente al mar, el más económico</span><span lang="pt">4★ pé na areia, o mais em conta</span></li><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/beach-park-acqua-resort.html?checkin=2027-01-29&checkout=2027-02-02&group_adults=3&group_children=1&age=9&no_rooms=1">Acqua Beach Park</a> · <span lang="es">5★, corriente que lleva al parque</span><span lang="pt">5★, correnteza que leva ao parque</span></li><li><a target="_blank" rel="noopener" href="https://beachpark.com.br/resorts/suites-beach-park-resort/">Suites Beach Park</a> · <span lang="es">pensado para familias, suite para 4</span><span lang="pt">pensado para famílias, suíte para 4</span></li><li><a target="_blank" rel="noopener" href="https://beachpark.com.br/resorts/wellness-beach-park-resort/">Wellness Beach Park</a> · <span lang="es">suite familiar hasta 8 personas</span><span lang="pt">suíte familiar para até 8 pessoas</span></li><li><a target="_blank" rel="noopener" href="https://beachpark.com.br/pacotes-promocoes/"><span lang="es">Paquetes oficiales</span><span lang="pt">Pacotes oficiais</span></a> · <span lang="es">consultar media pensión + parques</span><span lang="pt">consultar meia pensão + parques</span></li></ul></details>
 </section>
@@ -285,8 +304,8 @@ tfoot tr.ppl td{color:var(--red)}
       <p lang="pt">Carro alugado, saindo cedo. Chegamos para o primeiro pôr do sol.</p></li>
     <li class="day"><div class="when"><span lang="es">Miércoles 03/02 a viernes 05/02</span><span lang="pt">Quarta 03/02 a sexta 05/02</span></div>
       <h3><span lang="es">Días de playa</span><span lang="pt">Dias de praia</span></h3>
-      <ul lang="es"><li>Atardecer en los médanos</li><li>Ver las jangadas volviendo de la pesca</li><li>Clase de kite para quien quiera</li><li>Pescado fresco en los paradores</li></ul>
-      <ul lang="pt"><li>Pôr do sol nas dunas</li><li>Ver as jangadas chegando da pesca</li><li>Aula de kite para quem quiser</li><li>Peixe fresco nas barracas</li></ul></li>
+      <ul lang="es"><li>Atardecer en los médanos</li><li>Paseo en buggy hasta Moitas y la desembocadura del río Aracatiaçu</li><li>Ver las jangadas volviendo de la pesca</li><li>Clase de kite para quien quiera</li><li>Pescado fresco en los paradores</li></ul>
+      <ul lang="pt"><li>Pôr do sol nas dunas</li><li>Passeio de buggy até Moitas e a foz do rio Aracatiaçu</li><li>Ver as jangadas chegando da pesca</li><li>Aula de kite para quem quiser</li><li>Peixe fresco nas barracas</li></ul></li>
   </ol>
 <details class="alt"><summary><span lang="es">Ver alternativas</span><span lang="pt">Ver alternativas</span></summary><ul><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/zaya-beach-residence.html?checkin=2027-02-02&checkout=2027-02-06&group_adults=3&group_children=1&age=9&no_rooms=1">Zaya Beach Residence</a> · <span lang="es">pileta, muy bien puntuada</span><span lang="pt">piscina, muito bem avaliada</span></li><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/mare-mansa-suites-icaraizinho-amontada.html?checkin=2027-02-02&checkout=2027-02-06&group_adults=3&group_children=1&age=9&no_rooms=1">Maré Mansa Suítes</a> · <span lang="es">pileta y espacio para chicos</span><span lang="pt">piscina e espaço kids</span></li><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/kanto-do-chico.html?checkin=2027-02-02&checkout=2027-02-06&group_adults=3&group_children=1&age=9&no_rooms=1">Kanto do Chico</a> · <span lang="es">4★, jacuzzi</span><span lang="pt">4★, jacuzzi</span></li><li><a target="_blank" rel="noopener" href="https://www.booking.com/hotel/br/as-palhas.html?checkin=2027-02-02&checkout=2027-02-06&group_adults=3&group_children=1&age=9&no_rooms=1">As Palhas</a> · <span lang="es">frente al mar, pileta</span><span lang="pt">beira-mar, piscina</span></li><li><a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Jericoacoara">Jericoacoara</a> · <span lang="es">otro destino posible, más lejos (~300 km de Fortaleza)</span><span lang="pt">outro destino possível, mais longe (~300 km de Fortaleza)</span></li></ul></details>
 </section>
@@ -309,8 +328,8 @@ tfoot tr.ppl td{color:var(--red)}
       <p lang="pt">Devolvemos o carro e noite na Beira-Mar.</p></li>
     <li class="day"><div class="when"><span lang="es">Domingo 07/02</span><span lang="pt">Domingo 07/02</span></div>
       <h3>Praia do Futuro</h3>
-      <p lang="es">Día entero en los paradores de playa: cangrejo, tapioca y agua de coco.</p>
-      <p lang="pt">Dia inteiro nas barracas de praia: caranguejo, tapioca e água de coco.</p></li>
+      <p lang="es">Día entero en los paradores grandes, como Crocobeach, Vojnilô o Atlantidz: reposeras, pileta y cangrejo, que los jueves es tradición.</p>
+      <p lang="pt">Dia inteiro nas barracas grandes, como Crocobeach, Vojnilô ou Atlantidz: espreguiçadeiras, piscina e caranguejo, que às quintas é tradição.</p></li>
     <li class="day"><div class="when"><span lang="es">Lunes 08/02</span><span lang="pt">Segunda 08/02</span></div>
       <h3><span lang="es">Centro y Praia de Iracema</span><span lang="pt">Centro e Praia de Iracema</span></h3>
       <ul lang="es"><li>Mercado Central: castañas de cajú, encajes, hamacas</li><li>Centro Cultural Dragão do Mar</li><li>Atardecer en el Puente de los Ingleses</li></ul>
@@ -336,6 +355,13 @@ tfoot tr.ppl td{color:var(--red)}
     <tbody></tbody>
   </table></div>
   <p class="note"><span lang="es">Fuentes:</span><span lang="pt">Fontes:</span> <a target="_blank" rel="noopener" href="https://quantocustaviajar.com/brasil/fortaleza/alimentacao">Quanto Custa Viajar</a> (2025), <a target="_blank" rel="noopener" href="https://www.falandodeviagem.com.br/viewtopic.php?p=121248">Falando de Viagem</a> (Beach Park), <a target="_blank" rel="noopener" href="https://www.skyscanner.com.br/aluguel-de-carros">Skyscanner</a> (<span lang="es">autos</span><span lang="pt">carros</span>).</p>
+  <details class="alt"><summary><span lang="es">Más recomendaciones para comer</span><span lang="pt">Mais recomendações para comer</span></summary><ul>
+    <li><b>Colher de Pau</b> (Varjota) · <span lang="es">carne de sol na nata, baião de dois. Precio medio</span><span lang="pt">carne de sol na nata, baião de dois. Preço médio</span></li>
+    <li><b>Geppos</b> (Beira-Mar) · <span lang="es">mariscos y pastas frente al mar. Precio medio</span><span lang="pt">frutos do mar e massas de frente para o mar. Preço médio</span></li>
+    <li><b>La Bella Italia</b> · <b>Vignoli</b> (Meireles) · <span lang="es">pastas y pizzas. Precio medio</span><span lang="pt">massas e pizzas. Preço médio</span></li>
+    <li><b>Moleskine</b> (Varjota) · <span lang="es">cocina de autor y coctelería. Medio-alto</span><span lang="pt">cozinha autoral e coquetelaria. Médio-alto</span></li>
+    <li><b>L’Ô</b> (Aldeota) · <span lang="es">fusión, para una noche especial. Alto</span><span lang="pt">fusão, para uma noite especial. Alto</span></li>
+  </ul></details>
 </section>
 
 <!-- COSTOS -->
@@ -425,6 +451,39 @@ tfoot tr.ppl td{color:var(--red)}
     document.getElementById("inst-go").onclick=async()=>{if(!deferred)return;deferred.prompt();try{await deferred.userChoice}catch(e){}box.hidden=true};
     document.getElementById("inst-x").onclick=()=>{box.hidden=true;try{localStorage.setItem("inst-x","1")}catch(e){}};
   })();
+  // historias: resumir / ver todo
+  let shortMode=false;try{shortMode=localStorage.getItem("short")==="1"}catch(e){}
+  const stories=[...document.querySelectorAll(".story")];
+  stories.forEach(st=>{
+    const ps=[...st.querySelectorAll(":scope > p:not(.src)")];
+    const more=document.createElement("div");more.className="more";more.style.display="grid";more.style.gap="10px";
+    ps.slice(2).forEach(p=>more.append(p));
+    st.querySelector("dl").before(more);
+    const b=document.createElement("button");b.type="button";b.className="tgl";
+    st.querySelector("h3").after(b);
+    b.onclick=()=>{shortMode=!shortMode;try{localStorage.setItem("short",shortMode?"1":"0")}catch(e){}applyShort()};
+  });
+  function applyShort(){stories.forEach(st=>{st.querySelector(".more").hidden=shortMode;
+    st.querySelector(".tgl").innerHTML=shortMode?'<span lang="es">Ver toda la historia</span><span lang="pt">Ver a história toda</span>':'<span lang="es">Resumir</span><span lang="pt">Resumir</span>'})}
+  applyShort();
+
+  // novedades: punto rojo + aviso cuando el sitio cambia
+  const SITE_VERSION="2026-10-12.3";
+  const CHANGES=[
+    ["Historia, cultura y curiosidades de cada lugar, con botón para resumir","História, cultura e curiosidades de cada lugar, com botão para resumir"],
+    ["Todas las ilustraciones animadas","Todas as ilustrações animadas"],
+    ["Alternativas de hotel en cada destino y links a las fuentes de los costos","Alternativas de hotel em cada destino e links para as fontes dos custos"],
+    ["Paseo en buggy a Moitas y más restaurantes recomendados","Passeio de buggy até Moitas e mais restaurantes recomendados"],
+  ];
+  const newsEl=document.getElementById("news"),dot=document.getElementById("bell-dot");
+  let seen=null;try{seen=localStorage.getItem("seen-version")}catch(e){}
+  const openNews=()=>{document.getElementById("news-list").innerHTML=CHANGES.map(([es,pt])=>`<li><span lang="es">${es}</span><span lang="pt">${pt}</span></li>`).join("");newsEl.hidden=false;document.getElementById("news-ok").focus()};
+  const closeNews=()=>{newsEl.hidden=true;dot.hidden=true;try{localStorage.setItem("seen-version",SITE_VERSION)}catch(e){};try{navigator.clearAppBadge&&navigator.clearAppBadge()}catch(e){}};
+  document.getElementById("bell").onclick=openNews;
+  document.getElementById("news-ok").onclick=closeNews;
+  newsEl.addEventListener("click",e=>{if(e.target===newsEl)closeNews()});
+  if(seen!==SITE_VERSION){dot.hidden=false;try{navigator.setAppBadge&&navigator.setAppBadge(1)}catch(e){};if(seen)openNews();else{try{localStorage.setItem("seen-version",SITE_VERSION)}catch(e){};dot.hidden=true}}
+
   const ib=document.getElementById("insp-btn"),ip=document.getElementById("insp");
   ib.addEventListener("click",()=>{const open=ib.getAttribute("aria-expanded")!=="true";ib.setAttribute("aria-expanded",String(open));ip.hidden=!open});
 
@@ -615,8 +674,8 @@ tfoot tr.ppl td{color:var(--red)}
       const q=qEl.value.trim(); if(!q){stEl.textContent=T("empty");return}
       goEl.disabled=true; ansEl.hidden=false; ansEl.textContent=T("think"); stEl.textContent="";
       try{
-        const {answer}=await api("/ask",{password:pw,question:q,lang:LANG,context:context()});
-        ansEl.textContent=answer; stEl.textContent=T("saved");
+        const {answer,cached}=await api("/ask",{password:pw,question:q,lang:LANG,context:context()});
+        ansEl.textContent=answer; stEl.textContent=cached?(LANG==="es"?"Respuesta que ya estaba guardada.":"Resposta que já estava salva."):T("saved");
         try{const h=await api("/history",{password:pw});renderSaved(h.items||[])}catch(e){}
       }catch(e){
         ansEl.hidden=true;
