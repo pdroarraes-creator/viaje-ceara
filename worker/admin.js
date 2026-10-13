@@ -45,7 +45,7 @@ section[data-tab]{display:none}section[data-tab].on{display:block}
 <h2>WhatsApp</h2>
 <p class="muted">A Castanha só responde a quem está na lista.</p>
 <div class="card"><h3 style="margin-top:0">Adicionar um telefone</h3>
-<p class="muted">Com código do país e DDD, só números. Ex.: 5491128706685 (Argentina) ou 5581999999999 (Brasil).</p>
+<p class="muted">Com código do país e DDD, só números. Ex.: 5491100000000 (Argentina) ou 5581999999999 (Brasil).</p>
 <div class="row"><input id="mp" type="tel" inputmode="numeric" placeholder="Telefone" autocomplete="off"><input id="mn" placeholder="Nome"></div>
 <div class="row"><select id="mr"><option value="viajante">Viajante (família vizinha)</option><option value="pedro">Pedro</option><option value="raquel">Raquel</option><option value="hijo">Filho</option></select><button id="madd" type="button">Autorizar</button></div></div>
 <div class="row"><button id="bl" type="button" class="ghost">Atualizar lista</button> <span id="bs" class="muted"></span></div>

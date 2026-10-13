@@ -11,7 +11,10 @@ if [ ! -f .env ]; then
   echo "[3/4] Configuración."
   printf "Pegá la BOT_KEY (no se ve al pegar) y Enter: "
   read -rs KEY; echo
-  printf "WORKER_URL=https://viaje-ceara-ask.pdroarraes.workers.dev\nBOT_KEY=%s\nPHONE=5491128706685\n" "$KEY" > .env
+  printf "Número del WhatsApp de la Castanha, con código de país y sin + (ej.: 549XXXXXXXXXX) y Enter: "
+  read -r PHONE
+  case "$PHONE" in ''|*[!0-9]*) echo "El número debe tener solo dígitos. Corré el script de nuevo."; exit 1;; esac
+  printf "WORKER_URL=https://viaje-ceara-ask.pdroarraes.workers.dev\nBOT_KEY=%s\nPHONE=%s\n" "$KEY" "$PHONE" > .env
   chmod 600 .env
 else
   echo "[3/4] .env ya existe, lo dejo como está."
