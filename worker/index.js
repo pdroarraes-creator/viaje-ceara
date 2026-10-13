@@ -50,6 +50,7 @@ export default {
         password_set: !!env.SITE_PASSWORD,
         gemini_key_set: !!env.GEMINI_API_KEY,
         admin_key_set: !!env.ADMIN_KEY,
+        bot_key_set: !!env.BOT_KEY,
         memory_kv: !!env.QA,
         model: env.GEMINI_MODEL || "gemini-3.1-flash-lite",
         allowed_origin: origin,
