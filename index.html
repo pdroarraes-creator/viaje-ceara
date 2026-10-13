@@ -58,6 +58,12 @@ body:not([data-lang="pt"]) [lang="pt"], body[data-lang="pt"] [lang="es"]{display
 .facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .chip{border:1.5px solid var(--ink);border-radius:999px;padding:3px 12px;font-weight:500;font-size:15px}
 
+.insp-btn{margin-top:16px;cursor:pointer}
+.insp-btn[aria-expanded="true"]{background:var(--ink);color:var(--paper)}
+.insp{margin-top:12px;background:var(--card);border:1.5px solid var(--ink);border-radius:14px;padding:16px 18px;display:grid;gap:10px;max-width:68ch}
+.insp:not([hidden]){animation:unfold .35s ease-out}
+@keyframes unfold{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
 /* capítulos */
 .chapter{margin-top:64px;display:grid;gap:16px}
 .chead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px}
@@ -145,6 +151,15 @@ tfoot tr.ppl td{color:var(--red)}
   <span class="chip">13 <span lang="es">noches</span><span lang="pt">noites</span></span>
   <span class="chip">4 <span lang="es">viajeros</span><span lang="pt">viajantes</span></span>
   <span class="chip">~28 °C</span>
+</div>
+<button type="button" class="btn insp-btn" id="insp-btn" aria-expanded="false" aria-controls="insp"><span lang="es">Inspiración del sitio</span><span lang="pt">Inspiração do site</span></button>
+<div class="insp" id="insp" hidden>
+  <h3><span lang="es">Inspirado en la xilografía de cordel</span><span lang="pt">Inspirado na xilogravura de cordel</span></h3>
+  <p lang="es">En el nordeste de Brasil, los folletos de literatura de cordel se venden en las ferias colgados de cuerdas, y sus tapas se ilustran con grabados en madera: la xilografía. De ahí sale todo el diseño: trazos de tinta gruesos, el sol con rayos, la jangada de los pescadores de Ceará y el papel con textura.</p>
+  <p lang="pt">No Nordeste, os folhetos de literatura de cordel são vendidos nas feiras pendurados em cordas, e as capas são ilustradas com gravuras em madeira: a xilogravura. Daí vem todo o design: traços grossos de tinta, o sol com raios, a jangada dos pescadores do Ceará e o papel com textura.</p>
+  <p lang="es">Los colores salen del paisaje del viaje: el mar verde azulado, el amarillo del cajú, el rojo de los atardeceres y el azul de la tinta de los grabados. La tipografía de los títulos es gruesa y con remates, como los carteles de feria.</p>
+  <p lang="pt">As cores vêm da paisagem da viagem: o mar verde-azulado, o amarelo do caju, o vermelho do pôr do sol e o azul da tinta das gravuras. A tipografia dos títulos é grossa e com serifas, como os cartazes de feira.</p>
+  <p><a target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=xilogravura+de+cordel"><span lang="es">Ver ejemplos de xilografía de cordel</span><span lang="pt">Ver exemplos de xilogravura de cordel</span></a></p>
 </div>
 
 <div id="roteiro">
@@ -325,6 +340,8 @@ tfoot tr.ppl td{color:var(--red)}
     renderSugs();
   }
   document.querySelectorAll("[data-set]").forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.set)));
+  const ib=document.getElementById("insp-btn"),ip=document.getElementById("insp");
+  ib.addEventListener("click",()=>{const open=ib.getAttribute("aria-expanded")!=="true";ib.setAttribute("aria-expanded",String(open));ip.hidden=!open});
 
   /* ---------- dinero ---------- */
   // US$1 = R$4,9863 (12/10/2026) · US$1 = AR$1.540 oficial BNA (09/10/2026)
