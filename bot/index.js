@@ -81,7 +81,7 @@ async function start() {
           body: JSON.stringify({ botKey: BOT_KEY, bot, from: sender.split("@")[0], name: msg.pushName || "", chat: jid, text: cleanText(text, bot), audio, wantAudio: !!audio, ids }),
         });
         const d = await r.json().catch(() => ({}));
-        console.log("  worker:", r.status, JSON.stringify(d).slice(0, 160));
+        console.log("  worker:", r.status, d.reply ? "resposta de " + d.reply.length + " letras" : JSON.stringify(d).slice(0, 160), d.audio ? "+ áudio" : "", d.audioError ? "| ERRO DE VOZ: " + d.audioError : "");
         if (!d.reply) continue;
         await sock.readMessages([msg.key]);
         await sock.sendPresenceUpdate("composing", jid);
