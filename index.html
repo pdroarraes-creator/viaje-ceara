@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Itinerario del viaje a Ceará 2027: Fortaleza, Beach Park e Icaraizinho, con costos promedio por persona.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ceará 2027">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#EEF5F3">
 <style>html{color-scheme:light dark}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 </head>
 <body>
@@ -102,6 +110,24 @@ td a{font-size:13px}
 tfoot td{font-weight:700;border-bottom:0;font-size:16px}
 tfoot tr.ppl td{color:var(--red)}
 .note{font-size:14px;color:var(--soft)}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px}
+.seg.cur{justify-self:start}
+.cur{display:none}
+@media (max-width:600px){
+  .cur{display:inline-flex}
+  table{min-width:0}
+  th,td{padding:10px}
+  body[data-cur="usd"] .c-brl, body[data-cur="usd"] .c-ars,
+  body[data-cur="brl"] .c-usd, body[data-cur="brl"] .c-ars,
+  body[data-cur="ars"] .c-brl, body[data-cur="ars"] .c-usd{display:none}
+  td.c-brl,td.c-usd,td.c-ars{font-size:17px;font-weight:700;white-space:nowrap}
+  td .pp{font-size:13px}
+  tfoot td{font-size:19px}
+}
+.install{margin-top:16px;background:var(--card);border:1.5px dashed var(--sea);border-radius:14px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start}
+.install img{width:52px;height:52px;border-radius:12px;flex-shrink:0}
+.install p{font-size:15px}
+.install .x{margin-left:auto;background:none;border:0;color:var(--soft);font-size:22px;line-height:1;cursor:pointer;padding:0 4px}
 .scen{justify-self:start}
 
 /* assistente */
@@ -151,6 +177,16 @@ tfoot tr.ppl td{color:var(--red)}
   <span class="chip">13 <span lang="es">noches</span><span lang="pt">noites</span></span>
   <span class="chip">4 <span lang="es">viajeros</span><span lang="pt">viajantes</span></span>
   <span class="chip">~28 °C</span>
+</div>
+<div class="install" id="install" hidden>
+  <img src="apple-touch-icon.png" alt="">
+  <div style="display:grid;gap:6px;min-width:0">
+    <b><span lang="es">Guardá el viaje en tu celular</span><span lang="pt">Salve a viagem no celular</span></b>
+    <p id="inst-ios" hidden><span lang="es">En el iPhone, tocá Compartir (el cuadrado con la flecha) y después “Agregar a inicio”. Queda un ícono como una app.</span><span lang="pt">No iPhone, toque em Compartilhar (o quadrado com a seta) e depois em “Adicionar à Tela de Início”. Fica um ícone como um app.</span></p>
+    <p id="inst-other" hidden><span lang="es">Abrí el menú del navegador y elegí “Agregar a pantalla de inicio” o “Instalar app”.</span><span lang="pt">Abra o menu do navegador e escolha “Adicionar à tela inicial” ou “Instalar app”.</span></p>
+    <button type="button" class="btn" id="inst-go" hidden style="justify-self:start"><span lang="es">Instalar</span><span lang="pt">Instalar</span></button>
+  </div>
+  <button type="button" class="x" id="inst-x" aria-label="Cerrar">×</button>
 </div>
 <button type="button" class="btn insp-btn" id="insp-btn" aria-expanded="false" aria-controls="insp"><span lang="es">Inspiración del sitio</span><span lang="pt">Inspiração do site</span></button>
 <div class="insp" id="insp" hidden>
@@ -273,8 +309,9 @@ tfoot tr.ppl td{color:var(--red)}
   <h2><span lang="es">Comer y moverse</span><span lang="pt">Comer e se locomover</span></h2>
   <p lang="es">Precios promedio por persona, por comida y sin alcohol. Los de restaurantes son de 2025: conviene sumar un 10%.</p>
   <p lang="pt">Preços médios por pessoa, por refeição e sem álcool. Os de restaurantes são de 2025: vale somar uns 10%.</p>
+  <div class="seg cur" role="group" aria-label="Moneda"><button type="button" data-cur="usd" aria-pressed="true">US$</button><button type="button" data-cur="brl" aria-pressed="false">R$</button><button type="button" data-cur="ars" aria-pressed="false">AR$</button></div>
   <div class="tablewrap"><table id="t-food">
-    <thead><tr><th><span lang="es">Lugar</span><span lang="pt">Lugar</span></th><th>R$</th><th>US$</th><th>AR$</th></tr></thead>
+    <thead><tr><th><span lang="es">Lugar</span><span lang="pt">Lugar</span></th><th class="c-brl">R$</th><th class="c-usd">US$</th><th class="c-ars">AR$</th></tr></thead>
     <tbody></tbody>
   </table></div>
 </section>
@@ -284,16 +321,17 @@ tfoot tr.ppl td{color:var(--red)}
   <h2><span lang="es">Nuestros costos promedio</span><span lang="pt">Nossos custos médios</span></h2>
   <p lang="es">Son costos promedio estimados para 13 noches. Viajamos los 4 juntos y compartimos el auto y las habitaciones, así que el costo por persona es el total dividido por 4.</p>
   <p lang="pt">São custos médios estimados para 13 noites. Viajamos os 4 juntos e dividimos o carro e os quartos, então o custo por pessoa é o total dividido por 4.</p>
+  <div class="ctrls"><div class="seg cur" role="group" aria-label="Moneda"><button type="button" data-cur="usd" aria-pressed="true">US$</button><button type="button" data-cur="brl" aria-pressed="false">R$</button><button type="button" data-cur="ars" aria-pressed="false">AR$</button></div>
   <div class="seg scen" role="group" aria-label="Escenario">
     <button type="button" id="sc-mid" data-sc="mid" aria-pressed="true"><span lang="es">Comida media</span><span lang="pt">Comida média</span></button>
     <button type="button" id="sc-hi" data-sc="hi" aria-pressed="false"><span lang="es">Restaurantes caros</span><span lang="pt">Restaurantes caros</span></button>
-  </div>
+  </div></div>
   <div class="tablewrap"><table>
-    <thead><tr><th><span lang="es">Ítem</span><span lang="pt">Item</span></th><th>R$</th><th>US$</th><th>AR$</th></tr></thead>
+    <thead><tr><th><span lang="es">Ítem</span><span lang="pt">Item</span></th><th class="c-brl">R$</th><th class="c-usd">US$</th><th class="c-ars">AR$</th></tr></thead>
     <tbody id="ctab"></tbody>
     <tfoot>
-      <tr><td><span lang="es">Total familia</span><span lang="pt">Total família</span></td><td id="t-brl"></td><td id="t-usd"></td><td id="t-ars"></td></tr>
-      <tr class="ppl"><td><span lang="es">Por persona</span><span lang="pt">Por pessoa</span></td><td id="p-brl"></td><td id="p-usd"></td><td id="p-ars"></td></tr>
+      <tr><td><span lang="es">Total familia</span><span lang="pt">Total família</span></td><td class="c-brl" id="t-brl"></td><td class="c-usd" id="t-usd"></td><td class="c-ars" id="t-ars"></td></tr>
+      <tr class="ppl"><td><span lang="es">Por persona</span><span lang="pt">Por pessoa</span></td><td class="c-brl" id="p-brl"></td><td class="c-usd" id="p-usd"></td><td class="c-ars" id="p-ars"></td></tr>
     </tfoot>
   </table></div>
   <p class="note" id="rates"></p>
@@ -348,6 +386,22 @@ tfoot tr.ppl td{color:var(--red)}
     renderSugs();
   }
   document.querySelectorAll("[data-set]").forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.set)));
+  function setCur(c){body.dataset.cur=c;document.querySelectorAll("[data-cur]").forEach(b=>{if(b.tagName==="BUTTON")b.setAttribute("aria-pressed",String(b.dataset.cur===c))});try{localStorage.setItem("cur",c)}catch(e){}}
+  document.querySelectorAll("button[data-cur]").forEach(b=>b.addEventListener("click",()=>setCur(b.dataset.cur)));
+  let cur0=null;try{cur0=localStorage.getItem("cur")}catch(e){}setCur(cur0||"usd");
+  (function(){
+    const box=document.getElementById("install");
+    const standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
+    let gone=false;try{gone=localStorage.getItem("inst-x")==="1"}catch(e){}
+    if(window.claude||standalone||gone)return;
+    const ios=/iPhone|iPad|iPod/.test(navigator.userAgent);
+    let deferred=null;
+    addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;document.getElementById("inst-go").hidden=false;document.getElementById("inst-other").hidden=true});
+    document.getElementById(ios?"inst-ios":"inst-other").hidden=false;
+    box.hidden=false;
+    document.getElementById("inst-go").onclick=async()=>{if(!deferred)return;deferred.prompt();try{await deferred.userChoice}catch(e){}box.hidden=true};
+    document.getElementById("inst-x").onclick=()=>{box.hidden=true;try{localStorage.setItem("inst-x","1")}catch(e){}};
+  })();
   const ib=document.getElementById("insp-btn"),ip=document.getElementById("insp");
   ib.addEventListener("click",()=>{const open=ib.getAttribute("aria-expanded")!=="true";ib.setAttribute("aria-expanded",String(open));ip.hidden=!open});
 
@@ -383,7 +437,7 @@ tfoot tr.ppl td{color:var(--red)}
     if(r[0]==="g") return `<tr class="group"><td colspan="4">${r[1]}</td></tr>`;
     const [n,d,a,b,q]=r;
     const ph=q?` <a target="_blank" rel="noopener" href="${G(q)}">Fotos</a>`:"";
-    return `<tr><td>${n}<small>${d}${ph}</small></td><td>${b?nf(a)+"–"+nf(b):nf(a)}</td><td>${rng(usd,a,b,v=>v)}</td><td>${rng(ars,a,b,r1k)}</td></tr>`;
+    return `<tr><td>${n}<small>${d}${ph}</small></td><td class="c-brl">${b?nf(a)+"–"+nf(b):nf(a)}</td><td class="c-usd">${rng(usd,a,b,v=>v)}</td><td class="c-ars">${rng(ars,a,b,r1k)}</td></tr>`;
   }).join("");
 
   const items=[
@@ -407,7 +461,7 @@ tfoot tr.ppl td{color:var(--red)}
     document.getElementById("ctab").innerHTML=items.map(([n,d,v])=>{
       if(n==="FOOD"){n=L("Comida","Alimentação");d=label+", "+L(`R$ ${pp} por persona por día`,`R$ ${pp} por pessoa por dia`);v=11*pp*4}
       tot+=v; const q=v/4;
-      return `<tr><td>${n}<small>${d}</small></td><td>${nf(v)}<span class="pp">${nf(q)} ${P}</span></td><td>${nf(r10(usd(v)))}<span class="pp">${nf(r10(usd(q)))} ${P}</span></td><td>${nf(r1k(ars(v)))}<span class="pp">${nf(r1k(ars(q)))} ${P}</span></td></tr>`;
+      return `<tr><td>${n}<small>${d}</small></td><td class="c-brl">${nf(v)}<span class="pp">${nf(q)} ${P}</span></td><td class="c-usd">${nf(r10(usd(v)))}<span class="pp">${nf(r10(usd(q)))} ${P}</span></td><td class="c-ars">${nf(r1k(ars(v)))}<span class="pp">${nf(r1k(ars(q)))} ${P}</span></td></tr>`;
     }).join("");
     const set=(id,v)=>document.getElementById(id).textContent=v;
     set("t-brl",nf(tot));set("t-usd",nf(r10(usd(tot))));set("t-ars",nf(r1k(ars(tot))));
@@ -511,9 +565,9 @@ tfoot tr.ppl td{color:var(--red)}
   function startPublic(){
     if(!ASK_API)return;
     show("ask-off",false);
-    let pw=""; try{pw=sessionStorage.getItem("pw")||""}catch(e){}
+    let pw=""; try{pw=localStorage.getItem("pw")||""}catch(e){}
     const enter=async(p)=>{
-      try{const h=await api("/history",{password:p});pw=p;try{sessionStorage.setItem("pw",p)}catch(e){}
+      try{const h=await api("/history",{password:p});pw=p;try{localStorage.setItem("pw",p)}catch(e){}
         show("ask-pw",false);show("ask-on",true);renderSaved(h.items||[]);return true}
       catch(e){return false}
     };
