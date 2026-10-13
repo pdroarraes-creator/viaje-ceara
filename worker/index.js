@@ -90,7 +90,7 @@ export default {
 
       const at = Date.now();
       const key = `qa:${String(9e15 - at).padStart(16, "0")}:${crypto.randomUUID().slice(0, 8)}`; // más nuevo primero
-      await env.QA.put(key, JSON.stringify({ q: question, a: answer, lang, at, model }));
+      if (env.QA) await env.QA.put(key, JSON.stringify({ q: question, a: answer, lang, at, model }));
       return json({ answer });
     }
 
@@ -99,6 +99,7 @@ export default {
 };
 
 async function listQA(env, limit) {
+  if (!env.QA) return [];
   const list = await env.QA.list({ prefix: "qa:", limit });
   const items = await Promise.all(list.keys.map(async k => {
     try { return JSON.parse(await env.QA.get(k.name)); } catch { return null; }
@@ -107,6 +108,7 @@ async function listQA(env, limit) {
 }
 
 async function overLimit(env, request) {
+  if (!env.QA) return false;
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const hour = Math.floor(Date.now() / 3600000);
   const k = `rl:${ip}:${hour}`;
