@@ -35,7 +35,7 @@ async function start() {
   });
 
   sock.ev.on("messages.upsert", async ({ messages, type }) => {
-    if (type !== "notify") return;
+    if (type !== "notify") { console.log("evento ignorado, tipo:", type); return; }
     for (const msg of messages) {
       try {
         const jid = msg.key.remoteJid || "";
@@ -49,7 +49,8 @@ async function start() {
           mentionedMe: !!ctx?.mentionedJid?.some(j => j.split("@")[0] === me),
           repliedToMe: !!ctx?.participant && ctx.participant.split("@")[0] === me,
         };
-        if (!shouldReply(bot, m)) continue;
+        console.log("msg", isGroup ? "grupo" : "privado", jid.split("@")[0], JSON.stringify((text || "").slice(0, 40)), m.fromMe ? "(minha)" : "");
+        if (!shouldReply(bot, m)) { console.log("  -> ignorada"); continue; }
         // en grupos WhatsApp a veces usa un identificador interno (@lid): preferimos el número real si viene
         const sender = (isGroup ? (msg.key.participantPn || msg.key.participantAlt || msg.key.participant) : (msg.key.senderPn || msg.key.remoteJidAlt || jid)) || "";
         const r = await fetch(WORKER_URL.replace(/\/$/, "") + "/bot", {
@@ -57,6 +58,7 @@ async function start() {
           body: JSON.stringify({ botKey: BOT_KEY, bot, from: sender.split("@")[0], name: msg.pushName || "", chat: jid, text: cleanText(text, bot) }),
         });
         const d = await r.json().catch(() => ({}));
+        console.log("  worker:", r.status, JSON.stringify(d).slice(0, 160));
         if (!d.reply) continue;
         await sock.readMessages([msg.key]);
         await sock.sendPresenceUpdate("composing", jid);
