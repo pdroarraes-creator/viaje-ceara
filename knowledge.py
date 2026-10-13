@@ -12,6 +12,7 @@ async def main():
         await pg.goto(path)
         await pg.wait_for_timeout(800)
         txt = await pg.evaluate("""()=>{
+          document.querySelectorAll("details").forEach(d=>d.open=true);
           const g=id=>{const e=document.getElementById(id);return e?e.innerText.trim():""};
           return "ITINERARIO:\\n"+g("roteiro")+"\\n\\nCOMIDA Y AUTO:\\n"+g("comer")+"\\n\\nCOSTOS:\\n"+g("costos");
         }""")
