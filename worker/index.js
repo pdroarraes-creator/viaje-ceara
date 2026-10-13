@@ -1,4 +1,5 @@
 import { ADMIN_PAGE } from "./admin.js";
+import { handleBot } from "./bot.js";
 // Asistente del viaje a Ceará — Cloudflare Worker
 // Guarda la clave de Gemini y la contraseña del grupo como secretos (nunca en el código)
 // y guarda cada pregunta y respuesta en Workers KV para mejorar el sitio.
@@ -113,6 +114,8 @@ export default {
     }
 
     // Mandar un aviso ya a todos (página /admin, para probar)
+    if (url.pathname === "/bot") return handleBot(body, env, json, safeEqual);
+
     // Registro anónimo de accesos (sin contraseña; no guarda IP ni nombre)
     if (url.pathname === "/visit") {
       if (!env.QA) return json({ ok: false });

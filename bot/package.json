@@ -1,0 +1,10 @@
+{
+  "name": "viaje-ceara-bot",
+  "private": true,
+  "type": "module",
+  "scripts": { "caju": "node index.js caju", "castanha": "node index.js castanha" },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.9",
+    "pino": "^9.0.0"
+  }
+}
