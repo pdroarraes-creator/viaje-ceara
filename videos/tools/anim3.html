@@ -84,9 +84,21 @@ function stamp(txt,sub,t,t0,dur,y=210){
 function wrap(txt,maxw){const ws=txt.split(' '),L=[];let cur='';for(const w of ws){const tr=cur?cur+' '+w:w;if(X.measureText(tr).width>maxw&&cur){L.push(cur);cur=w}else cur=tr}L.push(cur);return L}
 function subtitle(t){
   const l=TL.lines.find(l=>t>=l.start-0.1&&t<=l.start+l.dur+0.25);if(!l)return null;
-  const a=cl((t-l.start+0.1)/0.2)*cl((l.start+l.dur+0.25-t)/0.2);
-  X.save();X.globalAlpha=a;X.font='800 36px Fig';X.textAlign='center';const L=wrap(l.text,600);const y0=1020-(L.length-1)*23;
-  X.lineJoin='round';L.forEach((s,i)=>{X.lineWidth=9;X.strokeStyle='rgba(20,18,40,.9)';X.strokeText(s,W/2,y0+i*46);X.fillStyle='#fff';X.fillText(s,W/2,y0+i*46)});
+  const a=cl((t-l.start+0.1)/0.2)*cl((l.start+l.dur+0.25-t)/0.2),rel=t-l.start,ws=l.text.split(' ');
+  X.save();X.globalAlpha=a;X.font='800 38px Fig';X.textBaseline='alphabetic';X.lineJoin='round';
+  // quebra em linhas
+  const rows=[[]];let wcur=0;const sp=X.measureText(' ').width;
+  ws.forEach((w,k)=>{const ww=X.measureText(w).width;if(wcur+ww>600&&rows[rows.length-1].length){rows.push([]);wcur=0}rows[rows.length-1].push([w,ww,k]);wcur+=ww+sp});
+  const y0=1015-(rows.length-1)*24;
+  // caixa de fundo
+  const bw=Math.max(...rows.map(r=>r.reduce((s,x)=>s+x[1]+sp,-sp)))+40,bh=rows.length*48+20;
+  X.fillStyle='rgba(20,18,40,.55)';X.beginPath();X.roundRect(W/2-bw/2,y0-40,bw,bh,16);X.fill();
+  rows.forEach((r,ri)=>{let x=W/2-r.reduce((s,q)=>s+q[1]+sp,-sp)/2;const y=y0+ri*48;
+    r.forEach(([w,ww,k])=>{const on=l.wt&&rel>=l.wt[k],cur=on&&(k===ws.length-1||rel<l.wt[k+1]);
+      X.lineWidth=8;X.strokeStyle='rgba(20,18,40,.95)';X.strokeText(w,x,y);
+      X.fillStyle=cur?'#F4B33D':on?'#fff':'rgba(255,255,255,.55)';
+      if(cur){X.save();X.translate(x+ww/2,y-12);X.scale(1.04,1.04);X.translate(-(x+ww/2),-(y-12));X.strokeText(w,x,y);X.fillText(w,x,y);X.restore()}else X.fillText(w,x,y);
+      x+=ww+sp})});
   X.restore();return l;
 }
 function host(t,f){
@@ -159,7 +171,7 @@ function scene(t,f){
     const a=t-(L5.start-0.25),whip=1-eo(prog(a,0,0.4)),v=cam(IMG.c3_bg,0.43+whip*0.4,0.47,2.5);
     flagWave(IMG.flagNL,v,0.387,0.405,t,ease(prog(t,L5.start+0.3,E.surrender+0.2))*v.s*0.13,0.585);
     tint('rgba(60,30,60,.25)');
-    if(whip>0.05){X.globalAlpha=whip*0.5;for(let i=1;i<5;i++)cam(IMG.c3_bg,0.43+whip*0.4-i*0.03,0.47,2.5,0,0.25);X.globalAlpha=1}
+    if(whip>0.05){for(let i=1;i<4;i++)cam(IMG.c3_bg,0.43+whip*0.4-i*0.02,0.47,2.5,0,whip*0.18)}
     return;
   }
   if(t<B.villa){ // bandeira portuguesa subindo (rendição)
