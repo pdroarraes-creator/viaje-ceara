@@ -130,6 +130,18 @@ tfoot tr.ppl td{color:var(--red)}
 .story .tgl{justify-self:start;font:700 14px var(--body);background:none;border:0;color:var(--sea);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
 .story{display:grid;gap:10px;padding:16px 18px;border-radius:14px;background:var(--card);border-left:5px solid var(--sea)}
 .story p{max-width:64ch}
+body:not(.v-hist) #historias{display:none}
+body.v-hist .wrap>*:not(header.top):not(#historias):not(.news){display:none}
+#historias .back{display:inline-block;margin:4px 0 2px;font-weight:700;text-decoration:none}
+.ep-tabs{display:flex;gap:10px;overflow-x:auto;padding:4px 0 8px;scroll-snap-type:x mandatory}
+.ep-tab{flex:0 0 auto;display:flex;gap:10px;align-items:center;scroll-snap-align:start;padding:8px 14px 8px 8px;border-radius:14px;background:var(--card);border:2px solid var(--rule);color:var(--ink);text-decoration:none;min-width:200px}
+.ep-tab img,.ep-tab .ph{width:44px;height:64px;border-radius:8px;object-fit:cover;flex:none}
+.ep-tab .ph{display:grid;place-items:center;background:var(--rule);font:700 22px var(--body);color:var(--soft)}
+.ep-tab b{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--red)}
+.ep-tab span span{font-size:15px}
+.ep-tab.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--caju) inset}
+.ep-tab.soon{opacity:.55}
+#historias .episode:not(.on){display:none}
 .episode{display:grid;gap:14px}
 .ep-head{display:grid;gap:2px}.ep-num{font:700 13px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
 .ep-head h3{margin:0;font-size:1.35rem}
@@ -398,7 +410,12 @@ body{padding-bottom:88px}
 <section class="block" id="historias">
   <h2><span lang="es">Historias</span><span lang="pt">Histórias</span></h2>
   <p lang="es">Cada sábado, hasta el viaje, Castanha y Caju cuentan un pedacito de Ceará. Acá queda cada episodio con la historia completa, curiosidades y dónde verlo en persona.</p><p lang="pt">Todo sábado, até a viagem, Castanha e Caju contam um pedacinho do Ceará. Aqui fica cada episódio com a história completa, curiosidades e onde ver ao vivo.</p>
-  <article class="episode">
+  <a class="back" href="#roteiro">← <span lang="es">Volver al itinerario</span><span lang="pt">Voltar ao roteiro</span></a>
+  <div class="ep-tabs" role="tablist">
+    <a role="tab" class="ep-tab" href="#historias/1" data-ep="1"><img src="https://pdroarraes-creator.github.io/viaje-ceara/videos/ep01-poster.jpg" alt="" loading="lazy"><span><b><span lang="es">Episodio 1</span><span lang="pt">Episódio 1</span></b><span lang="es">¿Por qué Fortaleza?</span><span lang="pt">Por que Fortaleza?</span></span></a>
+    <span class="ep-tab soon" aria-disabled="true"><span class="ph">2</span><span><b><span lang="es">Episodio 2</span><span lang="pt">Episódio 2</span></b><span lang="es">Próximo sábado</span><span lang="pt">Próximo sábado</span></span></span>
+  </div>
+  <article class="episode" data-ep="1">
     <div class="ep-head"><span class="ep-num"><span lang="es">Episodio 1</span><span lang="pt">Episódio 1</span></span><h3><span lang="es">¿Por qué Fortaleza se llama Fortaleza?</span><span lang="pt">Por que Fortaleza se chama Fortaleza?</span></h3></div>
     <div class="ep-video"><video controls playsinline preload="none" poster="https://pdroarraes-creator.github.io/viaje-ceara/videos/ep01-poster.jpg" src="https://pdroarraes-creator.github.io/viaje-ceara/videos/ep01.mp4"></video></div>
     <p class="note"><span lang="es">En español, con subtítulos. 1 min 38 s.</span><span lang="pt">Em espanhol, com legendas. 1 min 38 s.</span> <a href="https://pdroarraes-creator.github.io/viaje-ceara/videos/ep01.mp4" download><span lang="es">Descargar</span><span lang="pt">Baixar</span></a></p>
@@ -426,6 +443,18 @@ body{padding-bottom:88px}
     <p class="src"><span lang="es">Fuentes:</span><span lang="pt">Fontes:</span> <a target="_blank" rel="noopener" href="https://www.atlasofmutualheritage.nl/page/7132/schoonenburg-fort-fortaleza">Atlas of Mutual Heritage</a>, <a target="_blank" rel="noopener" href="https://mais.opovo.com.br/colunistas/vertical/2026/04/09/10-regiao-militar-celebra-300-anos-de-fortaleza-no-berco-historico-da-capital.html">O Povo, 300 anos e 10ª RM</a>, <a target="_blank" rel="noopener" href="https://mais.opovo.com.br/colunistas/erico-firmo/2026/04/10/300-anos-da-fortaleza-que-nao-comemorou-100-nem-200.html">O Povo, 100 e 200 anos</a>, <a target="_blank" rel="noopener" href="https://diariodonordeste.verdesmares.com.br/metro/10-regiao-militar-esta-aberta-para-visitacao-1.1528141">Diário do Nordeste, visitação (2016)</a>, <a target="_blank" rel="noopener" href="https://diariodonordeste.verdesmares.com.br/ceara/tres-anos-apos-desabar-muralha-da-fortaleza-de-nossa-senhora-da-assuncao-passa-por-reforma-1.3540778">Diário do Nordeste, muralha (2024)</a>, <a target="_blank" rel="noopener" href="https://mais.opovo.com.br/reportagens-especiais/pajeu-redivivo/2026/03/03/onde-esta-o-pajeu-o-riacho-que-sumiu-dos-mapas-de-fortaleza.html">O Povo, riacho Pajeú</a>, <a target="_blank" rel="noopener" href="https://blog.blablacar.com.br/passeios/mercado-central-fortaleza">Mercado Central</a>.</p>
   </article>
 </section>
+<script>
+(function(){
+  function route(){var h=location.hash||"",hist=h.indexOf("#historias")===0;document.body.classList.toggle("v-hist",hist);
+    if(!hist)return;var ep=(h.split("/")[1])||"1",arts=document.querySelectorAll("#historias .episode");
+    var found=false;arts.forEach(function(a){var on=a.dataset.ep===ep;a.classList.toggle("on",on);if(on)found=true});
+    if(!found&&arts[0]){arts[0].classList.add("on");ep=arts[0].dataset.ep}
+    document.querySelectorAll("#historias .ep-tab[data-ep]").forEach(function(t){var on=t.dataset.ep===ep;t.classList.toggle("on",on);t.setAttribute("aria-selected",on)});
+    document.querySelectorAll("#historias video").forEach(function(v){if(!v.closest(".episode.on"))v.pause()});
+    window.scrollTo(0,0)}
+  window.addEventListener("hashchange",route);route();
+})();
+</script>
 <section class="block" id="comer">
   <h2><span lang="es">Comer y moverse</span><span lang="pt">Comer e se locomover</span></h2>
   <p lang="es">Precios promedio por persona, por comida y sin alcohol. Los de restaurantes son de 2025: conviene sumar un 10%.</p>

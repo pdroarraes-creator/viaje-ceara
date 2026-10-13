@@ -198,78 +198,39 @@ Vuelta a las 16:35 del 10/02 · mismo precio, llega a Ezeiza a las 02:15
 Gol · comparar el precio directo con valija
 
 HISTORIAS (episodios de Castanha y Caju):
-Historias
-
-Cada sábado, hasta el viaje, Castanha y Caju cuentan un pedacito de Ceará. Acá queda cada episodio con la historia completa, curiosidades y dónde verlo en persona.
-
-EPISODIO 1
-¿Por qué Fortaleza se llama Fortaleza?
-
-En español, con subtítulos. 1 min 38 s. Descargar
-
-La historia completa
-
-Antes de los holandeses ya había portugueses: en 1612 Martim Soares Moreno levantó el Fuerte de São Sebastião en la Barra do Ceará, y es el mismo Martim de la novela Iracema. Los holandeses lo tomaron en 1637, pero en 1644 un levantamiento indígena los echó del Ceará.
-
-En 1649 los holandeses volvieron. La Compañía de las Indias Occidentales andaba perdiendo la guerra en Pernambuco y necesitaba plata, y se hablaba de minas en las sierras de Ceará. Matias Beck, un comerciante de Recife, salió en marzo y desembarcó en la bahía de Mucuripe el 3 de abril de 1649.
-
-Junto al arroyo Pajeú levantó el Fuerte Schoonenborch, que fue creciendo hasta 1653, cuando tenía 108 soldados. La plata nunca apareció.
-
-En enero de 1654 los holandeses se rindieron en Recife y perdieron Brasil. En Ceará, sus aliados indígenas no lo aceptaron y sitiaron el fuerte. Un barco portugués llegó el 20 de mayo, los holandeses entregaron el fuerte y el 1 de junio partieron hacia Barbados. El capitán Álvaro de Azevedo Barreto lo rebautizó Fortaleza de Nossa Senhora da Assunção.
-
-Alrededor del fuerte creció un pueblo, y el 13 de abril de 1726 se convirtió en villa: la Vila da Fortaleza. En 1823 Don Pedro I la hizo ciudad. Por eso el 13 de abril es el cumpleaños de Fortaleza, y en 2026 cumplió 300 años.
-
-Ver toda la historia y los datos
-Curiosidades
-Los holandeses terminaron rescatados
-
-Cuando Holanda se rindió en Brasil, sus aliados indígenas se enojaron y sitiaron el fuerte. Fueron los portugueses quienes llegaron por mar y salvaron a los holandeses.
-
-Un nombre de oficina
-
-Schoonenborch no era un soldado: era Wouter van Schoonenborch, consejero de la Compañía de las Indias Occidentales en Recife. El fuerte lo diseñó un inglés, Richard Carr.
-
-Reciclaje del siglo XVII
-
-Parte del material salió de las ruinas de un fuerte anterior, el de São Sebastião, en la Barra do Ceará, que los indígenas habían destruido en 1644.
-
-El arroyo escondido
-
-El Pajeú, donde nació todo, hoy corre casi entero bajo tierra: lo canalizaron en los años 60. Uno de los pocos tramos visibles está detrás del estacionamiento del Mercado Central.
-
-Una heroína en el túnel
-
-Se cree que en un túnel del fuerte estuvo presa Bárbara de Alencar, heroína de la revolución de 1817. Ahí también se guardan las cenizas del General Sampaio, héroe de la Guerra del Paraguay.
-
-300 años, pero sin fiesta de 100
-
-La ciudad nunca celebró sus 100 ni sus 200 años. Los 300, el 13 de abril de 2026, sí: hubo feriado y homenaje del Ejército en el propio fuerte.
-
-Dónde está hoy
-
-El fuerte sigue en pie, en el centro, frente al mar: es la sede de la 10ª Región Militar del Ejército. Parte de la muralla se derrumbó en 2021 y la reconstruyeron desde 2024.
-
-Dirección
-Av. Alberto Nepomuceno, s/n, Centro
-Visita
-Guiada y gratis, ~30 min
-Horario
-Lun. a vie. 8–16 h; fin de semana hasta 12 h (dato de 2016: confirmar)
-Mapa
-Fotos
-Cuándo lo vamos a ver
-
-El jueves 28/01 a la tarde es de compras. Si eligen el Mercado Central (castañas, encajes, hamacas), el fuerte está en la misma avenida, a pocas cuadras: es la oportunidad de ver dónde nació la ciudad. Y detrás del estacionamiento del Mercado se asoma el Pajeú.
-
-Mercado Central
-Av. Alberto Nepomuceno, 199
-Horario
-Lun. a sáb. 9–17 h; dom. 8–13 h
-Cerca
-Catedral Metropolitana
-Caminando del Mercado al fuerte
-
-Fuentes: Atlas of Mutual Heritage, O Povo, 300 anos e 10ª RM, O Povo, 100 e 200 anos, Diário do Nordeste, visitação (2016), Diário do Nordeste, muralha (2024), O Povo, riacho Pajeú, Mercado Central.
+HistoriasHistórias
+  Cada sábado, hasta el viaje, Castanha y Caju cuentan un pedacito de Ceará. Acá queda cada episodio con la historia completa, curiosidades y dónde verlo en persona.Todo sábado, até a viagem, Castanha e Caju contam um pedacinho do Ceará. Aqui fica cada episódio com a história completa, curiosidades e onde ver ao vivo.
+  ← Volver al itinerarioVoltar ao roteiro
+  
+    Episodio 1Episódio 1¿Por qué Fortaleza?Por que Fortaleza?
+    2Episodio 2Episódio 2Próximo sábadoPróximo sábado
+  
+  
+    Episodio 1Episódio 1¿Por qué Fortaleza se llama Fortaleza?Por que Fortaleza se chama Fortaleza?
+    
+    En español, con subtítulos. 1 min 38 s.Em espanhol, com legendas. 1 min 38 s. DescargarBaixar
+    La historia completaA história completa
+      Antes de los holandeses ya había portugueses: en 1612 Martim Soares Moreno levantó el Fuerte de São Sebastião en la Barra do Ceará, y es el mismo Martim de la novela Iracema. Los holandeses lo tomaron en 1637, pero en 1644 un levantamiento indígena los echó del Ceará.Antes dos holandeses já havia portugueses: em 1612 Martim Soares Moreno ergueu o Forte de São Sebastião na Barra do Ceará, e é o mesmo Martim do romance Iracema. Os holandeses o tomaram em 1637, mas em 1644 uma revolta indígena os expulsou do Ceará.
+      
+      
+      
+      
+    En 1649 los holandeses volvieron. La Compañía de las Indias Occidentales andaba perdiendo la guerra en Pernambuco y necesitaba plata, y se hablaba de minas en las sierras de Ceará. Matias Beck, un comerciante de Recife, salió en marzo y desembarcó en la bahía de Mucuripe el 3 de abril de 1649.Em 1649 os holandeses voltaram. A Companhia das Índias Ocidentais estava perdendo a guerra em Pernambuco e precisava de dinheiro, e se falava em minas de prata nas serras do Ceará. Matias Beck, um comerciante do Recife, partiu em março e desembarcou na enseada do Mucuripe em 3 de abril de 1649.Junto al arroyo Pajeú levantó el Fuerte Schoonenborch, que fue creciendo hasta 1653, cuando tenía 108 soldados. La plata nunca apareció.Junto ao riacho Pajeú ergueu o Forte Schoonenborch, que foi crescendo até 1653, quando tinha 108 soldados. A prata nunca apareceu.En enero de 1654 los holandeses se rindieron en Recife y perdieron Brasil. En Ceará, sus aliados indígenas no lo aceptaron y sitiaron el fuerte. Un barco portugués llegó el 20 de mayo, los holandeses entregaron el fuerte y el 1 de junio partieron hacia Barbados. El capitán Álvaro de Azevedo Barreto lo rebautizó Fortaleza de Nossa Senhora da Assunção.Em janeiro de 1654 os holandeses se renderam no Recife e perderam o Brasil. No Ceará, os aliados indígenas não aceitaram e cercaram o forte. Um navio português chegou em 20 de maio, os holandeses entregaram o forte e em 1º de junho partiram para Barbados. O capitão Álvaro de Azevedo Barreto o rebatizou de Fortaleza de Nossa Senhora da Assunção.Alrededor del fuerte creció un pueblo, y el 13 de abril de 1726 se convirtió en villa: la Vila da Fortaleza. En 1823 Don Pedro I la hizo ciudad. Por eso el 13 de abril es el cumpleaños de Fortaleza, y en 2026 cumplió 300 años.Ao redor do forte cresceu um povoado, e em 13 de abril de 1726 ele virou vila: a Vila da Fortaleza. Em 1823 Dom Pedro I a elevou a cidade. Por isso 13 de abril é o aniversário de Fortaleza, e em 2026 ela fez 300 anos.Ver toda la historia y los datosVer toda a história e os dados
+    CuriosidadesCuriosidades
+    Los holandeses terminaron rescatadosOs holandeses terminaram resgatadosCuando Holanda se rindió en Brasil, sus aliados indígenas se enojaron y sitiaron el fuerte. Fueron los portugueses quienes llegaron por mar y salvaron a los holandeses.Quando a Holanda se rendiu no Brasil, os aliados indígenas ficaram furiosos e cercaram o forte. Foram os portugueses que chegaram pelo mar e salvaram os holandeses.Un nombre de oficinaUm nome de escritórioSchoonenborch no era un soldado: era Wouter van Schoonenborch, consejero de la Compañía de las Indias Occidentales en Recife. El fuerte lo diseñó un inglés, Richard Carr.Schoonenborch não era soldado: era Wouter van Schoonenborch, conselheiro da Companhia das Índias Ocidentais no Recife. O forte foi projetado por um inglês, Richard Carr.Reciclaje del siglo XVIIReciclagem do século XVIIParte del material salió de las ruinas de un fuerte anterior, el de São Sebastião, en la Barra do Ceará, que los indígenas habían destruido en 1644.Parte do material veio das ruínas de um forte anterior, o de São Sebastião, na Barra do Ceará, que os indígenas tinham destruído em 1644.El arroyo escondidoO riacho escondidoEl Pajeú, donde nació todo, hoy corre casi entero bajo tierra: lo canalizaron en los años 60. Uno de los pocos tramos visibles está detrás del estacionamiento del Mercado Central.O Pajeú, onde tudo começou, hoje corre quase inteiro debaixo da terra: foi canalizado nos anos 60. Um dos poucos trechos visíveis fica atrás do estacionamento do Mercado Central.Una heroína en el túnelUma heroína no túnelSe cree que en un túnel del fuerte estuvo presa Bárbara de Alencar, heroína de la revolución de 1817. Ahí también se guardan las cenizas del General Sampaio, héroe de la Guerra del Paraguay.Acredita-se que num túnel do forte ficou presa Bárbara de Alencar, heroína da revolução de 1817. Ali também estão as cinzas do General Sampaio, herói da Guerra do Paraguai.300 años, pero sin fiesta de 100300 anos, mas sem festa de 100La ciudad nunca celebró sus 100 ni sus 200 años. Los 300, el 13 de abril de 2026, sí: hubo feriado y homenaje del Ejército en el propio fuerte.A cidade nunca comemorou 100 nem 200 anos. Os 300, em 13 de abril de 2026, sim: teve feriado e homenagem do Exército no próprio forte.
+    
+      Dónde está hoyOnde fica hoje
+      El fuerte sigue en pie, en el centro, frente al mar: es la sede de la 10ª Región Militar del Ejército. Parte de la muralla se derrumbó en 2021 y la reconstruyeron desde 2024.O forte continua de pé, no centro, de frente para o mar: é a sede da 10ª Região Militar do Exército. Parte da muralha desabou em 2021 e foi reconstruída a partir de 2024.
+      DirecciónEndereçoAv. Alberto Nepomuceno, s/n, CentroVisitaVisitaGuiada y gratis, ~30 minGuiada e grátis, ~30 minHorarioHorárioLun. a vie. 8–16 h; fin de semana hasta 12 h (dato de 2016: confirmar)Seg. a sex. 8–16 h; fim de semana até 12 h (dado de 2016: confirmar)
+      MapaMapaFotos
+    
+    
+      Cuándo lo vamos a verQuando vamos ver
+      El jueves 28/01 a la tarde es de compras. Si eligen el Mercado Central (castañas, encajes, hamacas), el fuerte está en la misma avenida, a pocas cuadras: es la oportunidad de ver dónde nació la ciudad. Y detrás del estacionamiento del Mercado se asoma el Pajeú.Quinta 28/01 à tarde é de compras. Se escolherem o Mercado Central (castanhas, rendas, redes), o forte fica na mesma avenida, a poucas quadras: é a chance de ver onde a cidade nasceu. E atrás do estacionamento do Mercado aparece o Pajeú.
+      Mercado CentralAv. Alberto Nepomuceno, 199HorarioHorárioLun. a sáb. 9–17 h; dom. 8–13 hSeg. a sáb. 9–17 h; dom. 8–13 hCercaPertoCatedral MetropolitanaCatedral Metropolitana
+      Caminando del Mercado al fuerteA pé do Mercado ao forte
+    
+    Fuentes:Fontes: Atlas of Mutual Heritage, O Povo, 300 anos e 10ª RM, O Povo, 100 e 200 anos, Diário do Nordeste, visitação (2016), Diário do Nordeste, muralha (2024), O Povo, riacho Pajeú, Mercado Central.
 
 COMIDA Y AUTO:
 Comer y moverse
