@@ -95,7 +95,7 @@ async function trip(env) {
     const url = (env.ALLOWED_ORIGIN || "https://pdroarraes-creator.github.io") + "/viaje-ceara/conocimiento.txt?t=" + Math.floor(Date.now() / 3600000);
     const r = await fetch(url);
     if (!r.ok) return "";
-    const t = (await r.text()).slice(0, 14000);
+    const t = (await r.text()).slice(0, 22000);
     await env.QA.put("bot:knowledge", t, { expirationTtl: 3600 });
     return t;
   } catch { return ""; }
