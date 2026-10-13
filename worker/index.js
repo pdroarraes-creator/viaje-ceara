@@ -78,13 +78,13 @@ export default {
 
     // Mandar un aviso ya a todos (página /admin, para probar)
     if (url.pathname === "/push-now") {
-      if (!env.ADMIN_KEY || !safeEqual(String(body.key || ""), env.ADMIN_KEY)) return json({ error: "wrong_key" }, 401);
+      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
       return json(await notifyAll(env));
     }
 
     // Exportar todo (página /admin)
     if (url.pathname === "/export") {
-      if (!env.ADMIN_KEY || !safeEqual(String(body.key || ""), env.ADMIN_KEY)) return json({ error: "wrong_key" }, 401);
+      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
       return json({ items: await listQA(env, 1000) });
     }
 
@@ -270,7 +270,7 @@ const ADMIN_PAGE = `<!doctype html><html lang="pt"><head><meta charset="utf-8"><
 <title>Perguntas do viaje-ceara</title>
 <style>body{font:16px system-ui,sans-serif;max-width:760px;margin:0 auto;padding:16px}input,button{font:inherit;padding:8px 12px}textarea{width:100%;height:60vh;font:13px ui-monospace,monospace}</style></head>
 <body><h1>Perguntas e respostas salvas</h1>
-<form id="f"><input id="k" type="password" placeholder="ADMIN_KEY" autocomplete="off"> <button>Ver</button></form>
+<form id="f"><input id="k" type="password" placeholder="ADMIN_KEY" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"> <button>Ver</button></form>
 <p><button id="pt" type="button">Enviar aviso de teste agora</button> <span id="ps"></span></p>
 <p id="s"></p><textarea id="o" readonly></textarea>
 <script>
