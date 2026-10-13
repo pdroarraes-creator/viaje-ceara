@@ -504,7 +504,7 @@ body{padding-bottom:88px}
   })();
   // historias: resumir / ver todo
   // empieza resumida: solo el primer párrafo; el resto (datos y fuentes incluidos) va en "ver todo"
-  let shortMode=true;try{shortMode=localStorage.getItem("story-open")!=="1"}catch(e){}
+  let shortMode=true; // siempre arranca resumido en cada visita
   const stories=[...document.querySelectorAll(".story")];
   stories.forEach(st=>{
     const kids=[...st.children].filter(el=>el.tagName!=="H3");
@@ -513,7 +513,7 @@ body{padding-bottom:88px}
     st.append(more);
     const b=document.createElement("button");b.type="button";b.className="tgl";
     st.append(b);
-    b.onclick=()=>{shortMode=!shortMode;try{localStorage.setItem("story-open",shortMode?"0":"1")}catch(e){}applyShort();if(shortMode)st.scrollIntoView({block:"nearest",behavior:"smooth"})};
+    b.onclick=()=>{shortMode=!shortMode;applyShort();if(shortMode)st.scrollIntoView({block:"nearest",behavior:"smooth"})};
   });
   function applyShort(){stories.forEach(st=>{st.querySelector(".more").hidden=shortMode;
     st.querySelector(".tgl").innerHTML=shortMode?'<span lang="es">Ver toda la historia y los datos</span><span lang="pt">Ver toda a história e os dados</span>':'<span lang="es">Resumir</span><span lang="pt">Resumir</span>'})}
