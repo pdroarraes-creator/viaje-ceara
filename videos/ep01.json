@@ -8,68 +8,57 @@
  "turns": [
   {
    "speaker": "Castanha",
-   "style": "alegre, presentando un programa",
-   "text": "¡Hola, familia! Esto es Rumbo a Ceará: cada sábado, hasta el viaje, les contamos un pedacito de Fortaleza. Yo soy Castanha..."
+   "style": "alegre, abriendo un programa",
+   "beat": "mapa",
+   "text": "¡Hola, familia! Esto es Rumbo a Ceará. Episodio uno: ¿por qué Fortaleza se llama Fortaleza?"
   },
   {
    "speaker": "Caju",
-   "style": "simpático, con humor",
-   "text": "...y yo, Caju. Dos cearenses de Fortaleza, así que perdonen el portuñol."
+   "style": "narrando, con misterio",
+   "beat": "barcos",
+   "text": "Para saberlo hay que volver a 1649. Desde el mar llegan barcos holandeses."
   },
   {
    "speaker": "Castanha",
-   "style": "intrigada",
-   "text": "Pregunta del día: ¿por qué una ciudad se llama Fortaleza?"
+   "style": "divertida",
+   "beat": "barcos",
+   "text": "Al frente viene Matías Beck. Busca plata en las sierras... y no encuentra nada."
   },
   {
    "speaker": "Caju",
-   "style": "canchero, seguro",
-   "text": "Fácil: porque tiene un fuerte. Siguiente."
+   "style": "narrando",
+   "beat": "fuerte",
+   "text": "Pero junto al arroyo Pajeú levanta un fuerte de madera: el Schoonenborch."
   },
   {
    "speaker": "Castanha",
-   "style": "contando un secreto",
-   "text": "Ah, pero ¿de quién era el fuerte? En 1649 llegaron los holandeses, que ya dominaban Pernambuco."
+   "style": "tensa, dramática",
+   "beat": "guerra",
+   "text": "Lejos de acá, en Pernambuco, la guerra contra los holandeses se pone fea."
   },
   {
    "speaker": "Caju",
-   "style": "narrador de aventura",
-   "text": "Su jefe, Matías Beck, vino buscando minas de plata. Plata no encontró, pero levantó un fuerte junto al arroyo Pajeú: el Schoonenborch."
+   "style": "dramático, después aliviado",
+   "beat": "guerra",
+   "text": "Y en 1654 se rinden. Los portugueses toman el fuerte y le cambian el nombre."
   },
   {
    "speaker": "Castanha",
-   "style": "irónica",
-   "text": "Lindo nombre. Imposible de pronunciar, pero lindo."
+   "style": "cálida, contando una historia",
+   "beat": "villa",
+   "text": "Alrededor del fuerte crecen casas, calles, una iglesia... y en 1726 nace la villa."
   },
   {
    "speaker": "Caju",
-   "style": "narrador",
-   "text": "Duró poco. En 1654 los holandeses se rindieron, los portugueses se quedaron con el fuerte y lo rebautizaron Nossa Senhora da Assunção."
+   "style": "orgulloso, con humor",
+   "beat": "hoy",
+   "text": "¿Y qué nombre le pusieron? El del fuerte: Fortaleza. En 2026 cumplió trescientos años."
   },
   {
    "speaker": "Castanha",
-   "style": "cálida",
-   "text": "Y el pueblo que creció alrededor terminó llamándose como el fuerte. La villa se fundó en 1726, así que en 2026 Fortaleza cumplió 300 años."
-  },
-  {
-   "speaker": "Caju",
-   "style": "orgulloso",
-   "text": "El fuerte sigue ahí: hoy es un cuartel del ejército."
-  },
-  {
-   "speaker": "Castanha",
-   "style": "desafiante, divertida",
-   "text": "Si en algún momento del viaje pasan por el centro, el fuerte está ahí, mirando al mar."
-  },
-  {
-   "speaker": "Caju",
-   "style": "ilusionado",
-   "text": "Y nosotros, mientras tanto, seguimos acá en el celular, atentos a lo que pregunten."
-  },
-  {
-   "speaker": "Castanha",
-   "style": "riéndose",
-   "text": "La semana que viene, más Fortaleza. ¡Hasta el sábado!"
+   "style": "alegre, despidiéndose",
+   "beat": "fin",
+   "text": "Si pasan por el centro, el fuerte sigue ahí, mirando al mar. ¡Hasta el sábado!"
   }
  ]
 }
