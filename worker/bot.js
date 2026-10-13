@@ -33,6 +33,20 @@ function roleOf(env, from) {
   return "externo";
 }
 
+// Datos reales del viaje: texto plano que se genera del sitio (knowledge.py) y se publica junto a él. Cache 1 hora en KV.
+async function trip(env) {
+  try {
+    const c = await env.QA.get("bot:knowledge");
+    if (c) return c;
+    const url = (env.ALLOWED_ORIGIN || "https://pdroarraes-creator.github.io") + "/viaje-ceara/conocimiento.txt?t=" + Math.floor(Date.now() / 3600000);
+    const r = await fetch(url);
+    if (!r.ok) return "";
+    const t = (await r.text()).slice(0, 14000);
+    await env.QA.put("bot:knowledge", t, { expirationTtl: 3600 });
+    return t;
+  } catch { return ""; }
+}
+
 export async function handleBot(body, env, json, safeEqual) {
   if (!env.BOT_KEY) return json({ error: "bot_key_not_set" }, 503);
   if (!safeEqual(String(body.botKey || ""), String(env.BOT_KEY))) return json({ error: "wrong_key" }, 401);
@@ -57,17 +71,21 @@ export async function handleBot(body, env, json, safeEqual) {
   const who = String(body.name || role).slice(0, 30);
   const contents = [...hist, { role: "user", parts: [{ text: `[${who}, ${role}] ${text}` }] }];
 
+  const datos = await trip(env);
   const system = PERSONAS[bot] +
+    (datos ? ` DATOS REALES DEL VIAJE A CEARÁ (usalos como única fuente para fechas, lugares, horarios y precios; si algo no está acá, decí que no lo sabés y no inventes; no digas que "todavía no está definido" si está en los datos):\n${datos}\n---\n` : "") +
     ` Quien te escribe ahora tiene el rol "${role}". ` +
     (role === "hijo" ? "Es un chico: sé divertido y cuidadoso, ayudalo con curiosidades o tarea, nada de finanzas." : "");
   const model = env.GEMINI_MODEL || "gemini-3.1-flash-lite";
   let reply = "";
   try {
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    const call = () => fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
-      body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents, generationConfig: { maxOutputTokens: 300, temperature: 0.8 } }),
+      body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents, generationConfig: { maxOutputTokens: 500, temperature: 0.5 } }),
     });
+    let r = await call();
+    for (let i = 0; i < 2 && (r.status === 503 || r.status === 429); i++) { await new Promise(res => setTimeout(res, 1500)); r = await call(); }
     if (!r.ok) return json({ error: "upstream", status: r.status }, 502);
     const d = await r.json();
     reply = (d.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("").trim();
