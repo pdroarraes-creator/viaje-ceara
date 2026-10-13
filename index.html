@@ -757,6 +757,11 @@ body{padding-bottom:88px}
     if(!ASK_API)return;
     show("ask-off",false);
     let pw=""; try{pw=localStorage.getItem("pw")||""}catch(e){}
+    // registro anónimo de accesos: un código al azar por aparelho, sin nombre ni IP
+    const logVisit=kind=>{try{
+      let vid="";try{vid=localStorage.getItem("vid")||"";if(!vid){vid=Math.random().toString(36).slice(2,10);localStorage.setItem("vid",vid)}}catch(e){}
+      const app=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
+      fetch(ASK_API.replace(/\/$/,"")+"/visit",{method:"POST",headers:{"Content-Type":"application/json"},keepalive:true,body:JSON.stringify({kind,vid,lang:LANG,app:!!app})}).catch(()=>{})}catch(e){}};
     const enter=async(p)=>{
       p=String(p||"").trim();
       try{const h=await api("/history",{password:p});pw=p;try{localStorage.setItem("pw",p)}catch(e){}
@@ -766,11 +771,12 @@ body{padding-bottom:88px}
     document.getElementById("ask-pw").onsubmit=async ev=>{ev.preventDefault();
       const st=document.getElementById("pw-status");st.textContent="…";
       const r=await enter(document.getElementById("pw").value);
+      if(r==="ok")logVisit("open_ok");else if(r==="wrong_password")logVisit("wrong_pw");
       st.textContent=r==="ok"?"":r==="wrong_password"?(LANG==="es"?"Contraseña incorrecta.":"Senha incorreta."):
         (LANG==="es"?"No se pudo conectar con el asistente ("+r+"). Probá en un rato.":"Não deu para conectar com o assistente ("+r+"). Tente daqui a pouco.")};
     document.getElementById("pw-eye").onclick=function(){const i=document.getElementById("pw"),on=i.type==="password";
       i.type=on?"text":"password";this.setAttribute("aria-pressed",String(on));this.setAttribute("aria-label",on?"Ocultar contraseña":"Mostrar contraseña");i.focus()};
-    (async()=>{if(!(pw&&await enter(pw)==="ok"))show("ask-pw",true)})();
+    (async()=>{if(pw&&await enter(pw)==="ok")logVisit("open_ok");else{show("ask-pw",true);logVisit("open_nopw")}})();
     stopEl.hidden=true;
     goEl.onclick=async()=>{
       const q=qEl.value.trim(); if(!q){stEl.textContent=T("empty");return}

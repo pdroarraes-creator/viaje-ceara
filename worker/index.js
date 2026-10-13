@@ -113,6 +113,33 @@ export default {
     }
 
     // Mandar un aviso ya a todos (página /admin, para probar)
+    // Registro anónimo de accesos (sin contraseña; no guarda IP ni nombre)
+    if (url.pathname === "/visit") {
+      if (!env.QA) return json({ ok: false });
+      const ua = String(request.headers.get("User-Agent") || "");
+      const dev = /iPhone|iPod/.test(ua) ? "iPhone" : /iPad/.test(ua) ? "iPad" : /Android/.test(ua) ? "Android" : /Windows/.test(ua) ? "Windows" : /Macintosh/.test(ua) ? "Mac" : /Linux/.test(ua) ? "Linux" : "otro";
+      const br = /Edg\//.test(ua) ? "Edge" : /Firefox|FxiOS/.test(ua) ? "Firefox" : /CriOS|Chrome/.test(ua) ? "Chrome" : /Safari/.test(ua) ? "Safari" : "otro";
+      const kind = ["open_ok", "open_nopw", "wrong_pw"].includes(body.kind) ? body.kind : "open_nopw";
+      const vid = String(body.vid || "").replace(/[^a-z0-9]/gi, "").slice(0, 12);
+      const cf = request.cf || {};
+      const t = Date.now();
+      const meta = {
+        t, kind, vid, dev, br,
+        lang: body.lang === "pt" ? "pt" : "es",
+        app: body.app ? 1 : 0,
+        place: [cf.city, cf.country].filter(Boolean).join(", ").slice(0, 60),
+      };
+      const key = "visit:" + String(9999999999999 - t).padStart(13, "0") + ":" + Math.random().toString(36).slice(2, 6);
+      await env.QA.put(key, "1", { metadata: meta, expirationTtl: 60 * 86400 });
+      return json({ ok: true });
+    }
+
+    if (url.pathname === "/visits") {
+      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
+      const l = await env.QA.list({ prefix: "visit:", limit: 1000 });
+      return json({ items: l.keys.map(k => k.metadata).filter(Boolean) });
+    }
+
     if (url.pathname === "/push-now") {
       if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
       return json(await notifyAll(env));

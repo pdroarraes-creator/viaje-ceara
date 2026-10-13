@@ -9,6 +9,7 @@ input,button,select{font:inherit;padding:8px 12px;border-radius:8px;border:1.5px
 button{background:#F4B33D;font-weight:700;cursor:pointer}button:disabled{opacity:.5}
 textarea{width:100%;box-sizing:border-box;font:13px ui-monospace,monospace;border-radius:8px;border:1.5px solid #1E2350;padding:8px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid #c9bfa8;padding:5px 6px;text-align:left}
 .muted{color:#555;font-size:14px}audio{width:100%;margin-top:8px}
 </style></head>
 <body><h1>Admin do Rumo ao Ceará</h1>
@@ -20,6 +21,9 @@ textarea{width:100%;box-sizing:border-box;font:13px ui-monospace,monospace;borde
 <textarea id="o" readonly rows="8"></textarea>
 
 <h2>Avisos no celular</h2>
+<h2>Acessos ao site (anônimo, últimos 60 dias)</h2>
+<div class="row"><button id="vv" type="button">Ver acessos</button> <span id="vs" class="muted"></span></div>
+<div id="vt"></div>
 <div class="row"><button id="pt" type="button">Enviar aviso de teste agora</button> <span id="ps" class="muted"></span></div>
 
 <h2>Estúdio de voz (episódios)</h2>
@@ -41,6 +45,12 @@ var KEY="";
 function post(path,data){data.key=KEY;return fetch(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error((j.error||"erro")+(j.status?" "+j.status:"")+(j.detail?" · "+j.detail:""));return j})})}
 f.onsubmit=function(e){e.preventDefault();KEY=k.value;s.textContent="Conferindo…";post("/export",{}).then(function(d){s.textContent="Ok. "+d.items.length+" perguntas salvas.";o.value=JSON.stringify(d.items,null,2)}).catch(function(){s.textContent="Chave errada."})};
 ver.onclick=function(){post("/export",{}).then(function(d){o.value=JSON.stringify(d.items,null,2)}).catch(function(e){o.value=e.message})};
+vv.onclick=function(){vs.textContent="Carregando…";post("/visits",{}).then(function(d){var it=d.items,day={},tz="America/Argentina/Buenos_Aires",fm=new Intl.DateTimeFormat("pt-BR",{timeZone:tz,day:"2-digit",month:"2-digit"}),hm=new Intl.DateTimeFormat("pt-BR",{timeZone:tz,hour:"2-digit",minute:"2-digit"});
+ var devs={};it.forEach(function(v){var k=fm.format(v.t);(day[k]=day[k]||{n:0,s:{}}).n++;day[k].s[v.vid||"?"]=1;devs[v.vid||"?"]=1});
+ vs.textContent=it.length+" acessos, "+Object.keys(devs).length+" aparelhos diferentes.";
+ var h="<table><tr><th>Dia</th><th>Acessos</th><th>Aparelhos</th></tr>";Object.keys(day).forEach(function(k){h+="<tr><td>"+k+"</td><td>"+day[k].n+"</td><td>"+Object.keys(day[k].s).length+"</td></tr>"});h+="</table><p class=muted>Últimos 40:</p><table><tr><th>Quando</th><th>Aparelho</th><th>Lugar</th><th>Idioma</th><th>Tipo</th></tr>";
+ var tp={open_ok:"entrou",open_nopw:"abriu, sem senha",wrong_pw:"senha errada"};
+ it.slice(0,40).forEach(function(v){h+="<tr><td>"+fm.format(v.t)+" "+hm.format(v.t)+"</td><td>"+v.dev+" · "+v.br+(v.app?" (app)":"")+" · "+(v.vid||"").slice(0,4)+"</td><td>"+(v.place||"?")+"</td><td>"+v.lang+"</td><td>"+(tp[v.kind]||v.kind)+"</td></tr>"});vt.innerHTML=h+"</table>"}).catch(function(e){vs.textContent=e.message})};
 pt.onclick=function(){ps.textContent="Enviando…";post("/push-now",{}).then(function(d){ps.textContent=d.subscribers+" celulares, "+d.sent+" enviados, "+d.removed+" removidos, "+d.failed+" com erro."}).catch(function(e){ps.textContent=e.message})};
 
 var SITE="https://pdroarraes-creator.github.io/viaje-ceara/videos/";
