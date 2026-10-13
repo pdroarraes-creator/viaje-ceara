@@ -2,72 +2,72 @@
  "id": "ep01",
  "title": "¿Por qué Fortaleza se llama Fortaleza?",
  "speakers": {
-  "Caju": "female",
-  "Baião": "male"
+  "Castanha": "female",
+  "Caju": "male"
  },
  "turns": [
   {
-   "speaker": "Caju",
+   "speaker": "Castanha",
    "style": "alegre, presentando un programa",
-   "text": "¡Hola, familia! Esto es Rumbo a Ceará: cada sábado, hasta el viaje, les contamos un pedacito de Fortaleza. Yo soy Caju..."
-  },
-  {
-   "speaker": "Baião",
-   "style": "simpático, con humor",
-   "text": "...y yo, Baião. Dos robots cearenses, así que perdonen el portuñol."
+   "text": "¡Hola, familia! Esto es Rumbo a Ceará: cada sábado, hasta el viaje, les contamos un pedacito de Fortaleza. Yo soy Castanha..."
   },
   {
    "speaker": "Caju",
+   "style": "simpático, con humor",
+   "text": "...y yo, Caju. Dos robots cearenses, así que perdonen el portuñol."
+  },
+  {
+   "speaker": "Castanha",
    "style": "intrigada",
    "text": "Pregunta del día: ¿por qué una ciudad se llama Fortaleza?"
   },
   {
-   "speaker": "Baião",
+   "speaker": "Caju",
    "style": "canchero, seguro",
    "text": "Fácil: porque tiene un fuerte. Siguiente."
   },
   {
-   "speaker": "Caju",
+   "speaker": "Castanha",
    "style": "contando un secreto",
    "text": "Ah, pero ¿de quién era el fuerte? En 1649 llegaron los holandeses, que ya dominaban Pernambuco."
   },
   {
-   "speaker": "Baião",
+   "speaker": "Caju",
    "style": "narrador de aventura",
    "text": "Su jefe, Matías Beck, vino buscando minas de plata. Plata no encontró, pero levantó un fuerte junto al arroyo Pajeú: el Schoonenborch."
   },
   {
-   "speaker": "Caju",
+   "speaker": "Castanha",
    "style": "irónica",
    "text": "Lindo nombre. Imposible de pronunciar, pero lindo."
   },
   {
-   "speaker": "Baião",
+   "speaker": "Caju",
    "style": "narrador",
    "text": "Duró poco. En 1654 los holandeses se rindieron, los portugueses se quedaron con el fuerte y lo rebautizaron Nossa Senhora da Assunção."
   },
   {
-   "speaker": "Caju",
+   "speaker": "Castanha",
    "style": "cálida",
    "text": "Y el pueblo que creció alrededor terminó llamándose como el fuerte. La villa se fundó en 1726, así que en 2026 Fortaleza cumplió 300 años."
   },
   {
-   "speaker": "Baião",
+   "speaker": "Caju",
    "style": "orgulloso",
    "text": "El fuerte sigue ahí: hoy es un cuartel del ejército."
   },
   {
-   "speaker": "Caju",
+   "speaker": "Castanha",
    "style": "desafiante, divertida",
    "text": "Si en algún momento del viaje pasan por el centro, el fuerte está ahí, mirando al mar."
   },
   {
-   "speaker": "Baião",
+   "speaker": "Caju",
    "style": "ilusionado",
    "text": "Y nosotros, mientras tanto, seguimos acá en el celular. Ventajas de ser robots."
   },
   {
-   "speaker": "Caju",
+   "speaker": "Castanha",
    "style": "riéndose",
    "text": "La semana que viene, más Fortaleza. ¡Hasta el sábado!"
   }

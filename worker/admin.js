@@ -33,8 +33,8 @@ table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px
  <button id="lv" type="button">Carregar vozes</button>
  <label class="muted"><input type="checkbox" id="allang"> incluir vozes em espanhol</label>
 </div>
-<div class="row">Caju (ela): <select id="vc"></select> <button type="button" class="try" data-who="Caju">Ouvir</button></div>
-<div class="row">Baião (ele): <select id="vb"></select> <button type="button" class="try" data-who="Baião">Ouvir</button></div>
+<div class="row">Castanha (ela): <select id="vc"></select> <button type="button" class="try" data-who="Castanha">Ouvir</button></div>
+<div class="row">Caju (ele): <select id="vb"></select> <button type="button" class="try" data-who="Caju">Ouvir</button></div>
 <div class="row"><button id="gen" type="button">Gerar episódio</button> <span id="gs" class="muted"></span></div>
 <audio id="au" controls hidden></audio>
 <div class="row"><a id="dl" hidden>Baixar .wav</a></div>
@@ -66,12 +66,12 @@ function pcmOf(bytes){ // devolve {pcm, rate} de um WAV (ou PCM cru 24k)
  return{pcm:bytes,rate:24000}}
 function wav(chunks,rate){var n=0;chunks.forEach(function(c){n+=c.length});var b=new Uint8Array(44+n),dv=new DataView(b.buffer);function w(o,str){for(var i=0;i<4;i++)b[o+i]=str.charCodeAt(i)}
  w(0,"RIFF");dv.setUint32(4,36+n,true);w(8,"WAVE");w(12,"fmt ");dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);dv.setUint32(24,rate,true);dv.setUint32(28,rate*2,true);dv.setUint16(32,2,true);dv.setUint16(34,16,true);w(36,"data");dv.setUint32(40,n,true);var p=44;chunks.forEach(function(c){b.set(c,p);p+=c.length});return new Blob([b],{type:"audio/wav"})}
-function voiceFor(who){return who==="Caju"?vc.value:vb.value}
+function voiceFor(who){return who==="Castanha"?vc.value:vb.value}
 function show(blob,name){au.src=URL.createObjectURL(blob);au.hidden=false;au.play();dl.href=au.src;dl.download=name;dl.hidden=false;dl.textContent="Baixar "+name}
 document.querySelectorAll(".try").forEach(function(btn){btn.onclick=function(){var who=btn.dataset.who;gs.textContent="Gerando amostra…";
  post("/tts",{voice:voiceFor(who),text:"¡Hola! Soy "+who+", un robot de Fortaleza. Cada sábado les cuento un poco de la ciudad.",style:"alegre"}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));show(wav([x.pcm],x.rate),"amostra-"+who+".wav");gs.textContent=""}).catch(function(e){gs.textContent=e.message})}});
 gen.onclick=function(){var S;try{S=JSON.parse(sc.value)}catch(e){gs.textContent="Roteiro com erro de JSON.";return}
- gen.disabled=true;var out=[],rate=24000,i=0;var meta={id:S.id,voices:{Caju:vc.value,"Baião":vb.value},gap:0.45,turns:[]};
+ gen.disabled=true;var out=[],rate=24000,i=0;var meta={id:S.id,voices:{Castanha:vc.value,Caju:vb.value},gap:0.45,turns:[]};
  function next(){if(i>=S.turns.length){var gap=new Uint8Array(Math.round(rate*meta.gap)*2);var parts=[];out.forEach(function(c,j){if(j)parts.push(gap);parts.push(c)});
    show(wav(parts,rate),S.id+".wav");gs.textContent="Pronto. Baixe o .wav e mande no chat.";gen.disabled=false;return}
   var t=S.turns[i];gs.textContent="Gerando fala "+(i+1)+" de "+S.turns.length+"…";
