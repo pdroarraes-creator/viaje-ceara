@@ -2,6 +2,8 @@
 // manda cada mensaje a /bot y manda de vuelta la respuesta. Acá viven la personalidad y los permisos.
 // Secreto necesario en Cloudflare: BOT_KEY (clave compartida con el script del celular).
 
+import { synth } from "./tts.js";
+
 const BASE =
   "Sos un personaje de dibujo animado, cearense de Fortaleza, con mucho humor norteño (usás 'oxe', 'arretado', 'visse' con medida, sin exagerar). " +
   "Hablás en español con acento y sabor brasileño (portuñol leve) salvo que la persona escriba en portugués: ahí respondés en portugués de Ceará. " +
@@ -18,6 +20,19 @@ const PERSONAS = {
     BASE + " Te llamás Caju, un cearense bonachón y bromista. Sos el asistente interno de la familia de Pedro (Pedro, Raquel y los chicos). " +
     "No tenés acceso a bancos ni a cuentas. Si alguien sin permiso de finanzas pregunta por plata de la casa, respondé con humor que eso es cosa de los papás.",
 };
+
+// Acento de la voz según el idioma de la respuesta: portugués → cearense; español → acento brasileño.
+const STYLE = {
+  pt: "Fale em português com sotaque nordestino cearense bem marcado, tom simpático, animado e bem-humorado, como uma pessoa de Fortaleza conversando no WhatsApp.",
+  es: "Hablá en español con acento brasileño bien marcado, tono simpático, alegre y bromista, como una cearense de Fortaleza que habla español.",
+};
+function langOf(t) {
+  const x = " " + t.toLowerCase() + " ";
+  const pt = (x.match(/ção|ões|\b(você|não|obrigad[oa]|tá|pra|oxe|visse|nós|então|também|muito|está|vamos|aqui|bora)\b/g) || []).length;
+  const es = (x.match(/[¿¡ñ]|\b(vos|usted|gracias|hola|también|está|estás|tenés|podés|dale|che|muy|cómo|qué)\b/g) || []).length;
+  return es > pt ? "es" : "pt";
+}
+const forSpeech = t => t.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F]/gu, "").replace(/[*_`#>]/g, "").replace(/\s+/g, " ").trim();
 
 // Permisos por número: quién puede ver finanzas y dar órdenes. Los números van en la variable BOT_ROLES (JSON) de Cloudflare:
 // {"5491100000000":"pedro","5491100000001":"raquel","5491100000002":"hijo"}
@@ -55,13 +70,19 @@ export async function botAdmin(body, env, json) {
     delete allow[norm(body.id)]; await env.QA.put("bot:allow", JSON.stringify(allow));
   } else if (a === "ignore") {
     await env.QA.delete("botunk:" + norm(body.id));
+  } else if (a === "setvoice") {
+    let v = {}; try { v = JSON.parse((await env.QA.get("bot:voice")) || "{}"); } catch {}
+    const b = body.bot === "caju" ? "caju" : "castanha";
+    if (body.voice) v[b] = String(body.voice).slice(0, 60); else delete v[b];
+    await env.QA.put("bot:voice", JSON.stringify(v));
   } else if (a === "setextra") {
     await env.QA.put("bot:extra", String(body.text || "").slice(0, 8000));
   }
   const l = await env.QA.list({ prefix: "botunk:", limit: 100 });
   const unknown = [];
   for (const k of l.keys) { try { unknown.push(JSON.parse(await env.QA.get(k.name))); } catch {} }
-  return json({ allow, unknown, extra: (await env.QA.get("bot:extra")) || "" });
+  let voice = {}; try { voice = JSON.parse((await env.QA.get("bot:voice")) || "{}"); } catch {}
+  return json({ allow, unknown, voice, extra: (await env.QA.get("bot:extra")) || "" });
 }
 
 // Datos reales del viaje: texto plano que se genera del sitio (knowledge.py) y se publica junto a él. Cache 1 hora en KV.
@@ -115,6 +136,7 @@ export async function handleBot(body, env, json, safeEqual) {
   const system = PERSONAS[bot] +
     (datos ? ` DATOS REALES DEL VIAJE A CEARÁ (usalos como única fuente para fechas, lugares, horarios y precios; si algo no está acá, decí que no lo sabés y no inventes; no digas que "todavía no está definido" si está en los datos):\n${datos}\n---\n` : "") +
     ` Quien te escribe ahora tiene el rol "${role}". ` +
+    (body.wantAudio ? " Tu respuesta va a ser LEÍDA EN VOZ ALTA: máximo 3 frases cortas, sin emojis, sin listas, sin asteriscos, con ritmo natural de charla." : "") +
     (role === "hijo" ? "Es un chico: sé divertido y cuidadoso, ayudalo con curiosidades o tarea, nada de finanzas." : "");
   const model = env.GEMINI_MODEL || "gemini-3.1-flash-lite";
   let reply = "";
@@ -134,5 +156,16 @@ export async function handleBot(body, env, json, safeEqual) {
 
   hist.push({ role: "user", parts: [{ text: `[${who}] ${text || "[áudio]"}` }] }, { role: "model", parts: [{ text: reply }] });
   await env.QA.put(hk, JSON.stringify(hist.slice(-12)), { expirationTtl: 7 * 86400 });
+  // Respuesta en audio: solo si la persona mandó audio y hay una voz elegida en /admin
+  if (body.wantAudio) {
+    try {
+      let v = {}; try { v = JSON.parse((await env.QA.get("bot:voice")) || "{}"); } catch {}
+      if (v[bot]) {
+        const speak = forSpeech(reply);
+        const audio = await synth(env, v[bot], speak, STYLE[langOf(speak)]);
+        return json({ reply, audio });
+      }
+    } catch {}
+  }
   return json({ reply });
 }

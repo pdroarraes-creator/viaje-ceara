@@ -4,7 +4,7 @@ set -e
 cd "$(dirname "$0")"
 echo "[1/4] Instalando dependencias del sistema..."
 pkg update -y >/dev/null 2>&1 || true
-pkg install -y nodejs-lts git >/dev/null
+pkg install -y nodejs-lts git ffmpeg >/dev/null
 echo "[2/4] Instalando el bot (puede tardar unos minutos)..."
 npm install --no-audit --no-fund
 if [ ! -f .env ]; then

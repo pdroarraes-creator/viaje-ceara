@@ -2,6 +2,7 @@
 // Variables: WORKER_URL, BOT_KEY, y para la primera vinculación PHONE=5491100000000 (el número del bot, sin +).
 import makeWASocket, { useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion, downloadMediaMessage } from "@whiskeysockets/baileys";
 import pino from "pino";
+import { spawn } from "node:child_process";
 import { shouldReply, cleanText, typingMs } from "./logic.js";
 
 const bot = process.argv[2];
@@ -10,6 +11,20 @@ const { WORKER_URL, BOT_KEY, PHONE } = process.env;
 if (!WORKER_URL || !BOT_KEY) { console.log("Faltan WORKER_URL y BOT_KEY"); process.exit(1); }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// Convierte el audio de Gemini (WAV o PCM crudo de 24 kHz) a nota de voz de WhatsApp (ogg/opus). Necesita ffmpeg; si falta, devuelve null y se manda texto.
+function toVoiceNote(b64) {
+  return new Promise(resolve => {
+    const raw = Buffer.from(b64, "base64");
+    const isWav = raw.slice(0, 4).toString() === "RIFF";
+    const args = ["-loglevel", "error", ...(isWav ? [] : ["-f", "s16le", "-ar", "24000", "-ac", "1"]), "-i", "pipe:0", "-c:a", "libopus", "-b:a", "32k", "-ac", "1", "-ar", "24000", "-f", "ogg", "pipe:1"];
+    let p; try { p = spawn("ffmpeg", args); } catch { return resolve(null); }
+    const out = []; p.stdout.on("data", c => out.push(c)); p.stderr.on("data", () => {});
+    p.on("error", () => resolve(null));
+    p.on("close", code => resolve(code === 0 && out.length ? Buffer.concat(out) : null));
+    p.stdin.on("error", () => {}); p.stdin.end(raw);
+  });
+}
 const textOf = m => m?.conversation || m?.extendedTextMessage?.text || m?.imageMessage?.caption || "";
 
 async function start() {
@@ -63,15 +78,18 @@ async function start() {
         const ids = [...new Set(cand.filter(Boolean))];
         const r = await fetch(WORKER_URL.replace(/\/$/, "") + "/bot", {
           method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ botKey: BOT_KEY, bot, from: sender.split("@")[0], name: msg.pushName || "", chat: jid, text: cleanText(text, bot), audio, ids }),
+          body: JSON.stringify({ botKey: BOT_KEY, bot, from: sender.split("@")[0], name: msg.pushName || "", chat: jid, text: cleanText(text, bot), audio, wantAudio: !!audio, ids }),
         });
         const d = await r.json().catch(() => ({}));
         console.log("  worker:", r.status, JSON.stringify(d).slice(0, 160));
         if (!d.reply) continue;
         await sock.readMessages([msg.key]);
         await sock.sendPresenceUpdate("composing", jid);
-        await sleep(typingMs(d.reply));
-        await sock.sendMessage(jid, { text: d.reply }, { quoted: isGroup ? msg : undefined });
+        await sleep(d.audio ? 1500 : typingMs(d.reply));
+        const note = d.audio ? await toVoiceNote(d.audio) : null;
+        if (d.audio && !note) console.log("  (sem ffmpeg ou falha ao converter: mando texto)");
+        if (note) await sock.sendMessage(jid, { audio: note, mimetype: "audio/ogg; codecs=opus", ptt: true }, { quoted: isGroup ? msg : undefined });
+        else await sock.sendMessage(jid, { text: d.reply }, { quoted: isGroup ? msg : undefined });
         await sock.sendPresenceUpdate("paused", jid);
       } catch (e) { console.log("error", e.message); }
     }

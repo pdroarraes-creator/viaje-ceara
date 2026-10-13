@@ -81,8 +81,10 @@ section[data-tab]{display:none}section[data-tab].on{display:block}
  <button id="lv" type="button">Carregar vozes</button>
  <label class="muted"><input type="checkbox" id="allang"> incluir vozes em espanhol</label>
 </div>
-<div class="row">Castanha (ela): <select id="vc"></select> <button type="button" class="try" data-who="Castanha">Ouvir</button></div>
-<div class="row">Caju (ele): <select id="vb"></select> <button type="button" class="try" data-who="Caju">Ouvir</button></div>
+<div class="row">Castanha (ela): <select id="vc"></select> <button type="button" class="try" data-who="Castanha">Ouvir (espanhol)</button> <button type="button" class="try" data-who="Castanha" data-lang="pt">Ouvir (português)</button></div>
+<div class="row">Caju (ele): <select id="vb"></select> <button type="button" class="try" data-who="Caju">Ouvir (espanhol)</button> <button type="button" class="try" data-who="Caju" data-lang="pt">Ouvir (português)</button></div>
+<div class="card"><b>Voz no WhatsApp</b><p class="muted">Quando alguém manda áudio, a Castanha (ou o Caju) responde falando. Em português com sotaque cearense, em espanhol com sotaque brasileiro. Escolha a voz acima, ouça, e salve.</p>
+<div class="row"><button id="svc" type="button">Usar a voz da Castanha no WhatsApp</button><button id="svb" type="button" class="ghost">Usar a do Caju</button></div><p id="svs" class="muted"></p></div>
 <div class="row"><button id="gen" type="button">Gerar episódio</button> <span id="gs" class="muted"></span></div>
 <audio id="au" controls hidden></audio>
 <div class="row"><a id="dl" hidden>Baixar .wav</a></div>
@@ -127,6 +129,9 @@ function drawBot(d){var h="",ids=Object.keys(d.allow);
  if(d.unknown.length){h+="<h3>Tentaram falar e estão bloqueados ("+d.unknown.length+")</h3>";
   d.unknown.forEach(function(u){h+="<div class='card warn'><b>"+esc2(u.name||"(sem nome)")+"</b> <small class='muted'>"+esc2(u.id)+"</small><div class='muted'>Disse: "+esc2(u.text||"(áudio ou mídia)")+"</div><div class='row'><input class='nm' placeholder='nome' value='"+esc2(u.name)+"'><select class='rl'><option value='viajante'>viajante</option><option value='pedro'>Pedro</option><option value='raquel'>Raquel</option><option value='hijo'>filho</option></select></div><div class='row'><button data-a='allow' data-id='"+esc2(u.id)+"'>Autorizar</button><button class='ghost' data-a='ignore' data-id='"+esc2(u.id)+"'>Ignorar</button></div></div>"})}
  bt.innerHTML=h;bx.value=d.extra;bs.textContent=ids.length+" autorizados, "+d.unknown.length+" aguardando"}
+var ACC_ES="Hablá en español con acento brasileño bien marcado, simpático y alegre.",ACC_PT="Fale em português com sotaque nordestino cearense bem marcado, simpático, animado e bem-humorado.";
+function saveVoice(who,sel){if(!sel.value){svs.textContent="Carregue as vozes primeiro.";return}svs.textContent="Salvando…";post("/bot-admin",{action:"setvoice",bot:who,voice:sel.value}).then(function(d){svs.textContent="Voz do WhatsApp: Castanha = "+(d.voice.castanha||"nenhuma")+" · Caju = "+(d.voice.caju||"nenhuma")}).catch(function(e){svs.textContent="Erro: "+e.message})}
+svc.onclick=function(){saveVoice("castanha",vc)};svb.onclick=function(){saveVoice("caju",vb)};
 function botCall(data){bs.textContent="Carregando…";return post("/bot-admin",data).then(drawBot).catch(function(e){bs.textContent="Erro: "+e.message})}
 bl.onclick=function(){botCall({action:"list"})};
 bxs.onclick=function(){botCall({action:"setextra",text:bx.value})};
@@ -149,12 +154,12 @@ function wav(chunks,rate){var n=0;chunks.forEach(function(c){n+=c.length});var b
 function voiceFor(who){return who==="Castanha"?vc.value:vb.value}
 function show(blob,name){au.src=URL.createObjectURL(blob);au.hidden=false;au.play();dl.href=au.src;dl.download=name;dl.hidden=false;dl.textContent="Baixar "+name}
 document.querySelectorAll(".try").forEach(function(btn){btn.onclick=function(){var who=btn.dataset.who;gs.textContent="Gerando amostra…";
- post("/tts",{voice:voiceFor(who),text:"¡Hola! Soy "+who+", un robot de Fortaleza. Cada sábado les cuento un poco de la ciudad.",style:"alegre"}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));show(wav([x.pcm],x.rate),"amostra-"+who+".wav");gs.textContent=""}).catch(function(e){gs.textContent=e.message})}});
+ var pt=btn.dataset.lang==="pt";post("/tts",{voice:voiceFor(who),text:pt?"Oxe, oi! Eu sou "+(who==="Castanha"?"a":"o")+" "+who+", de Fortaleza. Todo sábado eu conto um pouquinho da cidade pra vocês, visse?":"¡Hola! Soy "+who+", de Fortaleza. Cada sábado les cuento un poco de la ciudad.",style:pt?ACC_PT:ACC_ES+" alegre."}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));show(wav([x.pcm],x.rate),"amostra-"+who+".wav");gs.textContent=""}).catch(function(e){gs.textContent=e.message})}});
 gen.onclick=function(){var S;try{S=JSON.parse(sc.value)}catch(e){gs.textContent="Roteiro com erro de JSON.";return}
  gen.disabled=true;var out=[],rate=24000,i=0;var meta={id:S.id,voices:{Castanha:vc.value,Caju:vb.value},gap:0.45,turns:[]};
  function next(){if(i>=S.turns.length){var gap=new Uint8Array(Math.round(rate*meta.gap)*2);var parts=[];out.forEach(function(c,j){if(j)parts.push(gap);parts.push(c)});
    show(wav(parts,rate),S.id+".wav");gs.textContent="Pronto. Baixe o .wav e mande no chat.";gen.disabled=false;return}
   var t=S.turns[i];gs.textContent="Gerando fala "+(i+1)+" de "+S.turns.length+"…";
-  post("/tts",{voice:voiceFor(t.speaker),text:t.text,style:t.style}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));rate=x.rate;out.push(x.pcm);i++;next()}).catch(function(e){gs.textContent="Erro na fala "+(i+1)+": "+e.message;gen.disabled=false})}
+  post("/tts",{voice:voiceFor(t.speaker),text:t.text,style:ACC_ES+" "+(t.style||"")}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));rate=x.rate;out.push(x.pcm);i++;next()}).catch(function(e){gs.textContent="Erro na fala "+(i+1)+": "+e.message;gen.disabled=false})}
  next()};
 </script></body></html>`;

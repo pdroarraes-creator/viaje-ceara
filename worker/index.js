@@ -1,5 +1,6 @@
 import { ADMIN_PAGE } from "./admin.js";
 import { ICON192, ICON512 } from "./icons.js";
+import { synth } from "./tts.js";
 import { handleBot, botAdmin } from "./bot.js";
 // Asistente del viaje a Ceará — Cloudflare Worker
 // Guarda la clave de Gemini y la contraseña del grupo como secretos (nunca en el código)
@@ -112,20 +113,9 @@ export default {
       }
       const text = String(body.text || "").slice(0, 1200);
       if (!text || !body.voice) return json({ error: "empty" }, 400);
-      const ann = body.style ? [{ type: "speech_metadata", style: String(body.style).slice(0, 200) }] : undefined;
-      const req = {
-        model: String(body.model || env.TTS_MODEL || "gemini-3.8-flash-tts"),
-        input: [{ type: "user_input", content: [{ type: "text", text, ...(ann ? { annotations: ann } : {}) }] }],
-        response_format: { type: "audio" },
-        generation_config: { speech_config: [{ voice: String(body.voice) }] },
-      };
-      const r = await fetch(`${G}/interactions`, { method: "POST", headers: hdr, body: JSON.stringify(req) });
-      const t = await r.text();
-      if (!r.ok) return json({ error: "upstream", status: r.status, detail: t.slice(0, 600) }, 502);
-      let d; try { d = JSON.parse(t); } catch { return json({ error: "bad_upstream" }, 502); }
-      let audio = null;
-      for (const st of d.steps || []) if (st.type === "model_output") for (const c of st.content || []) if (c.type === "audio" && c.data) audio = c.data;
-      if (!audio) return json({ error: "no_audio", detail: t.slice(0, 400) }, 502);
+      let audio;
+      try { audio = await synth({ ...env, TTS_MODEL: body.model || env.TTS_MODEL }, body.voice, text, body.style); }
+      catch (e) { return json({ error: e.message === "no_audio" ? "no_audio" : "upstream", status: e.status, detail: e.detail }, 502); }
       return json({ audio });
     }
 
