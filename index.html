@@ -124,6 +124,7 @@ tfoot tr.ppl td{color:var(--red)}
 .news-card{background:var(--card);color:var(--ink);border-radius:18px;border:1.5px solid var(--ink);padding:20px;max-width:440px;width:100%;display:grid;gap:12px;animation:unfold .3s ease-out}
 .news-card ul{margin:0;padding-left:18px;display:grid;gap:6px}
 .news-card .go{font:700 16px var(--body);background:var(--caju);color:#1E2350;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;justify-self:start}
+.story .more{display:grid;gap:10px}
 .story .more[hidden]{display:none}
 .story .tgl{justify-self:start;font:700 14px var(--body);background:none;border:0;color:var(--sea);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
 .story{display:grid;gap:10px;padding:16px 18px;border-radius:14px;background:var(--card);border-left:5px solid var(--sea)}
@@ -459,24 +460,26 @@ tfoot tr.ppl td{color:var(--red)}
     document.getElementById("inst-x").onclick=()=>{box.hidden=true;try{localStorage.setItem("inst-x","1")}catch(e){}};
   })();
   // historias: resumir / ver todo
-  let shortMode=false;try{shortMode=localStorage.getItem("short")==="1"}catch(e){}
+  // empieza resumida: solo el primer párrafo; el resto (datos y fuentes incluidos) va en "ver todo"
+  let shortMode=true;try{shortMode=localStorage.getItem("story-open")!=="1"}catch(e){}
   const stories=[...document.querySelectorAll(".story")];
   stories.forEach(st=>{
-    const ps=[...st.querySelectorAll(":scope > p:not(.src)")];
-    const more=document.createElement("div");more.className="more";more.style.display="grid";more.style.gap="10px";
-    ps.slice(2).forEach(p=>more.append(p));
-    st.querySelector("dl").before(more);
+    const kids=[...st.children].filter(el=>el.tagName!=="H3");
+    const more=document.createElement("div");more.className="more";
+    kids.slice(2).forEach(el=>more.append(el));
+    st.append(more);
     const b=document.createElement("button");b.type="button";b.className="tgl";
-    st.querySelector("h3").after(b);
-    b.onclick=()=>{shortMode=!shortMode;try{localStorage.setItem("short",shortMode?"1":"0")}catch(e){}applyShort()};
+    st.append(b);
+    b.onclick=()=>{shortMode=!shortMode;try{localStorage.setItem("story-open",shortMode?"0":"1")}catch(e){}applyShort();if(shortMode)st.scrollIntoView({block:"nearest",behavior:"smooth"})};
   });
   function applyShort(){stories.forEach(st=>{st.querySelector(".more").hidden=shortMode;
-    st.querySelector(".tgl").innerHTML=shortMode?'<span lang="es">Ver toda la historia</span><span lang="pt">Ver a história toda</span>':'<span lang="es">Resumir</span><span lang="pt">Resumir</span>'})}
+    st.querySelector(".tgl").innerHTML=shortMode?'<span lang="es">Ver toda la historia y los datos</span><span lang="pt">Ver toda a história e os dados</span>':'<span lang="es">Resumir</span><span lang="pt">Resumir</span>'})}
   applyShort();
 
   // novedades: punto rojo + aviso cuando el sitio cambia
-  const SITE_VERSION="2026-10-12.4";
+  const SITE_VERSION="2026-10-12.5";
   const CHANGES=[
+    ["La historia ahora empieza resumida; tocá «Ver toda» para leer más","A história agora começa resumida; toque em «Ver toda» para ler mais"],
     ["Día 28: tarde de compras, con dónde ir, precios y horarios","Dia 28: tarde de compras, com onde ir, preços e horários"],
     ["Historia, cultura y curiosidades de cada lugar, con botón para resumir","História, cultura e curiosidades de cada lugar, com botão para resumir"],
     ["Todas las ilustraciones animadas","Todas as ilustrações animadas"],
