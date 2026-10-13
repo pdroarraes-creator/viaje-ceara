@@ -77,8 +77,9 @@ export async function handleBot(body, env, json, safeEqual) {
   if (!safeEqual(String(body.botKey || ""), String(env.BOT_KEY))) return json({ error: "wrong_key" }, 401);
   if (!env.QA || !env.GEMINI_API_KEY) return json({ error: "not_configured" }, 503);
   const bot = body.bot === "caju" ? "caju" : "castanha";
-  const text = String(body.text || "").trim().slice(0, 1000);
-  if (!text) return json({ reply: "" });
+  let text = String(body.text || "").trim().slice(0, 1000);
+  const au = body.audio && typeof body.audio.data === "string" && body.audio.data.length < 4_000_000 && /^audio\//.test(String(body.audio.mime)) ? body.audio : null;
+  if (!text && !au) return json({ reply: "" });
   const role = await roleOf(env, body.from);
 
   // Solo responde a números autorizados (panel /admin). Los demás quedan en la lista "quién intentó hablar" para autorizar con un toque.
@@ -98,7 +99,9 @@ export async function handleBot(body, env, json, safeEqual) {
   const hk = `bothist:${bot}:${chat}`;
   let hist = []; try { hist = JSON.parse((await env.QA.get(hk)) || "[]"); } catch {}
   const who = String(body.name || role).slice(0, 30);
-  const contents = [...hist, { role: "user", parts: [{ text: `[${who}, ${role}] ${text}` }] }];
+  const parts = [{ text: `[${who}, ${role}] ${text || "(mensagem de áudio: escute e responda ao que a pessoa disse, no mesmo idioma dela)"}` }];
+  if (au) parts.push({ inline_data: { mime_type: au.mime, data: au.data } });
+  const contents = [...hist, { role: "user", parts }];
 
   const datos = (await trip(env)) + ((await env.QA.get("bot:extra")) ? "\n\nINFORMACIÓN EXTRA (cargada por Pedro):\n" + (await env.QA.get("bot:extra")) : "");
   const system = PERSONAS[bot] +
@@ -121,7 +124,7 @@ export async function handleBot(body, env, json, safeEqual) {
   } catch { return json({ error: "upstream" }, 502); }
   if (!reply) return json({ reply: "" });
 
-  hist.push({ role: "user", parts: [{ text: `[${who}] ${text}` }] }, { role: "model", parts: [{ text: reply }] });
+  hist.push({ role: "user", parts: [{ text: `[${who}] ${text || "[áudio]"}` }] }, { role: "model", parts: [{ text: reply }] });
   await env.QA.put(hk, JSON.stringify(hist.slice(-12)), { expirationTtl: 7 * 86400 });
   return json({ reply });
 }

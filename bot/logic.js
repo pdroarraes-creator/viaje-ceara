@@ -5,7 +5,9 @@ const norm = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLow
 
 // m: { isGroup, text, mentionedMe, repliedToMe, fromMe }
 export function shouldReply(bot, m) {
-  if (m.fromMe || !m.text || !m.text.trim()) return false;
+  if (m.fromMe) return false;
+  if (m.hasAudio) return !m.isGroup || !!(m.mentionedMe || m.repliedToMe); // áudio no grupo: só se respondem a ela (não dá pra ler o nome)
+  if (!m.text || !m.text.trim()) return false;
   if (!m.isGroup) return true; // en privado responde siempre (el permiso lo decide el servidor)
   if (m.mentionedMe || m.repliedToMe) return true;
   const t = norm(m.text);

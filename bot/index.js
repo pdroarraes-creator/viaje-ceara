@@ -1,6 +1,6 @@
 // Bot de WhatsApp (ruta no oficial: dispositivo vinculado). Uso:  node index.js caju   |   node index.js castanha
 // Variables: WORKER_URL, BOT_KEY, y para la primera vinculación PHONE=5491100000000 (el número del bot, sin +).
-import makeWASocket, { useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion } from "@whiskeysockets/baileys";
+import makeWASocket, { useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion, downloadMediaMessage } from "@whiskeysockets/baileys";
 import pino from "pino";
 import { shouldReply, cleanText, typingMs } from "./logic.js";
 
@@ -41,21 +41,27 @@ async function start() {
         const jid = msg.key.remoteJid || "";
         if (!msg.message || jid.endsWith("@broadcast") || jid === "status@broadcast") continue;
         const isGroup = jid.endsWith("@g.us");
-        const ctx = msg.message.extendedTextMessage?.contextInfo;
+        const aud = msg.message.audioMessage;
+        const ctx = msg.message.extendedTextMessage?.contextInfo || aud?.contextInfo;
         const me = (sock.user?.id || "").split(":")[0].split("@")[0];
         const text = textOf(msg.message);
         const m = {
-          isGroup, text, fromMe: !!msg.key.fromMe,
+          isGroup, text, hasAudio: !!aud && (aud.seconds || 0) <= 180, fromMe: !!msg.key.fromMe,
           mentionedMe: !!ctx?.mentionedJid?.some(j => j.split("@")[0] === me),
           repliedToMe: !!ctx?.participant && ctx.participant.split("@")[0] === me,
         };
-        console.log("msg", isGroup ? "grupo" : "privado", jid.split("@")[0], JSON.stringify((text || "").slice(0, 40)), m.fromMe ? "(minha)" : "");
+        console.log("msg", isGroup ? "grupo" : "privado", jid.split("@")[0], JSON.stringify(aud ? "[áudio " + (aud.seconds || "?") + "s]" : (text || "").slice(0, 40)), m.fromMe ? "(minha)" : "");
         if (!shouldReply(bot, m)) { console.log("  -> ignorada"); continue; }
         // en grupos WhatsApp a veces usa un identificador interno (@lid): preferimos el número real si viene
         const sender = (isGroup ? (msg.key.participantPn || msg.key.participantAlt || msg.key.participant) : (msg.key.senderPn || msg.key.remoteJidAlt || jid)) || "";
+        let audio;
+        if (m.hasAudio) {
+          const buf = await downloadMediaMessage(msg, "buffer", {}, { logger: pino({ level: "silent" }), reuploadRequest: sock.updateMediaMessage });
+          audio = { mime: (aud.mimetype || "audio/ogg").split(";")[0], data: buf.toString("base64") };
+        }
         const r = await fetch(WORKER_URL.replace(/\/$/, "") + "/bot", {
           method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ botKey: BOT_KEY, bot, from: sender.split("@")[0], name: msg.pushName || "", chat: jid, text: cleanText(text, bot) }),
+          body: JSON.stringify({ botKey: BOT_KEY, bot, from: sender.split("@")[0], name: msg.pushName || "", chat: jid, text: cleanText(text, bot), audio }),
         });
         const d = await r.json().catch(() => ({}));
         console.log("  worker:", r.status, JSON.stringify(d).slice(0, 160));
