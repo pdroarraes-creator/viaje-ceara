@@ -122,11 +122,14 @@ export default {
       const kind = ["open_ok", "open_nopw", "wrong_pw"].includes(body.kind) ? body.kind : "open_nopw";
       const vid = String(body.vid || "").replace(/[^a-z0-9]/gi, "").slice(0, 12);
       const cf = request.cf || {};
+      const org = String(cf.asOrganization || "").slice(0, 40);
+      const bot = /amazon|google|microsoft|digitalocean|ovh|hetzner|linode|oracle|cloudflare|zscaler|netskope|palo alto|akamai|datacamp|m247|choopa|vultr|leaseweb/i.test(org) ? 1 : 0;
       const t = Date.now();
       const meta = {
         t, kind, vid, dev, br,
         lang: body.lang === "pt" ? "pt" : "es",
         app: body.app ? 1 : 0,
+        org, bot,
         place: [cf.city, cf.country].filter(Boolean).join(", ").slice(0, 60),
       };
       const key = "visit:" + String(9999999999999 - t).padStart(13, "0") + ":" + Math.random().toString(36).slice(2, 6);

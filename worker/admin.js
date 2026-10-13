@@ -47,10 +47,10 @@ f.onsubmit=function(e){e.preventDefault();KEY=k.value;s.textContent="Conferindo�
 ver.onclick=function(){post("/export",{}).then(function(d){o.value=JSON.stringify(d.items,null,2)}).catch(function(e){o.value=e.message})};
 vv.onclick=function(){vs.textContent="Carregando…";post("/visits",{}).then(function(d){var it=d.items,day={},tz="America/Argentina/Buenos_Aires",fm=new Intl.DateTimeFormat("pt-BR",{timeZone:tz,day:"2-digit",month:"2-digit"}),hm=new Intl.DateTimeFormat("pt-BR",{timeZone:tz,hour:"2-digit",minute:"2-digit"});
  var devs={};it.forEach(function(v){var k=fm.format(v.t);(day[k]=day[k]||{n:0,s:{}}).n++;day[k].s[v.vid||"?"]=1;devs[v.vid||"?"]=1});
- vs.textContent=it.length+" acessos, "+Object.keys(devs).length+" aparelhos diferentes.";
+ var nb=it.filter(function(v){return v.bot}).length;vs.textContent=it.length+" acessos ("+nb+" prováveis robôs), "+Object.keys(devs).length+" aparelhos diferentes.";
  var h="<table><tr><th>Dia</th><th>Acessos</th><th>Aparelhos</th></tr>";Object.keys(day).forEach(function(k){h+="<tr><td>"+k+"</td><td>"+day[k].n+"</td><td>"+Object.keys(day[k].s).length+"</td></tr>"});h+="</table><p class=muted>Últimos 40:</p><table><tr><th>Quando</th><th>Aparelho</th><th>Lugar</th><th>Idioma</th><th>Tipo</th></tr>";
  var tp={open_ok:"entrou",open_nopw:"abriu, sem senha",wrong_pw:"senha errada"};
- it.slice(0,40).forEach(function(v){h+="<tr><td>"+fm.format(v.t)+" "+hm.format(v.t)+"</td><td>"+v.dev+" · "+v.br+(v.app?" (app)":"")+" · "+(v.vid||"").slice(0,4)+"</td><td>"+(v.place||"?")+"</td><td>"+v.lang+"</td><td>"+(tp[v.kind]||v.kind)+"</td></tr>"});vt.innerHTML=h+"</table>"}).catch(function(e){vs.textContent=e.message})};
+ it.slice(0,40).forEach(function(v){h+="<tr><td>"+fm.format(v.t)+" "+hm.format(v.t)+"</td><td>"+v.dev+" · "+v.br+(v.app?" (app)":"")+" · "+(v.vid||"").slice(0,4)+"</td><td>"+(v.place||"?")+"</td><td>"+v.lang+"</td><td>"+(v.bot?"provável robô":(tp[v.kind]||v.kind))+(v.org?"<br><small class=muted>"+v.org+"</small>":"")+"</td></tr>"});vt.innerHTML=h+"</table>"}).catch(function(e){vs.textContent=e.message})};
 pt.onclick=function(){ps.textContent="Enviando…";post("/push-now",{}).then(function(d){ps.textContent=d.subscribers+" celulares, "+d.sent+" enviados, "+d.removed+" removidos, "+d.failed+" com erro."}).catch(function(e){ps.textContent=e.message})};
 
 var SITE="https://pdroarraes-creator.github.io/viaje-ceara/videos/";
