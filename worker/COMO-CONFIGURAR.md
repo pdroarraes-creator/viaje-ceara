@@ -44,4 +44,6 @@ Abra `https://viaje-ceara-ask.SEU-USUARIO.workers.dev/admin`, digite a `ADMIN_KE
 
 - O plano gratuito do Gemini e do Cloudflare costuma bastar para um grupo de família. No plano gratuito, o Google pode usar as perguntas para melhorar os modelos dele.
 - Cada pessoa pode fazer até 30 perguntas por hora.
+- Depois de 15 senhas ou chaves erradas em uma hora, o IP é bloqueado até a hora virar (variável opcional `MAX_FAILS_PER_HOUR`).
+- O estúdio de voz e os áudios dos bots têm teto de 150 sínteses por dia (variável opcional `TTS_PER_DAY`). Passou disso, o bot responde só em texto.
 - A senha e as chaves nunca ficam no código do site nem no GitHub.

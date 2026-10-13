@@ -20,6 +20,10 @@ import { handleBot, botAdmin } from "./bot.js";
 const MAX_Q = 600;
 const MAX_CONTEXT = 16000;
 const PER_HOUR = 30;
+// Tentativas erradas de senha/clave por IP e por hora antes de bloquear (variável opcional MAX_FAILS_PER_HOUR)
+const MAX_FAILS_PER_HOUR = 15;
+// Rutas que piden la contraseña del grupo, la ADMIN_KEY o la BOT_KEY
+const PROTECTED = new Set(["/voices", "/tts", "/bot", "/bot-admin", "/visits", "/push-now", "/export", "/check", "/history", "/ask"]);
 const PUSH_HOSTS = [/(^|\.)fcm\.googleapis\.com$/, /(^|\.)push\.apple\.com$/, /(^|\.)push\.services\.mozilla\.com$/, /(^|\.)notify\.windows\.com$/];
 
 export default {
@@ -83,6 +87,10 @@ export default {
     let body;
     try { body = await request.json(); } catch { return json({ error: "bad_request" }, 400); }
 
+    // Anti-adivinación: pasado el límite de intentos fallidos, ni se comprueba la contraseña
+    if (PROTECTED.has(url.pathname) && await tooManyFails(env, request)) return json({ error: "locked" }, 429);
+    const wrongKey = async () => { await registerFail(env, request); return json({ error: "wrong_key" }, 401); };
+
     // Suscribir un celular a los avisos (no pide contraseña: solo guarda la dirección de push)
     if (url.pathname === "/subscribe") {
       const sub = body.subscription || {};
@@ -97,7 +105,7 @@ export default {
 
     // Estudio de voz (solo admin): listar voces y sintetizar un trecho
     if (url.pathname === "/voices" || url.pathname === "/tts") {
-      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
+      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return wrongKey();
       if (!env.GEMINI_API_KEY) return json({ error: "no_gemini_key" }, 503);
       const G = "https://generativelanguage.googleapis.com/v1beta";
       const hdr = { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY };
@@ -115,12 +123,19 @@ export default {
       if (!text || !body.voice) return json({ error: "empty" }, 400);
       let audio;
       try { audio = await synth({ ...env, TTS_MODEL: body.model || env.TTS_MODEL }, body.voice, text, body.style); }
-      catch (e) { return json({ error: e.message === "no_audio" ? "no_audio" : "upstream", status: e.status, detail: e.detail }, 502); }
+      catch (e) {
+        if (e.message === "daily_limit") return json({ error: "daily_limit" }, 429);
+        return json({ error: e.message === "no_audio" ? "no_audio" : "upstream", status: e.status, detail: e.detail }, 502);
+      }
       return json({ audio });
     }
 
     // Mandar un aviso ya a todos (página /admin, para probar)
-    if (url.pathname === "/bot") return handleBot(body, env, json, safeEqual);
+    if (url.pathname === "/bot") {
+      const rb = await handleBot(body, env, json, safeEqual);
+      if (rb.status === 401) await registerFail(env, request);
+      return rb;
+    }
 
     // Registro anónimo de accesos (sin contraseña; no guarda IP ni nombre)
     if (url.pathname === "/visit") {
@@ -147,29 +162,30 @@ export default {
     }
 
     if (url.pathname === "/bot-admin") {
-      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
+      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return wrongKey();
       return botAdmin(body, env, json);
     }
 
     if (url.pathname === "/visits") {
-      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
+      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return wrongKey();
       const l = await env.QA.list({ prefix: "visit:", limit: 1000 });
       return json({ items: l.keys.map(k => k.metadata).filter(Boolean) });
     }
 
     if (url.pathname === "/push-now") {
-      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
+      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return wrongKey();
       return json(await notifyAll(env));
     }
 
     // Exportar todo (página /admin)
     if (url.pathname === "/export") {
-      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return json({ error: "wrong_key" }, 401);
+      if (!env.ADMIN_KEY || !safeEqual(normPw(body.key), normPw(env.ADMIN_KEY))) return wrongKey();
       return json({ items: await listQA(env, 1000) });
     }
 
     // La contraseña del grupo no distingue mayúsculas, espacios al costado ni acentos (el iPhone pone la primera en mayúscula)
     if (!env.SITE_PASSWORD || !safeEqual(normPw(body.password), normPw(env.SITE_PASSWORD))) {
+      await registerFail(env, request);
       return json({ error: "wrong_password" }, 401);
     }
 
@@ -333,6 +349,24 @@ async function overLimit(env, request) {
   if (n >= PER_HOUR) return true;
   await env.QA.put(k, String(n + 1), { expirationTtl: 3700 });
   return false;
+}
+
+// Cuenta intentos fallidos por IP y hora (KV). No es atómico ni estricto, pero frena la adivinación a mano o con scripts simples.
+async function tooManyFails(env, request) {
+  if (!env.QA) return false;
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const hour = Math.floor(Date.now() / 3600000);
+  const n = Number(await env.QA.get(`fail:${ip}:${hour}`)) || 0;
+  return n >= (Number(env.MAX_FAILS_PER_HOUR) || MAX_FAILS_PER_HOUR);
+}
+
+async function registerFail(env, request) {
+  if (!env.QA) return;
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const hour = Math.floor(Date.now() / 3600000);
+  const k = `fail:${ip}:${hour}`;
+  const n = Number(await env.QA.get(k)) || 0;
+  await env.QA.put(k, String(n + 1), { expirationTtl: 3700 });
 }
 
 function normPw(p) {
