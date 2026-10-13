@@ -163,12 +163,17 @@ var LAST=null,LASTMETA=null;
 function show(blob,name){LAST={blob:blob,name:name};drv.hidden=false;au.src=URL.createObjectURL(blob);au.hidden=false;au.play();dl.href=au.src;dl.download=name;dl.hidden=false;dl.textContent="Baixar "+name}
 document.querySelectorAll(".try").forEach(function(btn){btn.onclick=function(){var who=btn.dataset.who;gs.textContent="Gerando amostra…";
  var pt=btn.dataset.lang==="pt";post("/tts",{voice:voiceFor(who),text:pt?"Oxe, oi! Eu sou "+(who==="Castanha"?"a":"o")+" "+who+", de Fortaleza. Todo sábado eu conto um pouquinho da cidade pra vocês, visse?":"¡Hola! Soy "+who+", de Fortaleza. Cada sábado les cuento un poco de la ciudad.",style:pt?ACC_PT:ACC_ES+" alegre."}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));show(wav([x.pcm],x.rate),"amostra-"+who+".wav");gs.textContent=""}).catch(function(e){gs.textContent=e.message})}});
+var GEN=null;
 gen.onclick=function(){var S;try{S=JSON.parse(sc.value)}catch(e){gs.textContent="Roteiro com erro de JSON.";return}
- gen.disabled=true;var out=[],rate=24000,i=0;var meta={id:S.id,voices:{Castanha:vc.value,Caju:vb.value},gap:0.45,turns:[]};
- function next(){if(i>=S.turns.length){var gap=new Uint8Array(Math.round(rate*meta.gap)*2);var parts=[];out.forEach(function(c,j){if(j)parts.push(gap);parts.push(c)});
-   var tt=0;meta.turns.forEach(function(m,j){if(j)tt+=meta.gap;m.start=Math.round(tt*1000)/1000;tt+=m.dur});meta.rate=rate;meta.total=Math.round(tt*1000)/1000;LASTMETA=meta;show(wav(parts,rate),S.id+".wav");gs.textContent="Pronto. Baixe o .wav e mande no chat.";gen.disabled=false;return}
-  var t=S.turns[i];gs.textContent="Gerando fala "+(i+1)+" de "+S.turns.length+"…";
-  post("/tts",{voice:voiceFor(t.speaker),text:t.text,style:ACC_ES+" "+(t.style||"")}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));rate=x.rate;out.push(x.pcm);meta.turns.push({speaker:t.speaker,text:t.text,start:0,dur:Math.round(x.pcm.length/2/x.rate*1000)/1000});i++;next()}).catch(function(e){gs.textContent="Erro na fala "+(i+1)+": "+e.message;gen.disabled=false})}
+ var key=sc.value+"|"+vc.value+"|"+vb.value;
+ if(!GEN||GEN.key!==key||GEN.i>=S.turns.length)GEN={key:key,out:[],rate:24000,i:0,meta:{id:S.id,voices:{Castanha:vc.value,Caju:vb.value},gap:0.45,turns:[]}};
+ var G=GEN,tries=0;gen.disabled=true;
+ function next(){if(G.i>=S.turns.length){var meta=G.meta,rate=G.rate,gap=new Uint8Array(Math.round(rate*meta.gap)*2);var parts=[];G.out.forEach(function(c,j){if(j)parts.push(gap);parts.push(c)});
+   var tt=0;meta.turns.forEach(function(m,j){if(j)tt+=meta.gap;m.start=Math.round(tt*1000)/1000;tt+=m.dur});meta.rate=rate;meta.total=Math.round(tt*1000)/1000;LASTMETA=meta;show(wav(parts,rate),S.id+".wav");gs.textContent="Pronto. Baixe o .wav e mande no chat.";gen.textContent="Gerar episódio";gen.disabled=false;return}
+  var t=S.turns[G.i];gs.textContent="Gerando fala "+(G.i+1)+" de "+S.turns.length+"… (deixe a tela ligada)";
+  post("/tts",{voice:voiceFor(t.speaker),text:t.text,style:ACC_ES+" "+(t.style||"")}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));G.rate=x.rate;G.out.push(x.pcm);G.meta.turns.push({speaker:t.speaker,text:t.text,start:0,dur:Math.round(x.pcm.length/2/x.rate*1000)/1000});G.i++;tries=0;next()})
+  .catch(function(e){tries++;if(tries<=3){gs.textContent="Falha na fala "+(G.i+1)+" ("+e.message+"). Tentando de novo ("+tries+"/3)…";setTimeout(next,2500*tries);return}
+   gs.textContent="Parou na fala "+(G.i+1)+": "+e.message+". As "+G.i+" falas prontas ficaram guardadas.";gen.textContent="Continuar da fala "+(G.i+1);gen.disabled=false})}
  next()};
 
 try{du.value=localStorage.getItem("drv-url")||"";dt.value=localStorage.getItem("drv-tok")||""}catch(e){}
