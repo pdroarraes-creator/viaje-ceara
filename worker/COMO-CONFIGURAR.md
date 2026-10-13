@@ -47,3 +47,5 @@ Abra `https://viaje-ceara-ask.SEU-USUARIO.workers.dev/admin`, digite a `ADMIN_KE
 - Depois de 15 senhas ou chaves erradas em uma hora, o IP é bloqueado até a hora virar (variável opcional `MAX_FAILS_PER_HOUR`).
 - O estúdio de voz e os áudios dos bots têm teto de 150 sínteses por dia (variável opcional `TTS_PER_DAY`). Passou disso, o bot responde só em texto.
 - A senha e as chaves nunca ficam no código do site nem no GitHub.
+
+- **Enviar áudio para o Drive:** cole `worker/drive-apps-script.gs` num projeto do Apps Script (instruções no topo do arquivo) e preencha URL e token no card do /admin. Nada disso fica no repositório.

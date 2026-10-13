@@ -89,6 +89,9 @@ section[data-tab]{display:none}section[data-tab].on{display:block}
 <div class="row"><button id="gen" type="button">Gerar episódio</button> <span id="gs" class="muted"></span></div>
 <audio id="au" controls hidden></audio>
 <div class="row"><a id="dl" hidden>Baixar .wav</a></div>
+<div class="card" id="drv" hidden><b>Enviar para o Drive</b><p class="muted">Manda o áudio e os tempos de cada fala para uma pasta "Rumbo a Ceará" do seu Google Drive, para o Claude pegar de lá. Configuração única: veja worker/drive-apps-script.gs.</p>
+<div class="row"><input id="du" placeholder="URL do Apps Script (termina em /exec)"> <input id="dt" type="password" placeholder="Token"></div>
+<div class="row"><button id="ds" type="button">Enviar para o Drive</button> <span id="dss" class="muted"></span></div></div>
 <details><summary class="muted">Roteiro (JSON)</summary><textarea id="sc" rows="14"></textarea></details>
 </section>
 </main>
@@ -156,14 +159,24 @@ function pcmOf(bytes){ // devolve {pcm, rate} de um WAV (ou PCM cru 24k)
 function wav(chunks,rate){var n=0;chunks.forEach(function(c){n+=c.length});var b=new Uint8Array(44+n),dv=new DataView(b.buffer);function w(o,str){for(var i=0;i<4;i++)b[o+i]=str.charCodeAt(i)}
  w(0,"RIFF");dv.setUint32(4,36+n,true);w(8,"WAVE");w(12,"fmt ");dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);dv.setUint32(24,rate,true);dv.setUint32(28,rate*2,true);dv.setUint16(32,2,true);dv.setUint16(34,16,true);w(36,"data");dv.setUint32(40,n,true);var p=44;chunks.forEach(function(c){b.set(c,p);p+=c.length});return new Blob([b],{type:"audio/wav"})}
 function voiceFor(who){return who==="Castanha"?vc.value:vb.value}
-function show(blob,name){au.src=URL.createObjectURL(blob);au.hidden=false;au.play();dl.href=au.src;dl.download=name;dl.hidden=false;dl.textContent="Baixar "+name}
+var LAST=null,LASTMETA=null;
+function show(blob,name){LAST={blob:blob,name:name};drv.hidden=false;au.src=URL.createObjectURL(blob);au.hidden=false;au.play();dl.href=au.src;dl.download=name;dl.hidden=false;dl.textContent="Baixar "+name}
 document.querySelectorAll(".try").forEach(function(btn){btn.onclick=function(){var who=btn.dataset.who;gs.textContent="Gerando amostra…";
  var pt=btn.dataset.lang==="pt";post("/tts",{voice:voiceFor(who),text:pt?"Oxe, oi! Eu sou "+(who==="Castanha"?"a":"o")+" "+who+", de Fortaleza. Todo sábado eu conto um pouquinho da cidade pra vocês, visse?":"¡Hola! Soy "+who+", de Fortaleza. Cada sábado les cuento un poco de la ciudad.",style:pt?ACC_PT:ACC_ES+" alegre."}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));show(wav([x.pcm],x.rate),"amostra-"+who+".wav");gs.textContent=""}).catch(function(e){gs.textContent=e.message})}});
 gen.onclick=function(){var S;try{S=JSON.parse(sc.value)}catch(e){gs.textContent="Roteiro com erro de JSON.";return}
  gen.disabled=true;var out=[],rate=24000,i=0;var meta={id:S.id,voices:{Castanha:vc.value,Caju:vb.value},gap:0.45,turns:[]};
  function next(){if(i>=S.turns.length){var gap=new Uint8Array(Math.round(rate*meta.gap)*2);var parts=[];out.forEach(function(c,j){if(j)parts.push(gap);parts.push(c)});
-   show(wav(parts,rate),S.id+".wav");gs.textContent="Pronto. Baixe o .wav e mande no chat.";gen.disabled=false;return}
+   var tt=0;meta.turns.forEach(function(m,j){if(j)tt+=meta.gap;m.start=Math.round(tt*1000)/1000;tt+=m.dur});meta.rate=rate;meta.total=Math.round(tt*1000)/1000;LASTMETA=meta;show(wav(parts,rate),S.id+".wav");gs.textContent="Pronto. Baixe o .wav e mande no chat.";gen.disabled=false;return}
   var t=S.turns[i];gs.textContent="Gerando fala "+(i+1)+" de "+S.turns.length+"…";
-  post("/tts",{voice:voiceFor(t.speaker),text:t.text,style:ACC_ES+" "+(t.style||"")}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));rate=x.rate;out.push(x.pcm);i++;next()}).catch(function(e){gs.textContent="Erro na fala "+(i+1)+": "+e.message;gen.disabled=false})}
+  post("/tts",{voice:voiceFor(t.speaker),text:t.text,style:ACC_ES+" "+(t.style||"")}).then(function(d){var x=pcmOf(b64ToBytes(d.audio));rate=x.rate;out.push(x.pcm);meta.turns.push({speaker:t.speaker,text:t.text,start:0,dur:Math.round(x.pcm.length/2/x.rate*1000)/1000});i++;next()}).catch(function(e){gs.textContent="Erro na fala "+(i+1)+": "+e.message;gen.disabled=false})}
  next()};
+
+try{du.value=localStorage.getItem("drv-url")||"";dt.value=localStorage.getItem("drv-tok")||""}catch(e){}
+function b64Of(blob){return new Promise(function(ok,no){var r=new FileReader();r.onload=function(){ok(String(r.result).split(",")[1])};r.onerror=no;r.readAsDataURL(blob)})}
+function sendDrive(name,blob){return b64Of(blob).then(function(b){return fetch(du.value.trim(),{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({token:dt.value,name:name,mime:blob.type||"application/octet-stream",data:b})})})}
+ds.onclick=function(){if(!LAST){dss.textContent="Gere o episódio primeiro.";return}if(!/^https:\/\/script\.google\.com\/macros\/s\/[^\/]+\/exec$/.test(du.value.trim())){dss.textContent="A URL precisa ser a do Apps Script (script.google.com/macros/s/…/exec).";return}
+ try{localStorage.setItem("drv-url",du.value.trim());localStorage.setItem("drv-tok",dt.value)}catch(e){}
+ ds.disabled=true;dss.textContent="Enviando…";
+ var id=LAST.name.replace(/\.wav$/,"");
+ sendDrive(LAST.name,LAST.blob).then(function(){return LASTMETA?sendDrive(id+"-tempos.json",new Blob([JSON.stringify(LASTMETA,null,1)],{type:"application/json"})):0}).then(function(){dss.textContent="Enviado. O navegador não confirma o recebimento; avise o Claude que ele confere no Drive.";ds.disabled=false}).catch(function(e){dss.textContent="Falhou ("+e.message+").";ds.disabled=false})};
 </script></body></html>`;

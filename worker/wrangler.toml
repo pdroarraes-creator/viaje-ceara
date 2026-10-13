@@ -21,3 +21,6 @@ id = "d89cf90a5bf0437c83a3ba2a2a3acaff"
 # Cada 15 minutos mira si el sitio cambió de versión y manda el aviso push
 [triggers]
 crons = ["*/15 * * * *"]
+
+# Bloco vazio exigido pelo Cloudflare Workers Builds para builds de branches (npx wrangler preview).
+[previews]
