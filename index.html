@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Itinerario del viaje a Ceará 2027: Fortaleza, Beach Park e Icaraizinho, con costos promedio por persona.">
+<style>html{color-scheme:light dark}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head>
+<body>
+<title>Rumo ao Ceará 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Figtree:wght@400;500;700&display=swap">
+<style>
+/* Layout: capa em xilogravura de cordel (cena animada) → capítulos por destino com dias em linha do tempo → tabelas de custo → assistente.
+   Princípio: a gravura de cordel é o único gesto ousado; o resto é tipografia limpa e tabelas sóbrias. */
+:root{
+  --paper:#EEF5F3; --card:#FFFFFF; --ink:#1E2350; --soft:#56607F; --rule:#CFDCDD;
+  --sea:#127C8A; --caju:#F2B134; --red:#C23B22; --sky:#BFE3E6;
+  --display:"Alfa Slab One", "Rockwell", "Georgia", serif;
+  --body:"Figtree", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0F1430; --card:#171D40; --ink:#E9EEF7; --soft:#A7B0CC; --rule:#2C3463;
+  --sea:#4CC3CF; --caju:#F5C25A; --red:#F07A5C; --sky:#1B2A55; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0F1430; --card:#171D40; --ink:#E9EEF7; --soft:#A7B0CC; --rule:#2C3463;
+  --sea:#4CC3CF; --caju:#F5C25A; --red:#F07A5C; --sky:#1B2A55; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 17px/1.6 var(--body);padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:780px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;margin:0}
+h2{font:400 clamp(30px,6.5vw,46px)/1.05 var(--display);letter-spacing:.005em}
+h3{font:700 19px/1.3 var(--body)}
+p{margin:0}
+a{color:var(--sea);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--caju);outline-offset:2px;border-radius:4px}
+.num{font-variant-numeric:tabular-nums}
+
+body:not([data-lang="pt"]) [lang="pt"], body[data-lang="pt"] [lang="es"]{display:none}
+
+/* barra */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--paper);display:flex;justify-content:space-between;align-items:center;gap:10px;padding-block:10px;border-bottom:1px solid var(--rule)}
+.top nav{display:flex;gap:14px;flex-wrap:wrap}
+.top nav a{font-weight:700;font-size:15px;text-decoration:none;color:var(--ink)}
+.top nav a:hover{color:var(--sea)}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden;flex-shrink:0}
+.seg button{font:700 14px var(--body);background:transparent;color:var(--ink);border:0;padding:5px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+/* capa */
+.hero{position:relative;margin-top:16px;border-radius:22px;overflow:hidden;background:var(--sky);aspect-ratio:4/3;max-width:100%}
+@media (min-width:640px){.hero{aspect-ratio:16/9}}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero h1{position:absolute;left:20px;top:18px;right:20px;font:400 clamp(44px,11vw,96px)/.92 var(--display);color:var(--ink)}
+.lede{margin-top:20px;font-size:19px;max-width:60ch}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{border:1.5px solid var(--ink);border-radius:999px;padding:3px 12px;font-weight:500;font-size:15px}
+
+/* capítulos */
+.chapter{margin-top:64px;display:grid;gap:16px}
+.chead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px}
+.dates{font-weight:700;color:var(--sea);font-variant-numeric:tabular-nums}
+.post{border-radius:16px;overflow:hidden;aspect-ratio:21/8;max-width:100%;background:var(--sky);position:relative}
+.post canvas{position:absolute;inset:0;width:100%;height:100%}
+.intro{max-width:62ch}
+.media{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:700 15px var(--body);padding:8px 14px;border-radius:10px;border:1.5px solid var(--ink);background:var(--card);color:var(--ink)}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn svg{width:18px;height:18px;fill:currentColor}
+
+.days{list-style:none;margin:6px 0 0;padding:0;border-left:3px solid var(--ink);margin-left:7px}
+.day{position:relative;padding:0 0 22px 24px}
+.day::before{content:"";position:absolute;left:-10px;top:5px;width:17px;height:17px;border-radius:50%;background:var(--paper);border:3px solid var(--ink)}
+.day.travel::before{background:var(--caju)}
+.when{font-weight:700;font-size:14px;color:var(--soft)}
+.day p,.day ul{margin-top:4px;max-width:62ch}
+.day ul{padding-left:18px}
+.tips{background:var(--card);border-left:5px solid var(--caju);border-radius:0 12px 12px 0;padding:14px 16px}
+.tips ul{margin:6px 0 0;padding-left:18px}
+.tips li+li{margin-top:4px}
+
+/* tabelas */
+.block{margin-top:72px;display:grid;gap:12px}
+.block > p{max-width:62ch}
+.tablewrap{overflow-x:auto;border-radius:14px;border:1.5px solid var(--ink);background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:520px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--rule);font-size:15px;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+thead th{font-weight:700;background:var(--ink);color:var(--paper)}
+tr.group td{background:var(--paper);font-weight:700;color:var(--sea);text-align:left}
+td small{display:block;color:var(--soft);font-size:13px}
+td .pp{display:block;font-size:12px;color:var(--sea);font-weight:500}
+td a{font-size:13px}
+tfoot td{font-weight:700;border-bottom:0;font-size:16px}
+tfoot tr.ppl td{color:var(--red)}
+.note{font-size:14px;color:var(--soft)}
+.scen{justify-self:start}
+
+/* assistente */
+.ask{margin-top:72px;background:var(--ink);color:var(--paper);border-radius:22px;padding:22px 18px;display:grid;gap:14px}
+.ask h2{color:var(--paper)}
+.ask a{color:var(--caju)}
+.ask textarea{width:100%;min-height:84px;resize:vertical;font:400 16px/1.5 var(--body);padding:12px;border-radius:12px;border:0;background:var(--paper);color:var(--ink)}
+.ask .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.ask button.go{font:700 16px var(--body);background:var(--caju);color:#1E2350;border:0;border-radius:10px;padding:10px 18px;cursor:pointer}
+.ask button.go:disabled{opacity:.6;cursor:wait}
+.ask button.stop{font:700 14px var(--body);background:transparent;color:var(--paper);border:1.5px solid var(--paper);border-radius:10px;padding:8px 14px;cursor:pointer}
+.answer{background:var(--card);color:var(--ink);border-radius:12px;padding:14px 16px;white-space:pre-wrap;min-height:2em}
+.sugs{display:flex;flex-wrap:wrap;gap:8px}
+.sugs button{font:500 14px var(--body);background:transparent;color:var(--paper);border:1px solid var(--soft);border-radius:999px;padding:5px 12px;cursor:pointer}
+.sugs button:hover{border-color:var(--caju)}
+.saved{display:grid;gap:10px}
+.qa{background:rgba(255,255,255,.07);border-radius:12px;padding:10px 14px}
+.qa b{display:block}
+.qa p{color:var(--paper);opacity:.85;font-size:15px;margin-top:4px;white-space:pre-wrap}
+.muted{opacity:.8;font-size:15px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <nav>
+    <a href="#roteiro"><span lang="es">Itinerario</span><span lang="pt">Roteiro</span></a>
+    <a href="#costos"><span lang="es">Costos</span><span lang="pt">Custos</span></a>
+    <a href="#preguntar"><span lang="es">Preguntar</span><span lang="pt">Perguntar</span></a>
+  </nav>
+  <div class="seg" role="group" aria-label="Idioma">
+    <button type="button" id="b-es" data-set="es" aria-pressed="true">ES</button>
+    <button type="button" id="b-pt" data-set="pt" aria-pressed="false">PT</button>
+  </div>
+</header>
+
+<div class="hero">
+  <canvas id="hero" aria-hidden="true"></canvas>
+  <h1><span lang="es">Rumbo a Ceará</span><span lang="pt">Rumo ao Ceará</span></h1>
+</div>
+<p class="lede" lang="es">Dos semanas en la costa del nordeste de Brasil, los cuatro juntos: ciudad, parque acuático y un pueblo de pescadores. Acá está el plan día por día, con fotos, videos y lo que va a costar.</p>
+<p class="lede" lang="pt">Duas semanas no litoral do Nordeste, nós quatro juntos: cidade, parque aquático e uma vila de pescadores. Aqui está o plano dia por dia, com fotos, vídeos e quanto vai custar.</p>
+<div class="facts">
+  <span class="chip">27/01 – 10/02/2027</span>
+  <span class="chip">13 <span lang="es">noches</span><span lang="pt">noites</span></span>
+  <span class="chip">4 <span lang="es">viajeros</span><span lang="pt">viajantes</span></span>
+  <span class="chip">~28 °C</span>
+</div>
+
+<div id="roteiro">
+
+<!-- FORTALEZA -->
+<section class="chapter" id="fortaleza">
+  <div class="chead"><h2>Fortaleza</h2><span class="dates">27/01 – 29/01</span></div>
+  <div class="post"><canvas data-scene="city"></canvas></div>
+  <p class="intro" lang="es">Capital de Ceará, con una costanera enorme, feria de artesanías de noche y la mejor comida de playa del nordeste. Llegamos de madrugada, así que arrancamos descansando.</p>
+  <p class="intro" lang="pt">Capital do Ceará, com orla enorme, feira de artesanato à noite e a melhor comida de praia do Nordeste. Chegamos de madrugada, então começamos descansando.</p>
+  <div class="media">
+    <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Fortaleza+Beira+Mar+Praia+de+Iracema"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zM5 17h14l-4.5-6-3.5 4.5-2.5-3z"/></svg>Fotos</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Fortaleza+Ceará+qué+hacer"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span lang="es">Videos</span><span lang="pt">Vídeos</span></a>
+  </div>
+  <ol class="days">
+    <li class="day travel"><div class="when"><span lang="es">Miércoles 27/01</span><span lang="pt">Quarta 27/01</span></div>
+      <h3><span lang="es">Vuelo directo desde Aeroparque</span><span lang="pt">Voo direto de Aeroparque</span></h3>
+      <p lang="es">Salida 22:00, llegada 03:10. El hotel queda reservado desde esta noche.</p>
+      <p lang="pt">Saída 22:00, chegada 03:10. Hotel reservado desde esta noite.</p></li>
+    <li class="day"><div class="when"><span lang="es">Jueves 28/01</span><span lang="pt">Quinta 28/01</span></div>
+      <h3><span lang="es">Descanso y Beira-Mar</span><span lang="pt">Descanso e Beira-Mar</span></h3>
+      <ul lang="es"><li>Mañana para dormir</li><li>Atardecer en la Avenida Beira-Mar</li><li>Feria de artesanías de noche</li></ul>
+      <ul lang="pt"><li>Manhã para dormir</li><li>Fim de tarde na Avenida Beira-Mar</li><li>Feirinha de artesanato à noite</li></ul></li>
+  </ol>
+</section>
+
+<!-- BEACH PARK -->
+<section class="chapter" id="beachpark">
+  <div class="chead"><h2>Beach Park</h2><span class="dates">29/01 – 02/02</span></div>
+  <div class="post"><canvas data-scene="park"></canvas></div>
+  <p class="intro" lang="es">El complejo de parque acuático más grande de Brasil, a unos 25 km de Fortaleza. Cuatro noches en un resort del propio Beach Park, con media pensión.</p>
+  <p class="intro" lang="pt">O maior complexo de parque aquático do Brasil, a uns 25 km de Fortaleza. Quatro noites num resort do próprio Beach Park, com meia pensão.</p>
+  <div class="media">
+    <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Beach+Park+Aqua+Park+Fortaleza"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zM5 17h14l-4.5-6-3.5 4.5-2.5-3z"/></svg>Fotos</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Beach+Park+Insano+Aqua+Park"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span lang="es">Videos</span><span lang="pt">Vídeos</span></a>
+    <a class="btn" target="_blank" rel="noopener" href="https://beachpark.com.br/"><span lang="es">Sitio oficial</span><span lang="pt">Site oficial</span></a>
+  </div>
+  <ol class="days">
+    <li class="day travel"><div class="when"><span lang="es">Viernes 29/01</span><span lang="pt">Sexta 29/01</span></div>
+      <h3>Fortaleza → Beach Park, ~40 min</h3>
+      <p lang="es">Check-in en el resort y primera tarde en la playa.</p>
+      <p lang="pt">Check-in no resort e primeira tarde na praia.</p></li>
+    <li class="day"><div class="when"><span lang="es">Sábado 30/01 a lunes 01/02</span><span lang="pt">Sábado 30/01 a segunda 01/02</span></div>
+      <h3><span lang="es">Aqua Park y playa</span><span lang="pt">Aqua Park e praia</span></h3>
+      <ul lang="es"><li>Aqua Park, con el famoso tobogán Insano</li><li>Parque Arvorar, de naturaleza</li><li>Moqueca y cangrejo en el Restaurante de Playa</li><li>Vila Azul do Mar de noche</li></ul>
+      <ul lang="pt"><li>Aqua Park, com o famoso toboágua Insano</li><li>Parque Arvorar, de natureza</li><li>Moqueca e caranguejo no Restaurante de Praia</li><li>Vila Azul do Mar à noite</li></ul></li>
+  </ol>
+  <div class="tips">
+    <h3><span lang="es">Para tener en cuenta</span><span lang="pt">Bom saber</span></h3>
+    <ul lang="es"><li>Alojarse en el resort no da acceso automático al parque. Solo lo incluyen los paquetes con parques. Confirmar por WhatsApp de Beach Park: +55 85 8171-7021.</li><li>Los huéspedes entran 1 hora antes en dos atracciones del Aqua Park.</li><li>Adentro se paga solo con la tarjeta de consumo. Si se recarga con débito o efectivo, devuelven lo que sobra.</li></ul>
+    <ul lang="pt"><li>Ficar no resort não dá direito automático ao parque. Só os pacotes com parques incluem. Confirmar pelo WhatsApp do Beach Park: +55 85 8171-7021.</li><li>Hóspedes entram 1 hora antes em duas atrações do Aqua Park.</li><li>Lá dentro se paga só com o cartão de consumo. Recarregando no débito ou em dinheiro, devolvem o que sobrar.</li></ul>
+  </div>
+</section>
+
+<!-- ICARAIZINHO -->
+<section class="chapter" id="icaraizinho">
+  <div class="chead"><h2>Icaraizinho de Amontada</h2><span class="dates">02/02 – 06/02</span></div>
+  <div class="post"><canvas data-scene="dunes"></canvas></div>
+  <p class="intro" lang="es">Pueblo de pescadores en la costa oeste, con médanos, jangadas y un viento que atrae kitesurfistas de todo el mundo. Ritmo lento: playa, pies en la arena y atardecer.</p>
+  <p class="intro" lang="pt">Vila de pescadores na costa oeste, com dunas, jangadas e um vento que atrai kitesurfistas do mundo todo. Ritmo lento: praia, pé na areia e pôr do sol.</p>
+  <div class="media">
+    <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Icaraizinho+de+Amontada"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zM5 17h14l-4.5-6-3.5 4.5-2.5-3z"/></svg>Fotos</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Icaraizinho+de+Amontada"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span lang="es">Videos</span><span lang="pt">Vídeos</span></a>
+  </div>
+  <ol class="days">
+    <li class="day travel"><div class="when"><span lang="es">Martes 02/02</span><span lang="pt">Terça 02/02</span></div>
+      <h3>Beach Park → Icaraizinho, ~3h30</h3>
+      <p lang="es">Auto alquilado, saliendo temprano. Llegamos para el primer atardecer.</p>
+      <p lang="pt">Carro alugado, saindo cedo. Chegamos para o primeiro pôr do sol.</p></li>
+    <li class="day"><div class="when"><span lang="es">Miércoles 03/02 a viernes 05/02</span><span lang="pt">Quarta 03/02 a sexta 05/02</span></div>
+      <h3><span lang="es">Días de playa</span><span lang="pt">Dias de praia</span></h3>
+      <ul lang="es"><li>Atardecer en los médanos</li><li>Ver las jangadas volviendo de la pesca</li><li>Clase de kite para quien quiera</li><li>Pescado fresco en los paradores</li></ul>
+      <ul lang="pt"><li>Pôr do sol nas dunas</li><li>Ver as jangadas chegando da pesca</li><li>Aula de kite para quem quiser</li><li>Peixe fresco nas barracas</li></ul></li>
+  </ol>
+</section>
+
+<!-- FORTALEZA FINAL -->
+<section class="chapter" id="vuelta">
+  <div class="chead"><h2><span lang="es">De vuelta en Fortaleza</span><span lang="pt">De volta a Fortaleza</span></h2><span class="dates">06/02 – 10/02</span></div>
+  <div class="post"><canvas data-scene="sunset"></canvas></div>
+  <p class="intro" lang="es">Los últimos días coinciden con Carnaval. Centro, Praia do Futuro, compras de recuerdos y la vuelta.</p>
+  <p class="intro" lang="pt">Os últimos dias coincidem com o Carnaval. Centro, Praia do Futuro, lembranças e a volta.</p>
+  <div class="media">
+    <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q=Praia+do+Futuro+Fortaleza+barracas"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zM5 17h14l-4.5-6-3.5 4.5-2.5-3z"/></svg>Fotos</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Praia+do+Futuro+Fortaleza"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span lang="es">Videos</span><span lang="pt">Vídeos</span></a>
+  </div>
+  <ol class="days">
+    <li class="day travel"><div class="when"><span lang="es">Sábado 06/02</span><span lang="pt">Sábado 06/02</span></div>
+      <h3>Icaraizinho → Fortaleza, ~3h</h3>
+      <p lang="es">Devolvemos el auto y noche en la Beira-Mar.</p>
+      <p lang="pt">Devolvemos o carro e noite na Beira-Mar.</p></li>
+    <li class="day"><div class="when"><span lang="es">Domingo 07/02</span><span lang="pt">Domingo 07/02</span></div>
+      <h3>Praia do Futuro</h3>
+      <p lang="es">Día entero en los paradores de playa: cangrejo, tapioca y agua de coco.</p>
+      <p lang="pt">Dia inteiro nas barracas de praia: caranguejo, tapioca e água de coco.</p></li>
+    <li class="day"><div class="when"><span lang="es">Lunes 08/02</span><span lang="pt">Segunda 08/02</span></div>
+      <h3><span lang="es">Centro y Praia de Iracema</span><span lang="pt">Centro e Praia de Iracema</span></h3>
+      <ul lang="es"><li>Mercado Central: castañas de cajú, encajes, hamacas</li><li>Centro Cultural Dragão do Mar</li><li>Atardecer en el Puente de los Ingleses</li></ul>
+      <ul lang="pt"><li>Mercado Central: castanha de caju, rendas, redes</li><li>Centro Cultural Dragão do Mar</li><li>Pôr do sol na Ponte dos Ingleses</li></ul></li>
+    <li class="day travel"><div class="when"><span lang="es">Martes 09/02 a miércoles 10/02</span><span lang="pt">Terça 09/02 a quarta 10/02</span></div>
+      <h3><span lang="es">Vuelta a casa</span><span lang="pt">Volta para casa</span></h3>
+      <p lang="es">Último día libre. Vuelo a las 03:25 con escala en Río, llegada a Ezeiza a las 11:50 del 10/02.</p>
+      <p lang="pt">Último dia livre. Voo às 03:25 com conexão no Rio, chegada em Ezeiza às 11:50 do dia 10/02.</p></li>
+  </ol>
+</section>
+
+</div>
+
+<!-- COMER Y AUTO -->
+<section class="block" id="comer">
+  <h2><span lang="es">Comer y moverse</span><span lang="pt">Comer e se locomover</span></h2>
+  <p lang="es">Precios promedio por persona, por comida y sin alcohol. Los de restaurantes son de 2025: conviene sumar un 10%.</p>
+  <p lang="pt">Preços médios por pessoa, por refeição e sem álcool. Os de restaurantes são de 2025: vale somar uns 10%.</p>
+  <div class="tablewrap"><table id="t-food">
+    <thead><tr><th><span lang="es">Lugar</span><span lang="pt">Lugar</span></th><th>R$</th><th>US$</th><th>AR$</th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+</section>
+
+<!-- COSTOS -->
+<section class="block" id="costos">
+  <h2><span lang="es">Nuestros costos promedio</span><span lang="pt">Nossos custos médios</span></h2>
+  <p lang="es">Son costos promedio estimados para 13 noches. Viajamos los 4 juntos y compartimos el auto y las habitaciones, así que el costo por persona es el total dividido por 4.</p>
+  <p lang="pt">São custos médios estimados para 13 noites. Viajamos os 4 juntos e dividimos o carro e os quartos, então o custo por pessoa é o total dividido por 4.</p>
+  <div class="seg scen" role="group" aria-label="Escenario">
+    <button type="button" id="sc-mid" data-sc="mid" aria-pressed="true"><span lang="es">Comida media</span><span lang="pt">Comida média</span></button>
+    <button type="button" id="sc-hi" data-sc="hi" aria-pressed="false"><span lang="es">Restaurantes caros</span><span lang="pt">Restaurantes caros</span></button>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th><span lang="es">Ítem</span><span lang="pt">Item</span></th><th>R$</th><th>US$</th><th>AR$</th></tr></thead>
+    <tbody id="ctab"></tbody>
+    <tfoot>
+      <tr><td><span lang="es">Total familia</span><span lang="pt">Total família</span></td><td id="t-brl"></td><td id="t-usd"></td><td id="t-ars"></td></tr>
+      <tr class="ppl"><td><span lang="es">Por persona</span><span lang="pt">Por pessoa</span></td><td id="p-brl"></td><td id="p-usd"></td><td id="p-ars"></td></tr>
+    </tfoot>
+  </table></div>
+  <p class="note" id="rates"></p>
+  <p class="note" lang="es">Precio de pasajes de referencia: Skyscanner, 12/10/2026, sin valija. Sirve para comparar con millas. Fechas, vuelos y hoteles todavía a confirmar.</p>
+  <p class="note" lang="pt">Preço de passagem de referência: Skyscanner, 12/10/2026, sem mala. Serve para comparar com milhas. Datas, voos e hotéis ainda a confirmar.</p>
+</section>
+
+<!-- PREGUNTAR -->
+<section class="ask" id="preguntar">
+  <h2><span lang="es">Preguntá sobre el viaje</span><span lang="pt">Pergunte sobre a viagem</span></h2>
+  <p lang="es">Un asistente que conoce este itinerario y los costos. Las preguntas y respuestas quedan guardadas para ir mejorando el sitio.</p>
+  <p lang="pt">Um assistente que conhece este roteiro e os custos. As perguntas e respostas ficam salvas para irmos melhorando o site.</p>
+  <div id="ask-on" hidden>
+    <div class="sugs" id="sugs"></div>
+    <label for="q" class="muted" style="display:block;margin:12px 0 6px"><span lang="es">Tu pregunta</span><span lang="pt">Sua pergunta</span></label>
+    <textarea id="q"></textarea>
+    <div class="row" style="margin-top:10px">
+      <button type="button" class="go" id="go"><span lang="es">Preguntar</span><span lang="pt">Perguntar</span></button>
+      <button type="button" class="stop" id="stop" hidden><span lang="es">Detener</span><span lang="pt">Parar</span></button>
+      <span class="muted" id="status"></span>
+    </div>
+    <div class="answer" id="answer" hidden style="margin-top:12px"></div>
+  </div>
+  <div id="ask-off">
+    <p class="muted" lang="es">El asistente funciona dentro de Claude. <a href="https://claude.ai/artifact/1LaVToVU29Hnv5wPr8sEPK" target="_blank" rel="noopener">Abrir el sitio en Claude</a> para preguntar.</p>
+    <p class="muted" lang="pt">O assistente funciona dentro do Claude. <a href="https://claude.ai/artifact/1LaVToVU29Hnv5wPr8sEPK" target="_blank" rel="noopener">Abrir o site no Claude</a> para perguntar.</p>
+  </div>
+  <div id="saved-wrap" hidden>
+    <h3 style="color:var(--paper)"><span lang="es">Preguntas del grupo</span><span lang="pt">Perguntas do grupo</span></h3>
+    <div class="saved" id="saved" style="margin-top:10px"></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  const body=document.body;
+  let LANG="es";
+  function setLang(l){
+    LANG=l; body.dataset.lang=l; document.documentElement.lang=l==="es"?"es":"pt-BR";
+    document.querySelectorAll("[data-set]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.set===l)));
+    try{localStorage.setItem("lang",l)}catch(e){}
+    renderSugs();
+  }
+  document.querySelectorAll("[data-set]").forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.set)));
+
+  /* ---------- dinero ---------- */
+  // US$1 = R$4,9863 (12/10/2026) · US$1 = AR$1.540 oficial BNA (09/10/2026)
+  const BRL_USD=4.9863, ARS_USD=1540;
+  const nf=v=>new Intl.NumberFormat("pt-BR",{maximumFractionDigits:0}).format(v);
+  const usd=b=>b/BRL_USD, ars=b=>b/BRL_USD*ARS_USD;
+  const r10=v=>Math.round(v/10)*10, r1k=v=>Math.round(v/1000)*1000;
+  const rng=(f,a,b,round)=>b?`${nf(round(f(a)))}–${nf(round(f(b)))}`:nf(round(f(a)));
+  const L=(es,pt)=>`<span lang="es">${es}</span><span lang="pt">${pt}</span>`;
+  document.getElementById("rates").innerHTML=L("Cambio usado: US$ 1 = R$ 4,99 (12/10/2026) y US$ 1 = AR$ 1.540, dólar oficial (09/10/2026). Con tarjeta argentina el dólar sale más caro por los impuestos.","Câmbio usado: US$ 1 = R$ 4,99 (12/10/2026) e US$ 1 = AR$ 1.540, dólar oficial (09/10/2026). No cartão argentino o dólar sai mais caro por causa dos impostos.");
+
+  const G=s=>"https://www.google.com/search?tbm=isch&q="+encodeURIComponent(s);
+  const food=[
+    ["g",L("Precio medio","Preço médio")],
+    [L("Almuerzo común","Almoço comum"),L("plato del día, buffet por kilo","prato feito, self-service"),44,0,null],
+    [L("Cena común","Jantar comum"),L("restaurante simple","restaurante simples"),52,0,null],
+    ["Boteco Praia","Fortaleza",70,110,"Boteco Praia Fortaleza"],
+    ["Mercado do Peixe","Fortaleza",80,130,"Mercado do Peixe Mucuripe Fortaleza"],
+    ["Cervejaria Turatti","Fortaleza",80,130,"Cervejaria Turatti Fortaleza"],
+    ["g",L("Restaurantes caros","Restaurantes caros")],
+    ["Coco Bambu",L("mariscos","frutos do mar"),120,180,"Coco Bambu Fortaleza"],
+    ["Marquês da Varjota",L("cocina regional","cozinha regional"),120,180,"Marquês da Varjota Fortaleza"],
+    ["Santa Grelha",L("carnes","carnes"),150,220,"Santa Grelha Fortaleza"],
+    [L("Restaurante de Playa","Restaurante de Praia")+", Beach Park",L("picadas a platos de mariscos","petiscos a pratos de frutos do mar"),25,120,"Restaurante de Praia Beach Park"],
+    ["g",L("Auto (del 02/02 al 06/02, ~500 km)","Carro (de 02/02 a 06/02, ~500 km)")],
+    [L("Auto chico, por día","Carro pequeno, por dia"),"Skyscanner, 10/2026",108,0,null],
+    [L("Mediano o SUV, por día","Médio ou SUV, por dia"),L("estimado, 4 personas y 4 valijas","estimativa, 4 pessoas e 4 malas"),180,0,null],
+    [L("Combustible ida y vuelta","Combustível ida e volta"),L("estimado","estimativa"),300,0,null],
+  ];
+  document.querySelector("#t-food tbody").innerHTML=food.map(r=>{
+    if(r[0]==="g") return `<tr class="group"><td colspan="4">${r[1]}</td></tr>`;
+    const [n,d,a,b,q]=r;
+    const ph=q?` <a target="_blank" rel="noopener" href="${G(q)}">Fotos</a>`:"";
+    return `<tr><td>${n}<small>${d}${ph}</small></td><td>${b?nf(a)+"–"+nf(b):nf(a)}</td><td>${rng(usd,a,b,v=>v)}</td><td>${rng(ars,a,b,r1k)}</td></tr>`;
+  }).join("");
+
+  const items=[
+    [L("Pasajes ida y vuelta","Passagens ida e volta"),L("Gol, precio de referencia sin valija","Gol, preço de referência sem mala"),12413],
+    [L("Valijas despachadas","Malas despachadas"),L("4 valijas × 2 tramos, estimado","4 malas × 2 trechos, estimativa"),1600],
+    [L("Hotel Fortaleza","Hotel Fortaleza"),L("5 noches frente al mar, con desayuno","5 noites na beira-mar, com café"),5500],
+    [L("Resort Beach Park","Resort Beach Park"),L("4 noches, media pensión, promedio Oceani/Acqua","4 noites, meia pensão, média Oceani/Acqua"),7860],
+    [L("Entradas a los parques","Ingressos dos parques"),L("3 días; desaparece si el paquete los incluye","3 dias; some se o pacote incluir"),3000],
+    [L("Posada Icaraizinho","Pousada Icaraizinho"),L("4 noches, promedio Booking","4 noites, média Booking"),3100],
+    [L("Auto + combustible","Carro + combustível"),L("5 días, mediano/SUV","5 dias, médio/SUV"),1200],
+    [L("Uber y traslados","Uber e transfers"),L("aeropuerto y tramos cortos","aeroporto e trechos curtos"),400],
+    ["FOOD"],
+    [L("Paseos y extras","Passeios e extras"),L("buggy, kite, recuerdos","buggy, kite, lembranças"),1000],
+  ];
+  // comida: 9 días enteros + 4 con media pensión (mitad) = 11 días × 4 personas
+  const FOOD={mid:[150,L("Comida media","Comida média")],hi:[320,L("Con restaurantes caros","Com restaurantes caros")]};
+  let lastTotal=0;
+  function renderCosts(sc){
+    const [pp,label]=FOOD[sc]; let tot=0;
+    const P=L("por persona","por pessoa");
+    document.getElementById("ctab").innerHTML=items.map(([n,d,v])=>{
+      if(n==="FOOD"){n=L("Comida","Alimentação");d=label+", "+L(`R$ ${pp} por persona por día`,`R$ ${pp} por pessoa por dia`);v=11*pp*4}
+      tot+=v; const q=v/4;
+      return `<tr><td>${n}<small>${d}</small></td><td>${nf(v)}<span class="pp">${nf(q)} ${P}</span></td><td>${nf(r10(usd(v)))}<span class="pp">${nf(r10(usd(q)))} ${P}</span></td><td>${nf(r1k(ars(v)))}<span class="pp">${nf(r1k(ars(q)))} ${P}</span></td></tr>`;
+    }).join("");
+    const set=(id,v)=>document.getElementById(id).textContent=v;
+    set("t-brl",nf(tot));set("t-usd",nf(r10(usd(tot))));set("t-ars",nf(r1k(ars(tot))));
+    set("p-brl",nf(tot/4));set("p-usd",nf(r10(usd(tot/4))));set("p-ars",nf(r1k(ars(tot/4))));
+    document.querySelectorAll("[data-sc]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.sc===sc)));
+    lastTotal=tot;
+  }
+  document.querySelectorAll("[data-sc]").forEach(b=>b.addEventListener("click",()=>renderCosts(b.dataset.sc)));
+  renderCosts("mid");
+
+  /* ---------- gravura de cordel ---------- */
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function setup(c){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);return [x,r.width,r.height]}
+  function grain(x,W,H,seed){let s=seed;const rnd=()=>{s=(s*16807)%2147483647;return s/2147483647};x.fillStyle=css("--ink");x.globalAlpha=.07;for(let i=0;i<W*H/90;i++){x.fillRect(rnd()*W,rnd()*H,1.2,1.2)}x.globalAlpha=1}
+  function waves(x,W,H,y0,t,n){x.strokeStyle=css("--ink");x.lineWidth=2.4;x.lineCap="round";
+    for(let i=0;i<n;i++){const y=y0+14+i*16;x.beginPath();for(let k=-10;k<=W+10;k+=6){const yy=y+Math.sin(k/18+i*1.7+t)*3.2;k<0?x.moveTo(k,yy):x.lineTo(k,yy)}x.stroke()}}
+  function sun(x,cx,cy,r,rot,color){x.save();x.translate(cx,cy);x.rotate(rot);x.fillStyle=color;
+    for(let i=0;i<14;i++){x.beginPath();x.moveTo(0,-r*1.15);x.lineTo(r*.16,-r*1.75);x.lineTo(-r*.16,-r*1.75);x.closePath();x.fill();x.rotate(Math.PI*2/14)}
+    x.beginPath();x.arc(0,0,r,0,Math.PI*2);x.fill();x.strokeStyle=css("--ink");x.lineWidth=3;x.stroke();x.restore()}
+  function jangada(x,jx,jy,s,tilt){x.save();x.translate(jx,jy);x.rotate(tilt);const ink=css("--ink");
+    x.fillStyle=ink;x.fillRect(-46*s,0,92*s,8*s);x.fillRect(-3*s,-96*s,5*s,96*s);
+    x.fillStyle=css("--card");x.strokeStyle=ink;x.lineWidth=3;x.beginPath();x.moveTo(2*s,-92*s);x.quadraticCurveTo(58*s,-50*s,46*s,-6*s);x.lineTo(2*s,-6*s);x.closePath();x.fill();x.stroke();
+    x.strokeStyle=ink;x.lineWidth=1.6;for(let i=1;i<4;i++){x.beginPath();x.moveTo(2*s,(-92+i*21)*s);x.lineTo((26+i*5)*s,(-80+i*20)*s);x.stroke()}x.restore()}
+
+  const hero=document.getElementById("hero");
+  function drawHero(t){const [x,W,H]=setup(hero);
+    x.fillStyle=css("--sky");x.fillRect(0,0,W,H);
+    sun(x,W*.78,H*.36,Math.min(W,H)*.11,t*.05,css("--caju"));
+    const seaY=H*.64;x.fillStyle=css("--sea");x.fillRect(0,seaY,W,H-seaY);
+    waves(x,W,H,seaY,t*1.2,Math.ceil((H-seaY)/16));
+    x.fillStyle=css("--paper");x.beginPath();x.moveTo(0,H);x.lineTo(0,H*.86);x.quadraticCurveTo(W*.22,H*.8,W*.42,H*.9);x.quadraticCurveTo(W*.5,H*.95,W*.55,H);x.fill();
+    x.strokeStyle=css("--ink");x.lineWidth=3;x.stroke();
+    jangada(x,W*.46+Math.sin(t*.4)*W*.03,seaY+H*.08+Math.sin(t*1.3)*3,Math.min(W,H)/360,Math.sin(t*1.1)*.05);
+    grain(x,W,H,7);
+  }
+  let t0=performance.now(),raf=null,visible=true;
+  function loop(now){drawHero((now-t0)/1000);raf=requestAnimationFrame(loop)}
+  if(reduce){drawHero(0)}else{raf=requestAnimationFrame(loop);
+    new IntersectionObserver(es=>{visible=es[0].isIntersecting;if(visible&&!raf)raf=requestAnimationFrame(loop);if(!visible&&raf){cancelAnimationFrame(raf);raf=null}}).observe(hero)}
+  drawHero(0);
+
+  function post(c){const [x,W,H]=setup(c),s=c.dataset.scene,ink=css("--ink");
+    x.fillStyle=css("--sky");x.fillRect(0,0,W,H);const seaY=H*.62;
+    if(s==="sunset"){sun(x,W*.3,seaY,H*.2,0,css("--red"))}else{sun(x,s==="dunes"?W*.8:W*.18,H*.32,H*.12,0,css("--caju"))}
+    x.fillStyle=css("--sea");x.fillRect(0,seaY,W,H-seaY);waves(x,W,H,seaY,0,3);
+    x.fillStyle=ink;x.strokeStyle=ink;
+    if(s==="city"){let px=W*.45,i=0;while(px<W){const w=20+((i*37)%24),h=H*(.2+((i*53)%30)/100);x.fillRect(px,seaY-h,w,h);x.fillStyle=css("--sky");for(let r=8;r<h-6;r+=12)x.fillRect(px+5,seaY-h+r,w-10,3);x.fillStyle=ink;px+=w+5;i++}}
+    if(s==="dunes"){x.fillStyle=css("--caju");x.beginPath();x.moveTo(0,seaY+2);x.quadraticCurveTo(W*.18,H*.34,W*.42,seaY);x.quadraticCurveTo(W*.58,H*.46,W*.7,seaY+2);x.closePath();x.fill();x.lineWidth=3;x.stroke();jangada(x,W*.6,seaY+H*.16,H/300,0)}
+    if(s==="park"){x.lineWidth=10;x.lineCap="round";x.strokeStyle=css("--red");x.beginPath();x.moveTo(W*.52,H*.1);x.bezierCurveTo(W*.62,H*.3,W*.46,H*.4,W*.58,seaY-4);x.stroke();
+      x.strokeStyle=css("--caju");x.beginPath();x.moveTo(W*.7,H*.16);x.bezierCurveTo(W*.84,H*.3,W*.66,H*.44,W*.8,seaY-4);x.stroke();
+      x.fillStyle=ink;x.fillRect(W*.515,H*.1,6,seaY-H*.1);x.fillRect(W*.695,H*.16,6,seaY-H*.16)}
+    if(s==="sunset"){x.lineWidth=5;[[.68,.28],[.8,.2]].forEach(([a,b])=>{const tx=W*a+10,ty=H*b;x.beginPath();x.moveTo(W*a,seaY+6);x.quadraticCurveTo(W*a-12,H*.45,tx,ty);x.stroke();for(let k=0;k<6;k++){x.beginPath();x.ellipse(tx,ty,H*.14,H*.025,k*1.05,0,Math.PI*2);x.fill()}})}
+    grain(x,W,H,s.length*31);
+  }
+  const posts=[...document.querySelectorAll(".post canvas")];
+  const redrawAll=()=>{posts.forEach(post);if(reduce||!raf)drawHero(0)};
+  posts.forEach(post);
+  let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(redrawAll,150)});
+  try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",redrawAll)}catch(e){}
+
+  /* ---------- asistente ---------- */
+  const SUGS={es:["¿Qué llevar a Icaraizinho?","¿Conviene el paquete del Beach Park con parques?","¿Cuánto llevar en efectivo?","¿Qué comer en Fortaleza?"],
+              pt:["O que levar para Icaraizinho?","Vale o pacote do Beach Park com parques?","Quanto levar em dinheiro?","O que comer em Fortaleza?"]};
+  const qEl=document.getElementById("q"),goEl=document.getElementById("go"),stopEl=document.getElementById("stop"),stEl=document.getElementById("status"),ansEl=document.getElementById("answer");
+  function renderSugs(){const box=document.getElementById("sugs");if(!box)return;box.innerHTML="";(SUGS[LANG]||SUGS.es).forEach(s=>{const b=document.createElement("button");b.type="button";b.textContent=s;b.onclick=()=>{qEl.value=s;qEl.focus()};box.append(b)})}
+  let saved=null; try{saved=localStorage.getItem("lang")}catch(e){}
+  setLang(saved||"es");
+
+  const copy={
+    think:{es:"Pensando…",pt:"Pensando…"},
+    saved:{es:"Guardada para mejorar el sitio.",pt:"Salva para melhorar o site."},
+    nosave:{es:"No se pudo guardar esta pregunta.",pt:"Não foi possível salvar esta pergunta."},
+    rate:{es:"Demasiadas preguntas seguidas. Probá de nuevo en un rato.",pt:"Perguntas demais seguidas. Tente de novo daqui a pouco."},
+    err:{es:"No hubo respuesta. Probá de nuevo.",pt:"Não houve resposta. Tente de novo."},
+    empty:{es:"Escribí una pregunta primero.",pt:"Escreva uma pergunta primeiro."},
+  };
+  const T=k=>copy[k][LANG];
+  function context(){
+    const it=document.getElementById("roteiro").innerText.slice(0,9000);
+    const c=document.getElementById("costos").innerText.slice(0,4000);
+    const f=document.getElementById("comer").innerText.slice(0,3000);
+    return `Itinerario:\n${it}\n\nComida y auto:\n${f}\n\nCostos:\n${c}`;
+  }
+  function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+
+  (async()=>{
+    if(!window.claude||!claude.use)return;
+    const sample=await claude.use("sample").catch(()=>null);
+    if(!sample)return;
+    document.getElementById("ask-on").hidden=false;
+    document.getElementById("ask-off").hidden=true;
+    const db=await claude.use("db").catch(()=>null);
+    if(db){
+      try{
+        db.collection("preguntas").orderBy("at","desc").limit(30).onSnapshot(snap=>{
+          const box=document.getElementById("saved");
+          document.getElementById("saved-wrap").hidden=snap.empty;
+          box.innerHTML=snap.docs.map(d=>{const v=d.data()||{};return `<div class="qa"><b>${esc(String(v.q||""))}</b><p>${esc(String(v.a||"").slice(0,1200))}</p></div>`}).join("");
+        },()=>{});
+      }catch(e){}
+    }
+    let ctl=null;
+    stopEl.onclick=()=>ctl&&ctl.abort();
+    goEl.onclick=async()=>{
+      const q=qEl.value.trim(); if(!q){stEl.textContent=T("empty");return}
+      ctl=new AbortController(); goEl.disabled=true; stopEl.hidden=false; ansEl.hidden=false; ansEl.textContent=T("think"); stEl.textContent="";
+      const lang=LANG==="es"?"español rioplatense":"português do Brasil";
+      const prompt=`Sos el asistente de un sitio de viaje familiar: dos familias (4 personas viajando juntas) que salen de Buenos Aires a Ceará, Brasil. Respondé en ${lang}, en tono amigable y directo, en 3 a 8 frases o una lista corta. Usá los datos del sitio de abajo como base. Si algo no está en los datos y no lo sabés con seguridad, decilo y sugerí dónde confirmarlo. Si hablás de dinero, dá valores en reales, dólares y pesos argentinos usando el cambio indicado en el sitio.\n\nDATOS DEL SITIO:\n${context()}\n\nPREGUNTA:\n${q}`;
+      try{
+        const {text}=await sample(prompt,{signal:ctl.signal,cache:false,onText:({text})=>{ansEl.textContent=text}});
+        if(db){try{await db.collection("preguntas").add({q:q.slice(0,500),a:text.slice(0,4000),lang:LANG,at:Date.now()});stEl.textContent=T("saved")}catch(e){stEl.textContent=T("nosave")}}
+      }catch(e){
+        ansEl.textContent=e&&e.text?e.text:"";
+        if(e&&e.code==="cancelled"){}
+        else if(e&&(e.code==="not_granted"||e.code==="sampling_disabled")){document.getElementById("ask-on").hidden=true;document.getElementById("ask-off").hidden=false}
+        else if(e&&e.code==="rate_limited"){stEl.textContent=T("rate")}
+        else{stEl.textContent=T("err")}
+        if(!ansEl.textContent)ansEl.hidden=true;
+      }finally{goEl.disabled=false;stopEl.hidden=true}
+    };
+  })();
+})();
+</script>
+
+</body>
+</html>
