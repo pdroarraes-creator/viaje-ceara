@@ -26,7 +26,7 @@ const PERSONAS = {
 // Acento de la voz según el idioma de la respuesta: portugués → cearense; español → acento brasileño.
 const STYLE = {
   pt: "Fale em português com sotaque nordestino cearense bem marcado, tom simpático, animado e bem-humorado, como uma pessoa de Fortaleza conversando no WhatsApp.",
-  es: "Hablá en español con acento brasileño bien marcado, tono simpático, alegre y bromista, como una cearense de Fortaleza que habla español.",
+  es: "Hablá en portuñol: español con acento brasileño nordestino MUY marcado, con la musicalidad del portugués, tono simpático y bromista, como una cearense de Fortaleza que aprendió español.",
 };
 function langOf(t) {
   const x = " " + t.toLowerCase() + " ";

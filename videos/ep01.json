@@ -8,57 +8,63 @@
  "turns": [
   {
    "speaker": "Castanha",
-   "style": "alegre, abriendo un programa",
+   "style": "alegre, abriendo el programa, pícara",
    "beat": "mapa",
-   "text": "¡Hola, familia! Esto es Rumbo a Ceará. Episodio uno: ¿por qué Fortaleza se llama Fortaleza?"
+   "text": "¡Oi, familia! Esto es Rumbo a Ceará. Yo soy Castanha..."
   },
   {
    "speaker": "Caju",
-   "style": "narrando, con misterio",
-   "beat": "barcos",
-   "text": "Para saberlo hay que volver a 1649. Desde el mar llegan barcos holandeses."
+   "style": "bromista, con mucho acento",
+   "beat": "mapa",
+   "text": "...y yo, Caju. Somos cearenses, así que perdonen el portuñol, visse? Hoy: ¿por qué Fortaleza se llama Fortaleza?"
   },
   {
    "speaker": "Castanha",
-   "style": "divertida",
+   "style": "narrando, con humor",
    "beat": "barcos",
-   "text": "Al frente viene Matías Beck. Busca plata en las sierras... y no encuentra nada."
+   "text": "Volvamos a 1649. Desde el mar llegan barcos holandeses. Oxe, ¡con este calor y de pantalón largo!"
   },
   {
    "speaker": "Caju",
-   "style": "narrando",
+   "style": "divertido, autocrítico",
+   "beat": "barcos",
+   "text": "Al frente viene Matías Beck. Buscaba plata en las sierras... y plata no encontró. Igualito a mí a fin de mes."
+  },
+  {
+   "speaker": "Castanha",
+   "style": "narrando, riéndose al final",
    "beat": "fuerte",
-   "text": "Pero junto al arroyo Pajeú levanta un fuerte de madera: el Schoonenborch."
-  },
-  {
-   "speaker": "Castanha",
-   "style": "tensa, dramática",
-   "beat": "guerra",
-   "text": "Lejos de acá, en Pernambuco, la guerra contra los holandeses se pone fea."
+   "text": "Pero junto al arroyo Pajeú levantó un fuerte de madera: el Schoonenborch. Intenten decir eso con acento cearense."
   },
   {
    "speaker": "Caju",
-   "style": "dramático, después aliviado",
+   "style": "tenso, dramático",
    "beat": "guerra",
-   "text": "Y en 1654 se rinden. Los portugueses toman el fuerte y le cambian el nombre."
+   "text": "Lejos de acá, en Pernambuco, la guerra contra los holandeses se puso fea."
   },
   {
    "speaker": "Castanha",
-   "style": "cálida, contando una historia",
+   "style": "dramática y después aliviada",
+   "beat": "guerra",
+   "text": "Y en 1654 se rindieron. Los portugueses tomaron el fuerte y le cambiaron el nombre. ¡Menos mal!"
+  },
+  {
+   "speaker": "Caju",
+   "style": "cálido, contando una historia",
    "beat": "villa",
-   "text": "Alrededor del fuerte crecen casas, calles, una iglesia... y en 1726 nace la villa."
-  },
-  {
-   "speaker": "Caju",
-   "style": "orgulloso, con humor",
-   "beat": "hoy",
-   "text": "¿Y qué nombre le pusieron? El del fuerte: Fortaleza. En 2026 cumplió trescientos años."
+   "text": "Alrededor del fuerte crecieron casas, calles, una iglesia... y en 1726 nació la villa."
   },
   {
    "speaker": "Castanha",
+   "style": "orgullosa, con humor",
+   "beat": "hoy",
+   "text": "¿Y qué nombre le pusieron? El del fuerte: ¡Fortaleza! En 2026 cumplió trescientos años, y está arretada."
+  },
+  {
+   "speaker": "Caju",
    "style": "alegre, despidiéndose",
    "beat": "fin",
-   "text": "Si pasan por el centro, el fuerte sigue ahí, mirando al mar. ¡Hasta el sábado!"
+   "text": "Si pasan por el centro, el fuerte sigue ahí, mirando al mar. ¡Hasta el sábado, gente!"
   }
  ]
 }
