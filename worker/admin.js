@@ -8,24 +8,24 @@ export const ADMIN_PAGE = String.raw`<!doctype html><html lang="pt"><head><meta 
 <style>
 :root{--ink:#1E2350;--cream:#F4ECDD;--gold:#F4B33D;--card:#fff;--line:#d9cfba;--mut:#5b5f7a;--ok:#2e7d4f;--bad:#b3261e}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
-body{margin:0;font:16px/1.45 system-ui,sans-serif;color:var(--ink);background:var(--cream);padding-bottom:calc(76px + env(safe-area-inset-bottom))}
-.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:var(--ink);color:#fff}
-.top b{font-size:18px;flex:1}.top small{opacity:.7}
-.top button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);padding:6px 10px;font-weight:500}
-main,#login{max-width:760px;margin:0 auto;padding:16px}
-h2{font-size:20px;margin:4px 0 6px}h3{font-size:16px;margin:20px 0 4px}
-.card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
-input,button,select{font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);min-height:44px}
+body{margin:0;font:14px/1.4 system-ui,sans-serif;color:var(--ink);background:var(--cream);padding-bottom:calc(60px + env(safe-area-inset-bottom))}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;background:var(--ink);color:#fff}
+.top b{font-size:15px;flex:1}.top small{opacity:.7}
+.top button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);padding:4px 10px;min-height:30px;font-size:13px;font-weight:500}
+main,#login{max-width:680px;margin:0 auto;padding:12px}
+h2{font-size:17px;margin:2px 0 4px}h3{font-size:14px;margin:14px 0 4px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}
+input,button,select{font:inherit;font-size:14px;padding:6px 10px;border-radius:9px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);min-height:36px}
 button{background:var(--gold);font-weight:700;cursor:pointer}button:disabled{opacity:.5}
 button.ghost{background:#fff}button.danger{background:#fff;color:var(--bad);border-color:var(--bad)}
-textarea{width:100%;font:14px ui-monospace,monospace;border-radius:10px;border:1.5px solid var(--ink);padding:10px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+textarea{width:100%;font:13px ui-monospace,monospace;border-radius:10px;border:1.5px solid var(--ink);padding:10px}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}
 .row input{flex:1;min-width:120px}
-table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:middle}
-.muted{color:var(--mut);font-size:14px}audio{width:100%;margin-top:8px}
+table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:middle}
+.muted{color:var(--mut);font-size:12.5px;margin:2px 0 6px}audio{width:100%;margin-top:8px}
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;background:#fff;border-top:1.5px solid var(--ink);padding-bottom:env(safe-area-inset-bottom)}
-.tabs button{flex:1;border:0;border-radius:0;background:#fff;min-height:58px;font-size:12px;font-weight:600;color:var(--mut);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.tabs button span{font-size:22px;line-height:1}.tabs button.on{color:var(--ink);background:var(--gold)}
+.tabs button{flex:1;border:0;border-radius:0;background:#fff;min-height:48px;font-size:11px;font-weight:600;color:var(--mut);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.tabs button span{font-size:17px;line-height:1}.tabs button.on{color:var(--ink);background:var(--gold)}
 section[data-tab]{display:none}section[data-tab].on{display:block}
 #bt .person{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 14px}
 #bt .person div{min-width:0}#bt .person small{display:block;color:var(--mut)}
@@ -142,8 +142,11 @@ var SITE="https://pdroarraes-creator.github.io/viaje-ceara/videos/";
 function loadScript(){fetch(SITE+ep.value+".json?t="+Date.now()).then(function(r){return r.text()}).then(function(t){sc.value=t}).catch(function(){sc.value=""})}
 ep.onchange=loadScript;loadScript();
 function fill(sel,list,pref){sel.innerHTML="";list.forEach(function(v){var o=document.createElement("option");o.value=v.id||v.name;o.textContent=(v.name||v.id)+" · "+(v.lang||"")+(v.accent?" · "+v.accent:"")+(v.pitch?" · "+v.pitch:"")+(v.desc?" · "+v.desc.slice(0,60):"");sel.appendChild(o)})}
+var DEF_F=["Kore","Leda","Aoede","Zephyr","Callirrhoe","Autonoe","Despina","Erinome","Laomedeia","Achernar","Gacrux","Pulcherrima","Vindemiatrix","Sulafat"],DEF_M=["Puck","Charon","Fenrir","Orus","Enceladus","Iapetus","Umbriel","Algieba","Algenib","Rasalgethi","Alnilam","Schedar","Achird","Zubenelgenubi","Sadachbia","Sadaltager"];
+function defs(a){return a.map(function(n){return{id:n,name:n,desc:"voz padrão do Gemini"}})}
+fill(vc,defs(DEF_F));fill(vb,defs(DEF_M));
 lv.onclick=function(){gs.textContent="Carregando vozes…";var langs=["pt-BR"];if(allang.checked)langs=langs.concat(["es-AR","es-419","es-US","es-ES"]);
- Promise.all([post("/voices",{lang:langs,gender:"female"}),post("/voices",{lang:langs,gender:"male"})]).then(function(r){fill(vc,r[0].voices);fill(vb,r[1].voices);gs.textContent=r[0].voices.length+" vozes femininas, "+r[1].voices.length+" masculinas."}).catch(function(e){gs.textContent=e.message})};
+ Promise.all([post("/voices",{lang:langs,gender:"female"}),post("/voices",{lang:langs,gender:"male"})]).then(function(r){if(!r[0].voices.length||!r[1].voices.length){gs.textContent="O Google não listou vozes. Mantive as vozes padrão do Gemini.";return}fill(vc,r[0].voices);fill(vb,r[1].voices);gs.textContent=r[0].voices.length+" vozes femininas, "+r[1].voices.length+" masculinas."}).catch(function(e){gs.textContent="Não consegui listar ("+e.message+"). Mantive as vozes padrão do Gemini."})};
 
 function b64ToBytes(b){var s=atob(b),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}
 function pcmOf(bytes){ // devolve {pcm, rate} de um WAV (ou PCM cru 24k)
